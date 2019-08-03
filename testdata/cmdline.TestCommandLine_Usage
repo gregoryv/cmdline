@@ -1,0 +1,10 @@
+Usage: mycmd [OPTIONS]
+
+Options
+    --uid			(default: 0)
+	 user id to set on the new account
+	 If not given, one is generated
+
+    -u, --username		(default: john)
+    -p, --password		(default: )
+    -n, --dry-run		(default: false)
