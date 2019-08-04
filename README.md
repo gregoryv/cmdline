@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/gregoryv/cmdline.svg?branch=master)](https://travis-ci.org/gregoryv/cmdline)
+[![codecov](https://codecov.io/gh/gregoryv/cmdline/branch/master/graph/badge.svg)](https://codecov.io/gh/gregoryv/cmdline)
+[![Maintainability](https://api.codeclimate.com/v1/badges/3dbee57c607ffec60702/maintainability)](https://codeclimate.com/github/gregoryv/cmdline/maintainability)
+
+
 [cmdline](https://godoc.org/pkg/github.com/gregoryv/cmdline) -
 package cmdline provides a way to parse command line arguments
 
