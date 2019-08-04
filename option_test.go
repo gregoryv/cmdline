@@ -8,26 +8,31 @@ import (
 
 func Test_flags(t *testing.T) {
 	cases := []struct {
-		opt *Option
-		exp bool
+		got, exp bool
 	}{
-		{
-			opt: New("", "-n").Option("-n"),
-			exp: true,
-		},
-		{
-			opt: New("", "-n", "-name").Option("-n"),
-			exp: true,
-		},
-		{
-			opt: New("", "-n", "val").Option("-n"),
-			exp: false,
-		},
+		{New("", "-n").Option("-n").Bool(), true},
+		{New("", "-n", "-name").Option("-n").Bool(), true},
+		{New("", "-n", "val").Option("-n").Bool(), false},
 	}
 
 	assert := asserter.New(t)
 	for _, c := range cases {
-		got := c.opt.Bool()
-		assert().Equals(got, c.exp)
+		assert().Equals(c.got, c.exp)
+	}
+}
+
+func Test_int_options(t *testing.T) {
+	cases := []struct {
+		got int
+		exp int
+	}{
+		{
+			got: New("", "-i", "1").Option("-i").Int(0),
+			exp: 1,
+		},
+	}
+	assert := asserter.New(t)
+	for _, c := range cases {
+		assert().Equals(c.got, c.exp)
 	}
 }
