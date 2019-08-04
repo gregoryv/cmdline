@@ -30,6 +30,10 @@ func Test_int_options(t *testing.T) {
 			got: New("", "-i", "1").Option("-i").Int(0),
 			exp: 1,
 		},
+		{
+			got: New("", "-i", "k").Option("-i").Int(0),
+			exp: 0,
+		},
 	}
 	assert := asserter.New(t)
 	for _, c := range cases {
