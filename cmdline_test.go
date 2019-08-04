@@ -22,3 +22,13 @@ func TestCommandLine_Usage(t *testing.T) {
 	got := buf.String()
 	golden.Assert(t, got)
 }
+
+func TestCommandLine_New_panic(t *testing.T) {
+	defer func() {
+		e := recover()
+		if e == nil {
+			t.Error("Should panic on empty args")
+		}
+	}()
+	New()
+}
