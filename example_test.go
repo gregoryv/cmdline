@@ -3,7 +3,7 @@ package cmdline_test
 import (
 	"fmt"
 
-	"xwing.7de.se/cmdline"
+	"github.com/gregoryv/cmdline"
 )
 
 func ExampleCommandLine() {

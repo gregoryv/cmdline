@@ -1,4 +1,4 @@
-module xwing.7de.se/cmdline
+module github.com/gregoryv/cmdline
 
 go 1.12
 
