@@ -3,6 +3,7 @@ package cmdline
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -20,13 +21,12 @@ func New(args ...string) *CommandLine {
 	return &CommandLine{
 		args:    args,
 		usage:   noUsage,
-		exit:    noExit,
+		exit:    os.Exit,
 		options: make([]*Option, 0),
 	}
 }
 
-func noUsage()   {}
-func noExit(int) {}
+func noUsage() {}
 
 func namesMatch(names, arg string) bool {
 	if !isOption(arg) {
