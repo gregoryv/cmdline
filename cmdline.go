@@ -28,19 +28,6 @@ func New(args ...string) *CommandLine {
 func noUsage()   {}
 func noExit(int) {}
 
-func (cli *CommandLine) string(names string) (string, bool) {
-	for i, arg := range cli.args {
-		if namesMatch(names, arg) {
-			isLast := len(cli.args)-1 == i
-			if isLast {
-				return "", true
-			}
-			return cli.args[i+1], true
-		}
-	}
-	return "", false
-}
-
 func namesMatch(names, arg string) bool {
 	if !isOption(arg) {
 		return false
