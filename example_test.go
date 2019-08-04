@@ -24,7 +24,7 @@ func ExampleCommandLine() {
 	username := cli.Option("-u, --username").String("john")
 	password := cli.Option("-p, --password").String("")
 	dryrun := cli.Flag("-n, --dry-run")
-	cli.UsageOnError()
+	cli.CheckOptions()
 
 	fmt.Printf("uid=%v, username=%q, password=%q, dryrun=%v\n",
 		uid, username, password, dryrun,

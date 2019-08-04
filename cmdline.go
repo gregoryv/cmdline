@@ -52,7 +52,7 @@ func isOption(arg string) bool {
 	return len(arg) > 0 && arg[0] == '-'
 }
 
-func (cli *CommandLine) UsageOnError() {
+func (cli *CommandLine) CheckOptions() {
 	err := cli.parseFailed()
 	if err != nil {
 		cli.usage()
