@@ -51,6 +51,10 @@ func (cli *CommandLine) CheckOptions() {
 		cli.usage()
 		cli.exit(1)
 	}
+	if cli.Flag("-h, --help") {
+		cli.usage()
+		cli.exit(0)
+	}
 }
 
 func (cli *CommandLine) parseFailed() error {
@@ -94,11 +98,10 @@ func (cli *CommandLine) WriteUsageTo(w io.Writer) {
 func (cli *CommandLine) WriteOptionsTo(w io.Writer) {
 	fmt.Fprintln(w, "Options")
 	for _, opt := range cli.options {
-		indent := "\t\t"
-		if len(opt.names) < 10 {
-			indent = "\t\t\t"
+		def := fmt.Sprintf(" : %v", opt.defaultValue)
+		if opt.quoteValue {
+			def = fmt.Sprintf(" : %q", opt.defaultValue)
 		}
-		def := fmt.Sprintf("%s(default: %s)", indent, opt.defaultValue)
 		fmt.Fprintf(w, "    %s%s\n", opt.names, def)
 		if len(opt.doc) > 0 {
 			for _, line := range opt.doc {

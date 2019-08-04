@@ -43,3 +43,13 @@ func Test_error_handling_and_usage(t *testing.T) {
 		t.Error("Bad options should result in the exit func being called")
 	}
 }
+
+func TestCommandLine_CheckOptions(t *testing.T) {
+	cli := New("mycmd", "-h")
+	var called bool
+	cli.exit = func(int) { called = true }
+	cli.CheckOptions()
+	if !called {
+		t.Error("-h flag should result in exit")
+	}
+}

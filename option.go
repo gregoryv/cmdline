@@ -10,6 +10,7 @@ type Option struct {
 	args         []string
 	names        string
 	defaultValue string
+	quoteValue   bool // in usage output
 	doc          []string
 	err          error
 }
@@ -53,6 +54,7 @@ func (opt *Option) String(def string) string {
 // StringOpt returns string value from the arguments or the given default value.
 func (opt *Option) StringOpt(def string) (string, *Option) {
 	opt.setDefault(def)
+	opt.quoteValue = true
 	v, _ := opt.string(opt.names)
 	if v == "" {
 		return def, opt
