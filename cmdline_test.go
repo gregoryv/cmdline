@@ -35,14 +35,16 @@ func TestCommandLine_New_panic(t *testing.T) {
 
 func Test_error_handling_and_usage(t *testing.T) {
 	cli := New("mycmd", "-i", "not-a-number")
-	var exitCalled, usageCalled bool
+	var exitCalled bool
 	cli.exit = func(int) { exitCalled = true }
-	cli.usage = func() { usageCalled = true }
+	out := bytes.NewBufferString("")
+	cli.Output = out
 	cli.Option("-i").Int(0)
 	cli.CheckOptions()
 	if !exitCalled {
 		t.Error("Bad options should result in the exit func being called")
 	}
+	usageCalled := out.String() != ""
 	if !usageCalled {
 		t.Error("Bad options should result in the usage func being called")
 	}

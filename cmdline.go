@@ -10,6 +10,7 @@ import (
 type CommandLine struct {
 	args    []string // including command name as first element
 	usage   func()
+	Output  io.Writer // Used to write usage
 	exit    func(int)
 	options []*Option
 }
@@ -26,8 +27,9 @@ func New(args ...string) *CommandLine {
 		exit:    os.Exit,
 		options: make([]*Option, 0),
 	}
+	cli.Output = os.Stderr
 	cli.usage = func() {
-		cli.WriteUsageTo(os.Stderr)
+		cli.WriteUsageTo(cli.Output)
 	}
 	return cli
 }
