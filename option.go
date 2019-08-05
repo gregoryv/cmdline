@@ -14,6 +14,9 @@ type Option struct {
 	quoteValue   bool // in usage output
 	doc          []string
 	err          error
+
+	argIndex int // position in args for e.g. --username
+	valIndex int // position for option value, same as argIndex if e.g. --i=1
 }
 
 // NewOption returns an option defined by a comma separated list of
@@ -73,6 +76,8 @@ func (opt *Option) StringOpt(def string) (string, *Option) {
 func (opt *Option) stringArg() (string, bool) {
 	for i, arg := range opt.args {
 		if opt.match(arg) {
+			opt.argIndex = i
+			opt.valIndex = i
 			// argument is -i=value
 			eqIndex := strings.Index(arg, "=")
 			if eqIndex > 0 {
@@ -82,6 +87,7 @@ func (opt *Option) stringArg() (string, bool) {
 			if isLast {
 				return "", true
 			}
+			opt.valIndex = i + 1
 			// argument is -i
 			return opt.args[i+1], true
 		}

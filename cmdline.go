@@ -101,3 +101,23 @@ func (cli *CommandLine) WriteOptionsTo(w io.Writer) {
 		}
 	}
 }
+
+// Args returns arguments not matched by any of the options
+func (cli *CommandLine) Args() []string {
+	rest := make([]string, 0)
+	for i, arg := range cli.args[1:] {
+		if !cli.wasMatched(i) {
+			rest = append(rest, arg)
+		}
+	}
+	return rest
+}
+
+func (cli *CommandLine) wasMatched(i int) bool {
+	for _, opt := range cli.options {
+		if opt.argIndex == i || opt.valIndex == i {
+			return true
+		}
+	}
+	return false
+}

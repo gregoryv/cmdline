@@ -65,3 +65,15 @@ func TestCommandLine_CheckOptions(t *testing.T) {
 		t.Error("-h flag should result in usage")
 	}
 }
+
+func TestCommandLine_Args(t *testing.T) {
+	cli := &CommandLine{
+		args: []string{"", "-h", "-i=3", "a", "b"},
+	}
+	cli.Option("-h").Bool()
+	cli.Option("-i").Int(0)
+	rest := cli.Args()
+	if len(rest) != 2 {
+		t.Errorf("Args did not return rest of arguments: %v", rest)
+	}
+}
