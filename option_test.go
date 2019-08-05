@@ -10,9 +10,9 @@ func Test_flags(t *testing.T) {
 	cases := []struct {
 		got, exp bool
 	}{
-		{New("", "-n").Option("-n").Bool(), true},
-		{New("", "-n", "-name").Option("-n").Bool(), true},
-		{New("", "-n", "val").Option("-n").Bool(), false},
+		{NewOption("-n", "-n").Bool(), true},
+		{NewOption("-n", "-n", "-name").Bool(), true},
+		{NewOption("-n", "-n", "val").Bool(), false},
 	}
 
 	assert := asserter.New(t)
