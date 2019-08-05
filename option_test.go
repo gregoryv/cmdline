@@ -27,11 +27,15 @@ func Test_int_options(t *testing.T) {
 		exp int
 	}{
 		{
-			got: New("", "-i", "1").Option("-i").Int(0),
+			got: NewOption("-i", "-i", "1").Int(0),
 			exp: 1,
 		},
 		{
-			got: New("", "-i", "k").Option("-i").Int(0),
+			got: NewOption("-i", "-i=1").Int(0),
+			exp: 1,
+		},
+		{
+			got: NewOption("-i", "-i", "k").Int(0),
 			exp: 0,
 		},
 	}
@@ -46,7 +50,10 @@ func Test_namesMatch(t *testing.T) {
 		opt *Option
 		arg string
 		exp bool
-	}{}
+	}{
+		{NewOption("-v"), "-v", true},
+		{NewOption("-i"), "-i=1", true},
+	}
 	assert := asserter.New(t)
 	for _, c := range cases {
 		got := c.opt.match(c.arg)

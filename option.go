@@ -8,12 +8,16 @@ import (
 
 // Option defines a command line option, ie. --username
 type Option struct {
-	args         []string
+	args         []string // without command
 	names        string
 	defaultValue string
 	quoteValue   bool // in usage output
 	doc          []string
 	err          error
+}
+
+func NewOption(names string, args ...string) *Option {
+	return &Option{names: names, args: args}
 }
 
 func (opt *Option) setDefault(def interface{}) {
@@ -66,10 +70,16 @@ func (opt *Option) StringOpt(def string) (string, *Option) {
 func (opt *Option) stringArg() (string, bool) {
 	for i, arg := range opt.args {
 		if opt.match(arg) {
+			// argument is -i=value
+			eqIndex := strings.Index(arg, "=")
+			if eqIndex > 0 {
+				return arg[eqIndex+1:], true
+			}
 			isLast := len(opt.args)-1 == i
 			if isLast {
 				return "", true
 			}
+			// argument is -i
 			return opt.args[i+1], true
 		}
 	}
@@ -80,7 +90,22 @@ func (opt *Option) match(arg string) bool {
 	if !isOption(arg) {
 		return false
 	}
-	return strings.Index(opt.names, arg) >= 0
+	names := strings.Split(strings.ReplaceAll(opt.names, " ", ""), ",")
+	argName, _ := nameAndValue(arg)
+	for _, name := range names {
+		if name == argName {
+			return true
+		}
+	}
+	return false
+}
+
+func nameAndValue(arg string) (string, string) {
+	parts := strings.Split(arg, "=")
+	if len(parts) > 1 {
+		return parts[0], parts[1]
+	}
+	return parts[0], ""
 }
 
 func isOption(arg string) bool {
