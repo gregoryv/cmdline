@@ -40,3 +40,16 @@ func Test_int_options(t *testing.T) {
 		assert().Equals(c.got, c.exp)
 	}
 }
+
+func Test_namesMatch(t *testing.T) {
+	cases := []struct {
+		opt *Option
+		arg string
+		exp bool
+	}{}
+	assert := asserter.New(t)
+	for _, c := range cases {
+		got := c.opt.match(c.arg)
+		assert().Equals(got, c.exp)
+	}
+}

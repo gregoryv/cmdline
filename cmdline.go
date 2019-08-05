@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 )
 
 // CommandLine groups arguments for option parsing and usage.
@@ -31,17 +30,6 @@ func New(args ...string) *CommandLine {
 		cli.WriteUsageTo(os.Stderr)
 	}
 	return cli
-}
-
-func namesMatch(names, arg string) bool {
-	if !isOption(arg) {
-		return false
-	}
-	return strings.Index(names, arg) >= 0
-}
-
-func isOption(arg string) bool {
-	return len(arg) > 0 && arg[0] == '-'
 }
 
 // CheckOptions exits if any of the given options are incorrect.

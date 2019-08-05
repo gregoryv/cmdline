@@ -3,6 +3,7 @@ package cmdline
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Option defines a command line option, ie. --username
@@ -33,7 +34,7 @@ func (opt *Option) Int(def int) int {
 // IntOpt returns int value from the arguments or the given default value.
 func (opt *Option) IntOpt(def int) (int, *Option) {
 	opt.setDefault(def)
-	v, _ := opt.string(opt.names)
+	v, _ := opt.stringArg()
 	if v == "" {
 		opt.fail()
 		return def, opt
@@ -55,16 +56,16 @@ func (opt *Option) String(def string) string {
 func (opt *Option) StringOpt(def string) (string, *Option) {
 	opt.setDefault(def)
 	opt.quoteValue = true
-	v, _ := opt.string(opt.names)
+	v, _ := opt.stringArg()
 	if v == "" {
 		return def, opt
 	}
 	return v, opt
 }
 
-func (opt *Option) string(names string) (string, bool) {
+func (opt *Option) stringArg() (string, bool) {
 	for i, arg := range opt.args {
-		if namesMatch(names, arg) {
+		if opt.match(arg) {
 			isLast := len(opt.args)-1 == i
 			if isLast {
 				return "", true
@@ -73,6 +74,17 @@ func (opt *Option) string(names string) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+func (opt *Option) match(arg string) bool {
+	if !isOption(arg) {
+		return false
+	}
+	return strings.Index(opt.names, arg) >= 0
+}
+
+func isOption(arg string) bool {
+	return len(arg) > 0 && arg[0] == '-'
 }
 
 // Bool same as BoolOpt but does not return the Option.
@@ -85,7 +97,7 @@ func (opt *Option) Bool() bool {
 // The Option is returned for more configuration.
 func (opt *Option) BoolOpt() (bool, *Option) {
 	opt.setDefault(false)
-	v, found := opt.string(opt.names)
+	v, found := opt.stringArg()
 	if v != "" && !isOption(v) {
 		opt.fail()
 		return false, opt
