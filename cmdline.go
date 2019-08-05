@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // CommandLine groups arguments for option parsing and usage.
@@ -38,12 +39,20 @@ func New(args ...string) *CommandLine {
 func (cli *CommandLine) CheckOptions() {
 	err := cli.parseFailed()
 	if err != nil {
-		cli.usage()
+		fmt.Fprintln(cli.Output, err)
 		cli.exit(1)
 	}
-	if cli.Flag("-h, --help") {
+	help := NewOption("-h, --help", cli.args[1:]...).Bool()
+	if help {
 		cli.usage()
 		cli.exit(0)
+	}
+	for _, arg := range cli.Args() {
+		//		fmt.Println("r:", arg)
+		if isOption(arg) {
+			fmt.Fprintln(cli.Output, "Unknown option:", arg)
+			cli.exit(1)
+		}
 	}
 }
 
@@ -61,10 +70,7 @@ func (cli *CommandLine) parseFailed() error {
 //   -n, --dry-run
 //
 func (cli *CommandLine) Option(names string) *Option {
-	opt := &Option{
-		args:  cli.args[1:],
-		names: names,
-	}
+	opt := NewOption(names, cli.args[1:]...)
 	cli.options = append(cli.options, opt)
 	return opt
 }
@@ -106,6 +112,7 @@ func (cli *CommandLine) WriteOptionsTo(w io.Writer) {
 func (cli *CommandLine) Args() []string {
 	rest := make([]string, 0)
 	for i, arg := range cli.args[1:] {
+		//		fmt.Println("a:", arg)
 		if !cli.wasMatched(i) {
 			rest = append(rest, arg)
 		}
@@ -120,4 +127,8 @@ func (cli *CommandLine) wasMatched(i int) bool {
 		}
 	}
 	return false
+}
+
+func (cli *CommandLine) String() string {
+	return fmt.Sprintf("CommandLine: %s", strings.Join(cli.args, " "))
 }

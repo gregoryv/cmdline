@@ -2,6 +2,8 @@ package cmdline
 
 import (
 	"bytes"
+	"io/ioutil"
+	"strings"
 	"testing"
 
 	"github.com/gregoryv/golden"
@@ -33,29 +35,53 @@ func TestCommandLine_New_panic(t *testing.T) {
 	New()
 }
 
-func Test_error_handling_and_usage(t *testing.T) {
-	cli := New("mycmd", "-i", "not-a-number")
+func Test_error_handling(t *testing.T) {
+	cases := []struct {
+		cli     *CommandLine
+		optFunc func(*CommandLine)
+	}{
+		{
+			cli: newCli("mycmd -i 4 -unknown"),
+			optFunc: func(cli *CommandLine) {
+				cli.Option("-i").Int(0)
+			},
+		},
+		{
+			cli: newCli("mycmd -i notanumber"),
+			optFunc: func(cli *CommandLine) {
+				cli.Option("-i").Int(0)
+			},
+		},
+		{
+			cli:     newCli("mycmd -unknown"),
+			optFunc: func(cli *CommandLine) {},
+		},
+	}
+	for _, c := range cases {
+		checkExit(t, c.cli, c.optFunc)
+	}
+}
+
+func checkExit(t *testing.T, cli *CommandLine, fn func(*CommandLine)) {
 	var exitCalled bool
 	cli.exit = func(int) { exitCalled = true }
 	out := bytes.NewBufferString("")
 	cli.Output = out
-	cli.Option("-i").Int(0)
+	fn(cli)
 	cli.CheckOptions()
 	if !exitCalled {
-		t.Error("Bad options should result in the exit func being called")
-	}
-	usageCalled := out.String() != ""
-	if !usageCalled {
-		t.Error("Bad options should result in the usage func being called")
+		t.Error("Exit func not called for", cli)
+		t.Log(cli.Args())
 	}
 }
 
 func TestCommandLine_CheckOptions(t *testing.T) {
 	var exitCalled, usageCalled bool
 	cli := &CommandLine{
-		args:  []string{"mycmd", "-h"},
-		exit:  func(int) { exitCalled = true },
-		usage: func() { usageCalled = true },
+		args:   []string{"mycmd", "-h"},
+		exit:   func(int) { exitCalled = true },
+		usage:  func() { usageCalled = true },
+		Output: ioutil.Discard,
 	}
 	cli.CheckOptions()
 	if !exitCalled {
@@ -76,4 +102,8 @@ func TestCommandLine_Args(t *testing.T) {
 	if len(rest) != 2 {
 		t.Errorf("Args did not return rest of arguments: %v", rest)
 	}
+}
+
+func newCli(args string) *CommandLine {
+	return New(strings.Split(args, " ")...)
 }

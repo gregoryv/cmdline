@@ -23,7 +23,7 @@ type Option struct {
 // names and arguments to match against. Usually you would call
 // CommandLine.Option(names) over this.
 func NewOption(names string, args ...string) *Option {
-	return &Option{names: names, args: args}
+	return &Option{names: names, args: args, argIndex: -1, valIndex: -1}
 }
 
 func (opt *Option) setDefault(def interface{}) {
@@ -140,5 +140,5 @@ func (opt *Option) BoolOpt() (bool, *Option) {
 }
 
 func (opt *Option) fail() {
-	opt.err = fmt.Errorf("invalid %s", opt.names)
+	opt.err = fmt.Errorf("Invalid option: %s", opt.names)
 }
