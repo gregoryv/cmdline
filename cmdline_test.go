@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/golden"
 )
 
@@ -102,6 +103,12 @@ func TestCommandLine_Args(t *testing.T) {
 	if len(rest) != 2 {
 		t.Errorf("Args did not return rest of arguments: %v", rest)
 	}
+}
+
+func Test_stringer(t *testing.T) {
+	cli := newCli("mycmd -help -i=4")
+	assert := asserter.New(t)
+	assert().Contains(cli.String(), "mycmd -help -i=4")
 }
 
 func newCli(args string) *CommandLine {
