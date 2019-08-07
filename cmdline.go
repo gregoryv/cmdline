@@ -35,6 +35,12 @@ func New(args ...string) *CommandLine {
 	return cli
 }
 
+// Usage prints the usage for all options using the preconfigure
+// output.
+func (cli *CommandLine) Usage() {
+	cli.usage()
+}
+
 // CheckOptions exits if any of the given options are incorrect.
 func (cli *CommandLine) CheckOptions() {
 	err := cli.parseFailed()

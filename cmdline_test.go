@@ -21,7 +21,8 @@ func TestCommandLine_Usage(t *testing.T) {
 	cli.Option("-u, --username").String("john")
 	cli.Option("-p, --password").String("")
 	cli.Flag("-n, --dry-run")
-	cli.WriteUsageTo(buf)
+	cli.Output = buf
+	cli.Usage()
 	got := buf.String()
 	golden.Assert(t, got)
 }
