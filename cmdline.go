@@ -81,6 +81,12 @@ func (cli *CommandLine) Option(names string) *Option {
 	return opt
 }
 
+// Doc documents the last option
+func (cli *CommandLine) Doc(lines ...string) {
+	opt := cli.options[len(cli.options)-1]
+	opt.Doc(lines...)
+}
+
 // Flag is short for Option(name).Bool()
 func (cli *CommandLine) Flag(name string) bool {
 	val, _ := cli.Option(name).BoolOpt()

@@ -12,7 +12,7 @@ This package fixes a few problems that come with using the flag package.
 
 Example:
     func main() {
-        cli := cmdline.New(os.Args)
+        cli := cmdline.New(os.Args...)
         uid, opt := cli.Option("--uid").IntOpt(0)
         opt.Doc(
                 "user id to set on the new account",

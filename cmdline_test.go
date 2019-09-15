@@ -27,6 +27,12 @@ func TestCommandLine_Usage(t *testing.T) {
 	golden.Assert(t, got)
 }
 
+func TestCommandLine_Doc(t *testing.T) {
+	cli := New("mycmd")
+	cli.Option("-x")
+	cli.Doc("some text")
+}
+
 func TestCommandLine_New_panic(t *testing.T) {
 	defer func() {
 		e := recover()
