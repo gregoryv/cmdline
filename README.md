@@ -6,7 +6,7 @@
 [cmdline](https://godoc.org/pkg/github.com/gregoryv/cmdline) -
 package cmdline provides a way to parse command line arguments
 
-This package fixes a few problems that come with using the flag package.
+This package fixes opinionated issues with using the flag package.
 
   1. Don't hog the name flag, which is a boolean option
   2. Use appropriate names for arguments, options and flags
@@ -18,7 +18,7 @@ This package fixes a few problems that come with using the flag package.
 Example:
 
     func main() {
-        cli := cmdline.New(os.Args)
+        cli := cmdline.New(os.Args...)
         uid, opt := cli.Option("--uid").IntOpt(0)
         opt.Doc(
                 "user id to set on the new account",
