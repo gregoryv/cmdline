@@ -70,7 +70,7 @@ func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 		opt.fail()
 		return 0, opt
 	}
-	iv, err := strconv.ParseUint(v, 10, 64)
+	iv, err := strconv.ParseUint(v, 0, 64)
 	if err != nil {
 		opt.fail()
 	}
