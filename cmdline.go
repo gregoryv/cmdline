@@ -1,66 +1,56 @@
 package cmdline
 
 import (
+	"errors"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 )
 
-// CommandLine groups arguments for option parsing and usage.
-type CommandLine struct {
-	args    []string // including command name as first element
-	usage   func()
-	Output  io.Writer // Used to write usage
-	exit    func(int)
-	options []*Option
+// Parse returns a command line from a string starting with the
+// command followed by arguments.
+func Parse(str string) *CommandLine {
+	return New(strings.Split(str, " ")...)
 }
 
-// New returns a CommandLine, usually called with cmdline.New(os.Args...).
-// First argument must be the command name
+// New returns a CommandLine, usually called with
+// cmdline.New(os.Args...).  First argument must be the command name
 func New(args ...string) *CommandLine {
 	if len(args) == 0 {
 		panic("New() missing args")
 	}
-
 	cli := &CommandLine{
 		args:    args,
-		exit:    os.Exit,
 		options: make([]*Option, 0),
-	}
-	cli.Output = os.Stderr
-	cli.usage = func() {
-		cli.WriteUsageTo(cli.Output)
 	}
 	return cli
 }
 
-// Usage prints the usage for all options using the preconfigure
-// output.
-func (cli *CommandLine) Usage() {
-	cli.usage()
+// CommandLine groups arguments for option parsing and usage.
+type CommandLine struct {
+	args    []string // including command name as first element
+	options []*Option
 }
 
 // CheckOptions exits if any of the given options are incorrect.
-func (cli *CommandLine) CheckOptions() {
+func (cli *CommandLine) CheckOptions() error {
 	err := cli.parseFailed()
 	if err != nil {
-		fmt.Fprintln(cli.Output, err)
-		cli.exit(1)
+		return err
 	}
 	help := NewOption("-h, --help", cli.args[1:]...).Bool()
 	if help {
-		cli.usage()
-		cli.exit(0)
+		return ErrHelp
 	}
 	for _, arg := range cli.Args() {
-		//		fmt.Println("r:", arg)
 		if isOption(arg) {
-			fmt.Fprintln(cli.Output, "Unknown option:", arg)
-			cli.exit(1)
+			return fmt.Errorf("Unknown option: %v", arg)
 		}
 	}
+	return nil
 }
+
+var ErrHelp = errors.New("Help requested")
 
 func (cli *CommandLine) parseFailed() error {
 	for _, opt := range cli.options {
@@ -79,12 +69,6 @@ func (cli *CommandLine) Option(names string) *Option {
 	opt := NewOption(names, cli.args[1:]...)
 	cli.options = append(cli.options, opt)
 	return opt
-}
-
-// Doc documents the last option
-func (cli *CommandLine) Doc(lines ...string) {
-	opt := cli.options[len(cli.options)-1]
-	opt.Doc(lines...)
 }
 
 // Flag is short for Option(name).Bool()
