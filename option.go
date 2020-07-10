@@ -47,13 +47,35 @@ func (opt *Option) IntOpt(def int) (int, *Option) {
 	v, _ := opt.stringArg()
 	if v == "" {
 		opt.fail()
-		return def, opt
+		return 0, opt
 	}
 	iv, err := strconv.Atoi(v)
 	if err != nil {
 		opt.fail()
 	}
 	return iv, opt
+}
+
+// Uint same as UintOpt but does not return the Option
+func (opt *Option) Uint(def uint64) uint64 {
+	v, _ := opt.UintOpt(def)
+	return v
+}
+
+// UintOpt returns an unsigned int option
+func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
+	opt.setDefault(def)
+	v, _ := opt.stringArg()
+	if v == "" {
+		opt.fail()
+		return 0, opt
+	}
+	iv, err := strconv.ParseUint(v, 10, 64)
+	if err != nil {
+		opt.fail()
+	}
+	return iv, opt
+
 }
 
 // String same as StringOpt but does not return the Option.

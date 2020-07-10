@@ -6,57 +6,19 @@ import (
 	"github.com/gregoryv/asserter"
 )
 
-func Test_flags(t *testing.T) {
-	cases := []struct {
-		got, exp bool
-	}{
-		{NewOption("-n", "-n").Bool(), true},
-		{NewOption("-n", "-n", "-name").Bool(), true},
-		{NewOption("-n", "-n", "val").Bool(), false},
-	}
-
+func TestOption_Uint(t *testing.T) {
 	assert := asserter.New(t)
-	for _, c := range cases {
-		assert().Equals(c.got, c.exp)
-	}
-}
+	assert().Equals(NewOption("-o", "-o", "1").Uint(2), uint64(1))
+	assert().Equals(NewOption("-o", "-o", "7").Uint(2), uint64(7))
+	assert().Equals(NewOption("-o", "-o", "-9").Uint(2), uint64(0))
+	assert(NewOption("-o", "-o").Uint(1) == 0).Error("missing value")
+	assert(NewOption("-o", "-o", "string").Uint(1) == 0).Error("bad value")
 
-func Test_int_options(t *testing.T) {
-	cases := []struct {
-		got int
-		exp int
-	}{
-		{
-			got: NewOption("-i", "-i", "1").Int(0),
-			exp: 1,
-		},
-		{
-			got: NewOption("-i", "-i=1").Int(0),
-			exp: 1,
-		},
-		{
-			got: NewOption("-i", "-i", "k").Int(0),
-			exp: 0,
-		},
-	}
-	assert := asserter.New(t)
-	for _, c := range cases {
-		assert().Equals(c.got, c.exp)
-	}
-}
+	assert(NewOption("-o", "-o", "1").Int(2) == 1).Fail()
+	assert(NewOption("-o", "-o").Int(1) == 0).Error("missing value")
+	assert(NewOption("-o", "-o", "string").Int(1) == 0).Error("bad value")
 
-func Test_namesMatch(t *testing.T) {
-	cases := []struct {
-		opt *Option
-		arg string
-		exp bool
-	}{
-		{NewOption("-v"), "-v", true},
-		{NewOption("-i"), "-i=1", true},
-	}
-	assert := asserter.New(t)
-	for _, c := range cases {
-		got := c.opt.match(c.arg)
-		assert().Equals(got, c.exp)
-	}
+	assert(NewOption("-n", "-n").Bool())
+	assert(NewOption("-n", "-n", "-name").Bool())
+	assert(!NewOption("-n", "-n", "string").Bool())
 }
