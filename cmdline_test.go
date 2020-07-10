@@ -49,10 +49,10 @@ func TestCommandLine_Args(t *testing.T) {
 	cli := Parse("x -h -i=3 a b")
 	cli.Option("-h").Bool()
 	cli.Option("-i").Int(0)
-	rest := cli.Args()
-	if len(rest) != 2 {
-		t.Errorf("Args did not return rest of arguments: %v", rest)
-	}
+	assert := asserter.New(t)
+	assert().Equals(len(cli.Args()), 2)
+	assert().Equals(cli.Arg(0), "a")
+	assert().Equals(cli.Arg(3), "")
 }
 
 func Test_stringer(t *testing.T) {
