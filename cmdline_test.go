@@ -51,8 +51,8 @@ func TestCommandLine_Args(t *testing.T) {
 	cli.Option("-i").Int(0)
 	assert := asserter.New(t)
 	assert().Equals(len(cli.Args()), 2)
-	assert().Equals(cli.Arg(0), "a")
-	assert().Equals(cli.Arg(3), "")
+	assert().Equals(cli.Argn(0), "a")
+	assert().Equals(cli.Argn(3), "")
 }
 
 func Test_stringer(t *testing.T) {

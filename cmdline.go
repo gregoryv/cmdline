@@ -116,8 +116,8 @@ func (cli *CommandLine) Args() []string {
 	return rest
 }
 
-// Arg returns the n:th argument of remaining arguments
-func (me *CommandLine) Arg(n int) string {
+// Argn returns the n:th argument of remaining arguments
+func (me *CommandLine) Argn(n int) string {
 	rest := me.Args()
 	if n < len(rest) {
 		return rest[n]
