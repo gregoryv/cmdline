@@ -28,8 +28,9 @@ func New(args ...string) *CommandLine {
 
 // CommandLine groups arguments for option parsing and usage.
 type CommandLine struct {
-	args    []string // including command name as first element
-	options []*Option
+	args      []string // including command name as first element
+	options   []*Option
+	arguments []*Argument // required
 }
 
 // CheckOptions exits if any of the given options are incorrect.
@@ -82,7 +83,15 @@ func (cli *CommandLine) Flag(name string) bool {
 //
 //   Usage: COMMAND [OPTIONS]
 func (cli *CommandLine) WriteUsageTo(w io.Writer) {
-	fmt.Fprintf(w, "Usage: %s [OPTIONS]\n\n", cli.args[0])
+	required := make([]string, len(cli.arguments))
+	for i, argument := range cli.arguments {
+		required[i] = argument.name
+	}
+	var req string
+	if len(required) > 0 {
+		req = fmt.Sprintf(" %s", strings.Join(required, " "))
+	}
+	fmt.Fprintf(w, "Usage: %s [OPTIONS]%s\n\n", cli.args[0], req)
 	cli.WriteOptionsTo(w)
 }
 
@@ -136,4 +145,24 @@ func (cli *CommandLine) wasMatched(i int) bool {
 
 func (cli *CommandLine) String() string {
 	return fmt.Sprintf("CommandLine: %s", strings.Join(cli.args, " "))
+}
+
+// NeedArg returns a named argument.
+func (me *CommandLine) NeedArg(name string, n int) *Argument {
+	arg := &Argument{
+		name: name,
+		v:    me.Argn(n),
+	}
+	me.arguments = append(me.arguments, arg)
+	return arg
+}
+
+type Argument struct {
+	name string
+	v    string
+}
+
+// String
+func (me *Argument) String() string {
+	return me.v
 }

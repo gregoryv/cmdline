@@ -8,11 +8,11 @@ import (
 
 func ExampleCommandLine() {
 	args := []string{
-		"mycmd",
-		"--username", "user",
+		"adduser",
+		"-n",
 		"-p", "secret",
 		"--uid", "100",
-		"-n",
+		"john",
 	}
 
 	cli := cmdline.New(args...)
@@ -21,14 +21,14 @@ func ExampleCommandLine() {
 		"user id to set on the new account",
 		"If not given, one is generated",
 	)
-	username := cli.Option("-u, --username").String("john")
 	password := cli.Option("-p, --password").String("")
 	dryrun := cli.Flag("-n, --dry-run")
+	username := cli.NeedArg("USERNAME", 0).String()
 	cli.CheckOptions()
 
 	fmt.Printf("uid=%v, username=%q, password=%q, dryrun=%v\n",
 		uid, username, password, dryrun,
 	)
 	// output:
-	// uid=100, username="user", password="secret", dryrun=true
+	// uid=100, username="john", password="secret", dryrun=true
 }

@@ -9,19 +9,19 @@ import (
 )
 
 func TestCommandLine_Usage(t *testing.T) {
-	cli := New("mycmd")
+	cli := New("adduser")
+	cli.Flag("-n, --dry-run")
 	_, opt := cli.Option("--uid").IntOpt(0)
 	opt.Doc(
 		"user id to set on the new account",
 		"If not given, one is generated",
 	)
-	cli.Option("-u, --username").String("john")
 	cli.Option("-p, --password").String("")
-	cli.Flag("-n, --dry-run")
+	cli.NeedArg("USERNAME", 0).String()
+
 	var buf bytes.Buffer
 	cli.WriteUsageTo(&buf)
-	got := buf.String()
-	golden.Assert(t, got)
+	golden.Assert(t, buf.String())
 }
 
 func TestCommandLine_New_panic(t *testing.T) {
@@ -53,6 +53,16 @@ func TestCommandLine_Args(t *testing.T) {
 	assert().Equals(len(cli.Args()), 2)
 	assert().Equals(cli.Argn(0), "a")
 	assert().Equals(cli.Argn(3), "")
+}
+
+func TestCommandLine_Arg(t *testing.T) {
+	cli := Parse("cp -i 1 /etc")
+	cli.Option("-i").Int(0)
+	assert := asserter.New(t)
+	arg1 := cli.NeedArg("FROM", 0).String()
+	assert().Equals(arg1, "/etc")
+	arg2 := cli.NeedArg("TO", 1).String()
+	assert().Equals(arg2, "")
 }
 
 func Test_stringer(t *testing.T) {
