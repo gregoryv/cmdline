@@ -31,17 +31,15 @@ type CommandLine struct {
 	args      []string // including command name as first element
 	options   []*Option
 	arguments []*Argument // required
+
+	Help bool // set to true if -h or --help is given
 }
 
-// CheckOptions exits if any of the given options are incorrect.
-func (cli *CommandLine) CheckOptions() error {
+// Error returns first error of the given options.
+func (cli *CommandLine) Error() error {
 	err := cli.parseFailed()
 	if err != nil {
 		return err
-	}
-	help := NewOption("-h, --help", cli.args[1:]...).Bool()
-	if help {
-		return ErrHelp
 	}
 	for _, arg := range cli.Args() {
 		if isOption(arg) {

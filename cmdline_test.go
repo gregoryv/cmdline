@@ -34,22 +34,24 @@ func TestCommandLine_New_panic(t *testing.T) {
 	New()
 }
 
-func TestCommandLine_CheckOptions(t *testing.T) {
+func TestCommandLine_Error(t *testing.T) {
 	ok, bad := asserter.NewErrors(t)
-	ok(Parse("cmd").CheckOptions())
-	bad(Parse("mycmd -h").CheckOptions())
-	bad(Parse("mycmd -nosuch").CheckOptions())
+	ok(Parse("cmd").Error())
+	bad(Parse("mycmd -h").Error())
+	bad(Parse("mycmd -nosuch").Error())
 
 	cli := Parse("cmd -i=k")
 	cli.Option("-i").Int(10)
-	bad(cli.CheckOptions())
+	bad(cli.Error())
 }
 
 func TestCommandLine_Args(t *testing.T) {
-	cli := Parse("x -h -i=3 a b")
-	cli.Option("-h").Bool()
-	cli.Option("-i").Int(0)
+	cli := Parse("x -h a b")
+	help := cli.Flag("-h")
+	ival := cli.Option("-i").Int(0)
 	assert := asserter.New(t)
+	assert(help).Error("help")
+	assert().Equals(ival, 0)
 	assert().Equals(len(cli.Args()), 2)
 	assert().Equals(cli.Argn(0), "a")
 	assert().Equals(cli.Argn(3), "")

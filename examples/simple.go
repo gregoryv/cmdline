@@ -13,7 +13,7 @@ func main() {
 	name, opt := cli.Option("-firstname, --firstname").StringOpt("World")
 	opt.Doc("The name of whom you want to say hello to")
 
-	if err := cli.CheckOptions(); err != nil {
+	if err := cli.Error(); err != nil {
 		if err != cmdline.ErrHelp {
 			fmt.Println(err)
 			os.Exit(1)
