@@ -34,14 +34,11 @@ func ExampleCommandLine() {
 	// uid=100, username="john", password="secret", dryrun=true
 }
 
-func Example() {
+func Example_help() {
 	cli := cmdline.Parse("somecmd -h")
-	_ = cli.Option("-p, --password").String("")
-	cli.Option("-i, --integer").IntOpt(0)
-	_ = cli.NeedArg("HOST", 0).String()
-	_ = cli.Flag("-n, --dry-run")
-
+	cli.Flag("-n, --dry-run")
 	help := cli.Flag("-h, --help")
+
 	if err := cli.Error(); err != nil {
 		fmt.Println(err)
 		return
@@ -50,10 +47,9 @@ func Example() {
 		cli.WriteUsageTo(os.Stdout)
 	}
 	// output:
-	// Usage: somecmd [OPTIONS] HOST
+	// Usage: somecmd [OPTIONS]
 	//
 	// Options
-	//     -p, --password : ""
 	//     -n, --dry-run : false
 	//     -h, --help : false
 }

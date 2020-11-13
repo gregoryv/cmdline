@@ -153,12 +153,18 @@ func (opt *Option) Bool() bool {
 // The Option is returned for more configuration.
 func (opt *Option) BoolOpt() (bool, *Option) {
 	opt.setDefault(false)
-	v, found := opt.stringArg()
-	if v != "" && !isOption(v) {
-		opt.fail()
-		return false, opt
+	v := opt.boolArg()
+	return v, opt
+}
+
+func (opt *Option) boolArg() bool {
+	for i, arg := range opt.args {
+		if opt.match(arg) {
+			opt.argIndex = i
+			return true
+		}
 	}
-	return found, opt
+	return false
 }
 
 func (opt *Option) fail() {

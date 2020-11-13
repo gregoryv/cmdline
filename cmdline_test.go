@@ -2,6 +2,7 @@ package cmdline
 
 import (
 	"bytes"
+	"reflect"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -45,16 +46,19 @@ func TestCommandLine_Error(t *testing.T) {
 	bad(cli.Error())
 }
 
-func TestCommandLine_Args(t *testing.T) {
-	cli := Parse("x -h a b")
-	help := cli.Flag("-h")
-	ival := cli.Option("-i").Int(0)
-	assert := asserter.New(t)
-	assert(help).Error("help")
-	assert().Equals(ival, 0)
-	assert().Equals(len(cli.Args()), 2)
-	assert().Equals(cli.Argn(0), "a")
-	assert().Equals(cli.Argn(3), "")
+func Test_flags(t *testing.T) {
+	args := "x -h a b"
+	cli := Parse(args)
+	if !cli.Flag("-h") {
+		t.Errorf("-h failed for %q", args)
+	}
+	if cli.Flag("--h") {
+		t.Errorf("--h was ok for %q", args)
+	}
+	got := cli.Args()
+	if !reflect.DeepEqual(got, []string{"a", "b"}) {
+		t.Error(got)
+	}
 }
 
 func TestCommandLine_Arg(t *testing.T) {
