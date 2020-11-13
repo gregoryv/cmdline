@@ -7,45 +7,45 @@ import (
 	"github.com/gregoryv/cmdline"
 )
 
-func ExampleCommandLine() {
-	args := []string{
-		"adduser",
-		"-n",
-		"-p", "secret",
-		"--uid", "100",
-		"john",
+func Example() {
+	// would be os.Args...
+	args := []string{"adduser", "-h", "-p", "secret", "--uid", "100", "john"}
+
+	var (
+		cli = cmdline.New(args...)
+		uid = cli.Option("--uid",
+			"user id to set on the new account",
+			"If not given, one is generated",
+		).Int(0)
+		password = cli.Option("-p, --password").String("")
+		dryrun   = cli.Flag("-n, --dry-run")
+		help     = cli.Flag("-h, --help") // explicit help handling
+
+		// parse and name non options
+		username = cli.NeedArg("USERNAME", 0).String()
+	)
+
+	switch {
+	case !cli.Ok():
+		fmt.Println(cli.Error())
+		fmt.Println("Try --help for more information")
+
+	case help:
+		cli.WriteUsageTo(os.Stdout)
+
+	case dryrun:
+	default:
+		fmt.Println(uid, username, password, dryrun)
 	}
-
-	cli := cmdline.New(args...)
-	uid, opt := cli.Option("--uid").IntOpt(0)
-	opt.Doc(
-		"user id to set on the new account",
-		"If not given, one is generated",
-	)
-	password := cli.Option("-p, --password").String("")
-	dryrun := cli.Flag("-n, --dry-run")
-	username := cli.NeedArg("USERNAME", 0).String()
-	cli.Error()
-
-	fmt.Printf("uid=%v, username=%q, password=%q, dryrun=%v\n",
-		uid, username, password, dryrun,
-	)
-	// output:
-	// uid=100, username="john", password="secret", dryrun=true
 }
 
 func Example_help() {
-	cli := cmdline.Parse("somecmd -h")
-	cli.Flag("-n, --dry-run")
-	help := cli.Flag("-h, --help")
-
-	if err := cli.Error(); err != nil {
-		fmt.Println(err)
-		return
-	}
-	if help {
-		cli.WriteUsageTo(os.Stdout)
-	}
+	var (
+		cli  = cmdline.Parse("somecmd -h")
+		_    = cli.Flag("-n, --dry-run")
+		help = cli.Flag("-h, --help")
+	)
+	cli.WriteUsageTo(os.Stdout)
 	// output:
 	// Usage: somecmd [OPTIONS]
 	//

@@ -10,20 +10,5 @@ This package fixes a few problems that come with using the flag package.
   5. Skip pointer variations
   6. Include required options TODO
 
-Example:
-    func main() {
-        cli := cmdline.New(os.Args...)
-        uid, opt := cli.Option("--uid").IntOpt(0)
-        opt.Doc(
-                "user id to set on the new account",
-                "If not given, one is generated",
-        )
-        username := cli.Option("-u, --username").String("john")
-        password := cli.Option("-p, --password").String("")
-        dryrun := cli.Flag("-n, --dry-run")
-        cli.UsageOnError()
-
-        // ...
-    }
 */
 package cmdline

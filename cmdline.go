@@ -35,6 +35,11 @@ type CommandLine struct {
 	Help bool // set to true if -h or --help is given
 }
 
+// Ok returns true if no parsing error occured
+func (cli *CommandLine) Ok() bool {
+	return cli.Error() == nil
+}
+
 // Error returns first error of the given options.
 func (cli *CommandLine) Error() error {
 	err := cli.parseFailed()
@@ -64,8 +69,9 @@ func (cli *CommandLine) parseFailed() error {
 // Names should be a comma separated string, e.g.
 //   -n, --dry-run
 //
-func (cli *CommandLine) Option(names string) *Option {
+func (cli *CommandLine) Option(names string, doclines ...string) *Option {
 	opt := NewOption(names, cli.args[1:]...)
+	opt.doc = doclines
 	cli.options = append(cli.options, opt)
 	return opt
 }
