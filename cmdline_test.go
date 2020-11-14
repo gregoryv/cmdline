@@ -9,6 +9,25 @@ import (
 	"github.com/gregoryv/golden"
 )
 
+func TestCommandLine_Ok(t *testing.T) {
+	args := "ls -r ."
+	cli := Parse(args)
+	cli.Flag("-r")
+	if !cli.Ok() {
+		t.Errorf("parse flag -r from line %q", args)
+	}
+}
+
+func TestCommandLine_not_Ok(t *testing.T) {
+	args := "ls -r ."
+	cli := Parse(args)
+	cli.Option("-v").String("")
+	if cli.Ok() {
+		t.Log(cli.Error())
+		t.Errorf("parse flag -v from line %q", args)
+	}
+}
+
 func TestCommandLine_Usage(t *testing.T) {
 	cli := New("adduser")
 	cli.Flag("-n, --dry-run")
