@@ -12,13 +12,10 @@ func Example() {
 	args := []string{"adduser", "-h", "-p", "secret", "--uid", "100", "john"}
 
 	var (
-		cli = cmdline.New(args...)
-		uid = cli.Option("--uid",
-			"user id to set on the new account",
-			"If not given, one is generated",
-		).Int(0)
+		cli      = cmdline.New(args...)
+		uid      = cli.Option("--uid", "Generated if not given").Int(0)
 		password = cli.Option("-p, --password").String("")
-		help     = cli.Flag("-h, --help") // explicit help handling
+		help     = cli.Flag("-h, --help")
 
 		// parse and name non options
 		username = cli.Required("USERNAME").String()

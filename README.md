@@ -40,4 +40,14 @@ Example:
             // ...
     }
 
-}
+Usage is written as
+
+    Usage: adduser [OPTIONS] USERNAME
+    
+    Options
+        --uid : 0
+             Generated if not given
+    
+        -p, --password : ""
+        -h, --help : false
+
