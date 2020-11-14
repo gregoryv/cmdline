@@ -3,8 +3,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/3dbee57c607ffec60702/maintainability)](https://codeclimate.com/github/gregoryv/cmdline/maintainability)
 
 
-[cmdline](https://godoc.org/pkg/github.com/gregoryv/cmdline) -
-package cmdline provides a way to parse command line arguments
+Package [cmdline](https://godoc.org/pkg/github.com/gregoryv/cmdline)
+provides a way to parse command line arguments
 
 This package fixes opinionated issues with using the flag package.
 
@@ -13,21 +13,31 @@ This package fixes opinionated issues with using the flag package.
   3. Optional documentation, self documenting options are preferred
   4. Simplify multiname options, e.g. -n, --dry-run map to same flag
   5. Skip pointer variations
-  6. Include required options TODO
+  6. Include required arguments
 
 Example:
 
     func main() {
-        cli := cmdline.New(os.Args...)
-        uid, opt := cli.Option("--uid").IntOpt(0)
-        opt.Doc(
-                "user id to set on the new account",
-                "If not given, one is generated",
+        var (
+            cli      = cmdline.New(args...)
+            uid      = cli.Option("--uid", "Generated if not given").Int(0)
+            password = cli.Option("-p, --password").String("")
+            help     = cli.Flag("-h, --help")
+    
+            // parse and name non options
+            username = cli.Required("USERNAME").String()
         )
-        username := cli.Option("-u, --username").String("john")
-        password := cli.Option("-p, --password").String("")
-        dryrun := cli.Flag("-n, --dry-run")
-        cli.CheckOptions()
 
-        // ...
+        switch {
+        case !cli.Ok():
+            fmt.Println(cli.Error())
+            fmt.Println("Try --help for more information")
+
+        case help:
+            cli.WriteUsageTo(os.Stdout)
+
+        default:
+            // ...
     }
+
+}
