@@ -129,7 +129,7 @@ func (cli *CommandLine) Args() []string {
 	return rest
 }
 
-// Argn returns the n:th argument of remaining arguments
+// Argn returns the n:th argument of remaining arguments starting at 0.
 func (me *CommandLine) Argn(n int) string {
 	rest := me.Args()
 	if n < len(rest) {
@@ -152,10 +152,10 @@ func (cli *CommandLine) String() string {
 }
 
 // NeedArg returns a named argument.
-func (me *CommandLine) NeedArg(name string, n int) *Argument {
+func (me *CommandLine) NeedArg(name string) *Argument {
 	arg := &Argument{
 		name: name,
-		v:    me.Argn(n),
+		v:    me.Argn(len(me.arguments)),
 	}
 	me.arguments = append(me.arguments, arg)
 	return arg

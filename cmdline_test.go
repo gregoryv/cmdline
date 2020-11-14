@@ -37,7 +37,7 @@ func TestCommandLine_Usage(t *testing.T) {
 		"If not given, one is generated",
 	)
 	cli.Option("-p, --password").String("")
-	cli.NeedArg("USERNAME", 0).String()
+	cli.NeedArg("USERNAME").String()
 
 	var buf bytes.Buffer
 	cli.WriteUsageTo(&buf)
@@ -84,9 +84,9 @@ func TestCommandLine_Arg(t *testing.T) {
 	cli := Parse("cp -i 1 /etc")
 	cli.Option("-i").Int(0)
 	assert := asserter.New(t)
-	arg1 := cli.NeedArg("FROM", 0).String()
+	arg1 := cli.NeedArg("FROM").String()
 	assert().Equals(arg1, "/etc")
-	arg2 := cli.NeedArg("TO", 1).String()
+	arg2 := cli.NeedArg("TO").String()
 	assert().Equals(arg2, "")
 }
 

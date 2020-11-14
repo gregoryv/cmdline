@@ -21,7 +21,7 @@ func Example() {
 		help     = cli.Flag("-h, --help") // explicit help handling
 
 		// parse and name non options
-		username = cli.NeedArg("USERNAME", 0).String()
+		username = cli.NeedArg("USERNAME").String()
 	)
 
 	switch {
@@ -33,7 +33,7 @@ func Example() {
 		cli.WriteUsageTo(os.Stdout)
 
 	default:
-		fmt.Println(uid, username, password, dryrun)
+		fmt.Println(uid, username, password)
 	}
 }
 
