@@ -19,6 +19,7 @@ func Example() {
 
 		// parse and name non options
 		username = cli.Required("USERNAME").String()
+		note     = cli.Optional("NOTE").String()
 	)
 
 	switch {
@@ -30,7 +31,7 @@ func Example() {
 		cli.WriteUsageTo(os.Stdout)
 
 	default:
-		fmt.Println(uid, username, password)
+		fmt.Println(uid, username, password, note)
 	}
 }
 

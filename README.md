@@ -15,17 +15,18 @@ This package fixes opinionated issues with using the flag package.
   5. Skip pointer variations
   6. Include required arguments
 
-Example:
+Example for the adduser command:
 
     func main() {
         var (
-            cli      = cmdline.New(args...)
+            cli      = cmdline.New(os.Args...)
             uid      = cli.Option("--uid", "Generated if not given").Int(0)
             password = cli.Option("-p, --password").String("")
             help     = cli.Flag("-h, --help")
     
             // parse and name non options
             username = cli.Required("USERNAME").String()
+            note     = cli.Optional("NOTE").String()
         )
 
         switch {
@@ -42,7 +43,7 @@ Example:
 
 Usage is written as
 
-    Usage: adduser [OPTIONS] USERNAME
+    Usage: adduser [OPTIONS] USERNAME [NOTE]
     
     Options
         --uid : 0
