@@ -22,3 +22,9 @@ func TestOption_Uint(t *testing.T) {
 	assert(NewOption("-n", "-n", "-name").Bool())
 	assert(!NewOption("-n", "-n", "string").Bool())
 }
+
+func TestOption_String(t *testing.T) {
+	got := NewOption("-n", "-n", "john").String("doe")
+	assert := asserter.New(t)
+	assert().Equals(got, "john")
+}
