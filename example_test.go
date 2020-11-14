@@ -45,7 +45,9 @@ func Example_help() {
 		_    = cli.Flag("-n, --dry-run")
 		help = cli.Flag("-h, --help")
 	)
-	cli.WriteUsageTo(os.Stdout)
+	if help {
+		cli.WriteUsageTo(os.Stdout)
+	}
 	// output:
 	// Usage: somecmd [OPTIONS]
 	//
