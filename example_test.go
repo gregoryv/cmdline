@@ -21,7 +21,7 @@ func Example() {
 		help     = cli.Flag("-h, --help") // explicit help handling
 
 		// parse and name non options
-		username = cli.NeedArg("USERNAME").String()
+		username = cli.Required("USERNAME").String()
 	)
 
 	switch {
@@ -42,12 +42,15 @@ func Example_help() {
 		cli  = cmdline.Parse("somecmd -h")
 		_    = cli.Flag("-n, --dry-run")
 		help = cli.Flag("-h, --help")
+		// order is important for non options
+		_ = cli.Required("FILE")
+		_ = cli.Optional("DIR")
 	)
 	if help {
 		cli.WriteUsageTo(os.Stdout)
 	}
 	// output:
-	// Usage: somecmd [OPTIONS]
+	// Usage: somecmd [OPTIONS] FILE [DIR]
 	//
 	// Options
 	//     -n, --dry-run : false

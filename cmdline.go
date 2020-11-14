@@ -62,6 +62,11 @@ func (cli *CommandLine) parseFailed() error {
 			return opt.err
 		}
 	}
+	for _, arg := range cli.arguments {
+		if arg.err != nil {
+			return arg.err
+		}
+	}
 	return nil
 }
 
@@ -85,17 +90,17 @@ func (cli *CommandLine) Flag(name string) bool {
 // WriteUsageTo writes names, defaults and documentation to the given
 // writer with the first line being
 //
-//   Usage: COMMAND [OPTIONS]
+//   Usage: COMMAND [OPTIONS] ARGUMENTS...
 func (cli *CommandLine) WriteUsageTo(w io.Writer) {
-	required := make([]string, len(cli.arguments))
-	for i, argument := range cli.arguments {
-		required[i] = argument.name
+	fmt.Fprintf(w, "Usage: %s [OPTIONS]", cli.args[0])
+	for _, arg := range cli.arguments {
+		if arg.required {
+			fmt.Fprintf(w, " %s", arg.name)
+			continue
+		}
+		fmt.Fprintf(w, " [%s]", arg.name)
 	}
-	var req string
-	if len(required) > 0 {
-		req = fmt.Sprintf(" %s", strings.Join(required, " "))
-	}
-	fmt.Fprintf(w, "Usage: %s [OPTIONS]%s\n\n", cli.args[0], req)
+	fmt.Fprint(w, "\n\n")
 	cli.WriteOptionsTo(w)
 }
 
@@ -151,8 +156,22 @@ func (cli *CommandLine) String() string {
 	return fmt.Sprintf("CommandLine: %s", strings.Join(cli.args, " "))
 }
 
-// NeedArg returns a named argument.
-func (me *CommandLine) NeedArg(name string) *Argument {
+// Required returns a required named argument.
+func (me *CommandLine) Required(name string) *Argument {
+	arg := &Argument{
+		name:     name,
+		v:        me.Argn(len(me.arguments)),
+		required: true,
+	}
+	if arg.v == "" {
+		arg.err = fmt.Errorf("missing %s", name)
+	}
+	me.arguments = append(me.arguments, arg)
+	return arg
+}
+
+// Optional returns a required named argument.
+func (me *CommandLine) Optional(name string) *Argument {
 	arg := &Argument{
 		name: name,
 		v:    me.Argn(len(me.arguments)),
@@ -162,8 +181,10 @@ func (me *CommandLine) NeedArg(name string) *Argument {
 }
 
 type Argument struct {
-	name string
-	v    string
+	name     string
+	v        string
+	err      error
+	required bool
 }
 
 // String
