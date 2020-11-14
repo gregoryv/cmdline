@@ -18,7 +18,6 @@ func Example() {
 			"If not given, one is generated",
 		).Int(0)
 		password = cli.Option("-p, --password").String("")
-		dryrun   = cli.Flag("-n, --dry-run")
 		help     = cli.Flag("-h, --help") // explicit help handling
 
 		// parse and name non options
@@ -33,7 +32,6 @@ func Example() {
 	case help:
 		cli.WriteUsageTo(os.Stdout)
 
-	case dryrun:
 	default:
 		fmt.Println(uid, username, password, dryrun)
 	}
