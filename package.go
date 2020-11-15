@@ -1,5 +1,5 @@
 /*
-package cmdline provides a way to parse command line arguments
+Package cmdline provides a way to parse command line arguments.
 
 This package fixes a few problems that come with using the flag package.
 

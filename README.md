@@ -1,25 +1,23 @@
-[![Build Status](https://travis-ci.org/gregoryv/cmdline.svg?branch=master)](https://travis-ci.org/gregoryv/cmdline)
-[![codecov](https://codecov.io/gh/gregoryv/cmdline/branch/master/graph/badge.svg)](https://codecov.io/gh/gregoryv/cmdline)
-[![Maintainability](https://api.codeclimate.com/v1/badges/3dbee57c607ffec60702/maintainability)](https://codeclimate.com/github/gregoryv/cmdline/maintainability)
-
-
-Package [cmdline](https://godoc.org/pkg/github.com/gregoryv/cmdline)
-provides a way to parse command line arguments
+[![Build Status](https:/travis-ci.org/gregoryv/cmdline.svg?branch=master)](https:/travis-ci.org/gregoryv/cmdline)
+[![Code coverage](https:/codecov.io/gh/gregoryv/cmdline/branch/master/graph/badge.svg)](https:/codecov.io/gh/gregoryv/cmdline)
+[![Maintainability](https:/api.codeclimate.com/v1/badges/3dbee57c607ffec60702/maintainability)](https:/codeclimate.com/github/gregoryv/cmdline/maintainability)
+Package[cmdline](https:/godoc.org/pkg/github.com/gregoryv/cmdline)provides a way to parse command line arguments
 
 This package fixes opinionated issues with using the flag package.
 
-  1. Don't hog the name flag, which is a boolean option
-  2. Use appropriate names for arguments, options and flags
-  3. Optional documentation, self documenting options are preferred
-  4. Simplify multiname options, e.g. -n, --dry-run map to same flag
-  5. Skip pointer variations
-  6. Include required arguments
+- Don't hog the name flag, which is a boolean option
+- Use appropriate names for arguments, options and flags
+- Self documenting options are preferred
+- Multiname options, e.g. -n, --dry-run map to same flag
+- Skip pointer variations
+- Include required arguments
 
-Example for the adduser command:
 
-    func main() {
+## Example
+
+    func run(w io.Writer, args ...string) {
         var (
-            cli      = cmdline.New(os.Args...)
+            cli      = cmdline.New(args...)
             uid      = cli.Option("--uid", "Generated if not given").Int(0)
             password = cli.Option("-p, --password").String("")
             help     = cli.Flag("-h, --help")
@@ -28,27 +26,34 @@ Example for the adduser command:
             username = cli.Required("USERNAME").String()
             note     = cli.Optional("NOTE").String()
         )
-
+    
         switch {
-        case !cli.Ok():
-            fmt.Println(cli.Error())
-            fmt.Println("Try --help for more information")
-
         case help:
-            cli.WriteUsageTo(os.Stdout)
-
+            cli.WriteUsageTo(w)
+    
+        case !cli.Ok():
+            fmt.Fprintln(w, cli.Error())
+            fmt.Fprintln(w, "Try --help for more information")
+    
         default:
-            // ...
+            fmt.Fprintln(w, uid, username, password, note)
+        }
     }
+    
 
-Usage is written as
+Output
 
     Usage: adduser [OPTIONS] USERNAME [NOTE]
     
     Options
         --uid : 0
-             Generated if not given
+    	 Generated if not given
     
         -p, --password : ""
         -h, --help : false
+    
+
+
+
+
 

@@ -2,15 +2,17 @@ package cmdline_test
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/gregoryv/cmdline"
 )
 
 func Example() {
-	// would be os.Args...
-	args := []string{"adduser", "-h", "-p", "secret", "--uid", "100", "john"}
+	run(os.Stdout, "adduser", "-p", "secret", "--uid", "100", "john")
+}
 
+func run(w io.Writer, args ...string) {
 	var (
 		cli      = cmdline.New(args...)
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)
@@ -23,34 +25,14 @@ func Example() {
 	)
 
 	switch {
-	case !cli.Ok():
-		fmt.Println(cli.Error())
-		fmt.Println("Try --help for more information")
-
 	case help:
-		cli.WriteUsageTo(os.Stdout)
+		cli.WriteUsageTo(w)
+
+	case !cli.Ok():
+		fmt.Fprintln(w, cli.Error())
+		fmt.Fprintln(w, "Try --help for more information")
 
 	default:
-		fmt.Println(uid, username, password, note)
+		fmt.Fprintln(w, uid, username, password, note)
 	}
-}
-
-func Example_help() {
-	var (
-		cli  = cmdline.Parse("somecmd -h")
-		_    = cli.Flag("-n, --dry-run")
-		help = cli.Flag("-h, --help")
-		// order is important for non options
-		_ = cli.Required("FILE")
-		_ = cli.Optional("DIR")
-	)
-	if help {
-		cli.WriteUsageTo(os.Stdout)
-	}
-	// output:
-	// Usage: somecmd [OPTIONS] FILE [DIR]
-	//
-	// Options
-	//     -n, --dry-run : false
-	//     -h, --help : false
 }

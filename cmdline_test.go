@@ -2,12 +2,33 @@ package cmdline
 
 import (
 	"bytes"
+	"os"
 	"reflect"
 	"testing"
 
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/golden"
 )
+
+func Example_help() {
+	var (
+		cli  = Parse("somecmd -h")
+		_    = cli.Flag("-n, --dry-run")
+		help = cli.Flag("-h, --help")
+		// order is important for non options
+		_ = cli.Required("FILE")
+		_ = cli.Optional("DIR")
+	)
+	if help {
+		cli.WriteUsageTo(os.Stdout)
+	}
+	// output:
+	// Usage: somecmd [OPTIONS] FILE [DIR]
+	//
+	// Options
+	//     -n, --dry-run : false
+	//     -h, --help : false
+}
 
 func TestCommandLine_Ok(t *testing.T) {
 	cli := Parse("ls -r .")

@@ -44,7 +44,10 @@ func (opt *Option) Int(def int) int {
 // IntOpt returns int value from the arguments or the given default value.
 func (opt *Option) IntOpt(def int) (int, *Option) {
 	opt.setDefault(def)
-	v, _ := opt.stringArg()
+	v, found := opt.stringArg()
+	if !found {
+		return def, opt
+	}
 	if v == "" {
 		opt.fail()
 		return 0, opt
