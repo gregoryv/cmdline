@@ -48,10 +48,6 @@ func (opt *Option) IntOpt(def int) (int, *Option) {
 	if !found {
 		return def, opt
 	}
-	if v == "" {
-		opt.fail()
-		return 0, opt
-	}
 	iv, err := strconv.Atoi(v)
 	if err != nil {
 		opt.fail()
@@ -68,10 +64,9 @@ func (opt *Option) Uint(def uint64) uint64 {
 // UintOpt returns an unsigned int option
 func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 	opt.setDefault(def)
-	v, _ := opt.stringArg()
-	if v == "" {
-		opt.fail()
-		return 0, opt
+	v, found := opt.stringArg()
+	if !found {
+		return def, opt
 	}
 	iv, err := strconv.ParseUint(v, 0, 64)
 	if err != nil {
@@ -98,6 +93,7 @@ func (opt *Option) StringOpt(def string) (string, *Option) {
 	return v, opt
 }
 
+// todo rewrite to return string and error
 func (opt *Option) stringArg() (string, bool) {
 	for i, arg := range opt.args {
 		if opt.match(arg) {
@@ -110,7 +106,7 @@ func (opt *Option) stringArg() (string, bool) {
 			}
 			isLast := len(opt.args)-1 == i
 			if isLast {
-				return "", true
+				return "", false
 			}
 			opt.valIndex = i + 1
 			// argument is -i

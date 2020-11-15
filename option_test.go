@@ -6,21 +6,40 @@ import (
 	"github.com/gregoryv/asserter"
 )
 
-func TestOption_Uint(t *testing.T) {
+func TestOption(t *testing.T) {
 	assert := asserter.New(t)
-	assert().Equals(NewOption("-o", "-o", "1").Uint(2), uint64(1))
-	assert().Equals(NewOption("-o", "-o", "7").Uint(2), uint64(7))
-	assert().Equals(NewOption("-o", "-o", "-9").Uint(2), uint64(0))
-	assert(NewOption("-o", "-o").Uint(1) == 0).Error("missing value")
-	assert(NewOption("-o", "-o", "string").Uint(1) == 0).Error("bad value")
 
-	assert(NewOption("-o", "-o", "1").Int(2) == 1).Fail()
-	assert(NewOption("-o", "-o").Int(1) == 0).Error("missing value")
-	assert(NewOption("-o", "-o", "string").Int(1) == 0).Error("bad value")
+	var (
+		cli     = Parse("countstars -verbose -min 1 -filter alien -last")
+		min     = cli.Option("-min")
+		verbose = cli.Option("-verbose")
+		max     = cli.Option("-max")
+		last    = cli.Option("-last")
+	)
 
-	assert(NewOption("-n", "-n").Bool())
-	assert(NewOption("-n", "-n", "-name").Bool())
-	assert(!NewOption("-n", "-n", "string").Bool())
+	assert().Equals(min.Uint(2), uint64(1))
+	assert().Equals(verbose.Uint(2), uint64(0))
+	assert().Equals(max.Uint(2), uint64(2))
+	//assert().Equals(last.Uint(2), uint64(0))
+
+	assert().Equals(min.Int(2), 1)
+	assert().Equals(verbose.Int(2), 0)
+	assert().Equals(max.Int(2), 2)
+
+	assert().Equals(min.Bool(), true)
+	assert().Equals(verbose.Bool(), true)
+	assert().Equals(max.Bool(), false)
+
+	assert().Equals(min.String("s"), "1")
+	assert().Equals(verbose.String("s"), "-min")
+	assert(verbose.err != nil).Error(verbose.err)
+
+	assert().Equals(max.String("s"), "s")
+
+	// fixme
+	//assert().Equals(last.String("s"), "")
+	//assert(last.err != nil).Error(last.err)
+	_ = last
 }
 
 func TestOption_String(t *testing.T) {
