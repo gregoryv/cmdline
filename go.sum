@@ -61,6 +61,10 @@ github.com/gregoryv/web v0.13.1-0.20201115070057-a07b22f5c98a h1:slz5A1Fnr1sKHCz
 github.com/gregoryv/web v0.13.1-0.20201115070057-a07b22f5c98a/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
 github.com/gregoryv/web v0.13.1-0.20201115072643-d6a64550eaa2 h1:rMuPxU48ZMgvhq4bc0yIZrPf6Y9mLtK9Ku2Bl/wbaoc=
 github.com/gregoryv/web v0.13.1-0.20201115072643-d6a64550eaa2/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
+github.com/gregoryv/web v0.13.1-0.20201116051742-ece88d760431 h1:j2qfJvNK3mLRCZk4rRZhbbA8sIXH+fp6ZdD5miPOZIU=
+github.com/gregoryv/web v0.13.1-0.20201116051742-ece88d760431/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
+github.com/gregoryv/web v0.14.0 h1:UYw2k0+DwkV7Nqxh085Fz4qxO6NIU1KaD/Zn1wKCHpA=
+github.com/gregoryv/web v0.14.0/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
 github.com/gregoryv/workdir v0.2.0/go.mod h1:qX7yFN0yqysNfEr2F5Tta9+5K8oueS/sqBmdiExBoYA=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=

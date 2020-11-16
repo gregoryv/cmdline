@@ -3,7 +3,6 @@ package cmdline_test
 import (
 	"bufio"
 	"bytes"
-	"os"
 	"path"
 	"strings"
 	"testing"
@@ -18,7 +17,7 @@ func Test_generate_readme(t *testing.T) {
 	var usage bytes.Buffer
 	run(&usage, "adduser", "-h")
 
-	html := Html(Body(
+	body := Body(
 		travisBadge(project),
 		codecovBadge(project),
 		codeclimateBadge(project, "3dbee57c607ffec60702"),
@@ -46,12 +45,11 @@ func Test_generate_readme(t *testing.T) {
 		),
 		P("Output"),
 		Pre(usage.String()),
-	))
-
-	w, _ := os.Create("README.md")
-	defer w.Close()
-	md := NewMarkdownWriter(w)
-	md.WriteMarkdown(html)
+	)
+	page := NewFile("README.md",
+		Html(body),
+	)
+	page.SaveTo(".")
 }
 
 func replaceLeft(s, text string) string {

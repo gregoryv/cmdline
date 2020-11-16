@@ -9,6 +9,6 @@ require (
 	github.com/gregoryv/golden v0.3.0
 	github.com/gregoryv/nexus v0.4.0 // indirect
 	github.com/gregoryv/qual v0.3.1
-	github.com/gregoryv/web v0.13.1-0.20201115072643-d6a64550eaa2
+	github.com/gregoryv/web v0.14.0
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 )
