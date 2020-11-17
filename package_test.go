@@ -21,7 +21,7 @@ func Test_generate_readme(t *testing.T) {
 		travisBadge(project),
 		codecovBadge(project),
 		codeclimateBadge(project, "3dbee57c607ffec60702"),
-
+		Br(),
 		P(
 			"Package", godoc(project),
 			"provides a means to parse command line arguments.",
