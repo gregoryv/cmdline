@@ -24,13 +24,13 @@ func Test_generate_readme(t *testing.T) {
 
 		P(
 			"Package", godoc(project),
-			"provides a way to parse command line arguments",
+			"provides a means to parse command line arguments.",
 		),
 		P("This package fixes opinionated issues with using the flag package."),
 		Ol(
 			Li("Don't hog the name flag, which is a boolean option"),
 			Li("Use appropriate names for arguments, options and flags"),
-			Li("Self documenting options are preferred"),
+			Li("Self documenting arguments and options are preferred"),
 			Li("Multiname options, e.g. -n, --dry-run map to same flag"),
 			Li("Skip pointer variations"),
 			Li("Include required arguments"),
