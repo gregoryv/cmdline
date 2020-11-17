@@ -23,8 +23,8 @@ func Test_generate_readme(t *testing.T) {
 		codeclimateBadge(project, "3dbee57c607ffec60702"),
 		Br(),
 		P(
-			"Package", godoc(project),
-			"provides a means to parse command line arguments.",
+			"Package ", godoc(project),
+			" provides a means to parse command line arguments.",
 		),
 		P("This package fixes opinionated issues with using the flag package."),
 		Ol(
@@ -75,8 +75,8 @@ func godoc(project string) *Element {
 func travisBadge(project string) *Element {
 	var (
 		base = "https://travis-ci.org/"
-		href = Href(path.Join(base, project))
-		src  = Src(path.Join(base, project+".svg?branch=master"))
+		href = Href(base + project)
+		src  = Src(base + project + ".svg?branch=master")
 		alt  = Alt("Build Status")
 	)
 	return A(href, Img(src, alt))
@@ -85,8 +85,8 @@ func travisBadge(project string) *Element {
 func codecovBadge(project string) *Element {
 	var (
 		base = "https://codecov.io/gh/"
-		href = Href(path.Join(base, project))
-		src  = Src(path.Join(base, project, "branch/master/graph/badge.svg"))
+		href = Href(base + project)
+		src  = Src(base + project + "/branch/master/graph/badge.svg")
 		alt  = Alt("Code coverage")
 	)
 	return A(href, Img(src, alt))
@@ -95,11 +95,11 @@ func codecovBadge(project string) *Element {
 func codeclimateBadge(project, hash string) *Element {
 	var (
 		base = "https://codeclimate.com/github/"
-		href = Href(path.Join(base, project, "maintainability"))
+		href = Href(base + project + "maintainability")
 
 		api   = "https://api.codeclimate.com/v1"
 		badge = path.Join("/badges/", hash, "/maintainability")
-		src   = Src(path.Join(api, badge))
+		src   = Src(api + badge)
 		alt   = Alt("Maintainability")
 	)
 	return A(href, Img(src, alt))
