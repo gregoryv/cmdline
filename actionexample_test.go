@@ -1,8 +1,10 @@
-package cmdline
+package cmdline_test
+
+import "github.com/gregoryv/cmdline"
 
 func Example_runAction() {
 	var (
-		cli        = Parse("somecmd sayHi")
+		cli        = cmdline.Parse("somecmd sayHi")
 		actions, _ = cli.Group("ACTION", &Hi{})
 		name       = cli.Required("ACTION").String()
 	)

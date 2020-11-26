@@ -1,13 +1,15 @@
-package cmdline
+package cmdline_test
 
 import (
 	"fmt"
 	"os"
+
+	"github.com/gregoryv/cmdline"
 )
 
 func Example_help() {
 	var (
-		cli  = Parse("somecmd -h")
+		cli  = cmdline.Parse("somecmd -h")
 		_    = cli.Flag("-n, --dry-run")
 		help = cli.Flag("-h, --help")
 		// order is important for non options
@@ -36,7 +38,7 @@ type Hi struct {
 
 func (me *Hi) Name() string { return "sayHi" }
 
-func (me *Hi) ExtraOptions(cli *CommandLine) {
+func (me *Hi) ExtraOptions(cli *cmdline.CommandLine) {
 	me.to = cli.Option("-t, --to").String("stranger")
 }
 
