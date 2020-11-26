@@ -9,6 +9,15 @@ import (
 	"github.com/gregoryv/golden"
 )
 
+func TestParser_AddGroup_twice(t *testing.T) {
+	cli := Parse("ls -h")
+	cli.Group("first")
+	_, err := cli.Group("first")
+	if err == nil {
+		t.Error("expected error")
+	}
+}
+
 func TestParser_Ok(t *testing.T) {
 	cli := Parse("ls -r .")
 	cli.Flag("-r")
