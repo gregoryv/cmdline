@@ -38,7 +38,7 @@ type Hi struct {
 
 func (me *Hi) Name() string { return "sayHi" }
 
-func (me *Hi) ExtraOptions(cli *cmdline.CommandLine) {
+func (me *Hi) ExtraOptions(cli *cmdline.Parser) {
 	me.to = cli.Option("-t, --to").String("stranger")
 }
 

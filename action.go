@@ -5,5 +5,5 @@ type Action interface {
 	Name() string
 
 	// ExtraOptions for this action
-	ExtraOptions(*CommandLine)
+	ExtraOptions(*Parser)
 }

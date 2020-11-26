@@ -7,19 +7,19 @@ import (
 	"strings"
 )
 
-// Parse returns a command line from a string starting with the
-// command followed by arguments.
-func Parse(str string) *CommandLine {
+// Parse returns a parser from a string starting with the command
+// followed by arguments.
+func Parse(str string) *Parser {
 	return New(strings.Split(str, " ")...)
 }
 
-// New returns a CommandLine, usually called with
+// New returns a parser, usually called with
 // cmdline.New(os.Args...).  First argument must be the command name
-func New(args ...string) *CommandLine {
+func New(args ...string) *Parser {
 	if len(args) == 0 {
 		panic("New() missing args")
 	}
-	cli := &CommandLine{
+	cli := &Parser{
 		args:    args,
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
@@ -27,8 +27,8 @@ func New(args ...string) *CommandLine {
 	return cli
 }
 
-// CommandLine groups arguments for option parsing and usage.
-type CommandLine struct {
+// Parser groups arguments for option parsing and usage.
+type Parser struct {
 	args      []string // including command name as first element
 	options   []*Option
 	arguments []*Argument // required
@@ -36,12 +36,12 @@ type CommandLine struct {
 	groups []*Group
 }
 
-func (me *CommandLine) Group(name string, v ...Action) (*Group, error) {
+func (me *Parser) Group(name string, v ...Action) (*Group, error) {
 	grp := NewGroup(name, v...)
 	return grp, me.AddGroup(grp)
 }
 
-func (me *CommandLine) AddGroup(grp *Group) error {
+func (me *Parser) AddGroup(grp *Group) error {
 	for _, existing := range me.groups {
 		if existing.Name() == grp.Name() {
 			return fmt.Errorf("group %q already exists", grp.Name())
@@ -52,12 +52,12 @@ func (me *CommandLine) AddGroup(grp *Group) error {
 }
 
 // Ok returns true if no parsing error occured
-func (cli *CommandLine) Ok() bool {
+func (cli *Parser) Ok() bool {
 	return cli.Error() == nil
 }
 
 // Error returns first error of the given options.
-func (cli *CommandLine) Error() error {
+func (cli *Parser) Error() error {
 	err := cli.parseFailed()
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func (cli *CommandLine) Error() error {
 	return nil
 }
 
-func (cli *CommandLine) parseFailed() error {
+func (cli *Parser) parseFailed() error {
 	for _, opt := range cli.options {
 		if opt.err != nil {
 			return opt.err
@@ -88,7 +88,7 @@ func (cli *CommandLine) parseFailed() error {
 // Names should be a comma separated string, e.g.
 //   -n, --dry-run
 //
-func (cli *CommandLine) Option(names string, doclines ...string) *Option {
+func (cli *Parser) Option(names string, doclines ...string) *Option {
 	opt := NewOption(names, cli.args[1:]...)
 	opt.doc = doclines
 	cli.options = append(cli.options, opt)
@@ -96,7 +96,7 @@ func (cli *CommandLine) Option(names string, doclines ...string) *Option {
 }
 
 // Flag is short for Option(name).Bool()
-func (cli *CommandLine) Flag(name string) bool {
+func (cli *Parser) Flag(name string) bool {
 	val, _ := cli.Option(name).BoolOpt()
 	return val
 }
@@ -105,7 +105,7 @@ func (cli *CommandLine) Flag(name string) bool {
 // writer with the first line being
 //
 //   Usage: COMMAND [OPTIONS] ARGUMENTS...
-func (cli *CommandLine) WriteUsageTo(w io.Writer) {
+func (cli *Parser) WriteUsageTo(w io.Writer) {
 	fmt.Fprintf(w, "Usage: %s [OPTIONS]", cli.args[0])
 	for _, arg := range cli.arguments {
 		if arg.required {
@@ -133,11 +133,11 @@ func (cli *CommandLine) WriteUsageTo(w io.Writer) {
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
-func (cli *CommandLine) WriteOptionsTo(w io.Writer) {
+func (cli *Parser) WriteOptionsTo(w io.Writer) {
 	cli.writeOptionsTo(w, "")
 }
 
-func (cli *CommandLine) writeOptionsTo(w io.Writer, indent string) {
+func (cli *Parser) writeOptionsTo(w io.Writer, indent string) {
 	for _, opt := range cli.options {
 		def := fmt.Sprintf(" : %v", opt.defaultValue)
 		if opt.quoteValue {
@@ -154,7 +154,7 @@ func (cli *CommandLine) writeOptionsTo(w io.Writer, indent string) {
 }
 
 // Args returns arguments not matched by any of the options
-func (cli *CommandLine) Args() []string {
+func (cli *Parser) Args() []string {
 	rest := make([]string, 0)
 	for i, arg := range cli.args[1:] {
 		//		fmt.Println("a:", arg)
@@ -166,7 +166,7 @@ func (cli *CommandLine) Args() []string {
 }
 
 // Argn returns the n:th argument of remaining arguments starting at 0.
-func (me *CommandLine) Argn(n int) string {
+func (me *Parser) Argn(n int) string {
 	rest := me.Args()
 	if n < len(rest) {
 		return rest[n]
@@ -174,7 +174,7 @@ func (me *CommandLine) Argn(n int) string {
 	return ""
 }
 
-func (cli *CommandLine) wasMatched(i int) bool {
+func (cli *Parser) wasMatched(i int) bool {
 	for _, opt := range cli.options {
 		if opt.argIndex == i || opt.valIndex == i {
 			return true
@@ -183,12 +183,12 @@ func (cli *CommandLine) wasMatched(i int) bool {
 	return false
 }
 
-func (cli *CommandLine) String() string {
-	return fmt.Sprintf("CommandLine: %s", strings.Join(cli.args, " "))
+func (cli *Parser) String() string {
+	return fmt.Sprintf("Parser: %s", strings.Join(cli.args, " "))
 }
 
 // Required returns a required named argument.
-func (me *CommandLine) Required(name string) *Argument {
+func (me *Parser) Required(name string) *Argument {
 	arg := &Argument{
 		name:     name,
 		v:        me.Argn(len(me.arguments)),
@@ -202,7 +202,7 @@ func (me *CommandLine) Required(name string) *Argument {
 }
 
 // Optional returns a required named argument.
-func (me *CommandLine) Optional(name string) *Argument {
+func (me *Parser) Optional(name string) *Argument {
 	arg := &Argument{
 		name: name,
 		v:    me.Argn(len(me.arguments)),

@@ -9,7 +9,7 @@ import (
 	"github.com/gregoryv/golden"
 )
 
-func TestCommandLine_Ok(t *testing.T) {
+func TestParser_Ok(t *testing.T) {
 	cli := Parse("ls -r .")
 	cli.Flag("-r")
 	if !cli.Ok() {
@@ -17,7 +17,7 @@ func TestCommandLine_Ok(t *testing.T) {
 	}
 }
 
-func TestCommandLine_not_Ok(t *testing.T) {
+func TestParser_not_Ok(t *testing.T) {
 	args := "ls -r ."
 	cli := Parse(args)
 	cli.Option("-v").String("")
@@ -26,7 +26,7 @@ func TestCommandLine_not_Ok(t *testing.T) {
 	}
 }
 
-func TestCommandLine_Required(t *testing.T) {
+func TestParser_Required(t *testing.T) {
 	cli := Parse("mkdir")
 	cli.Required("DIR")
 	if cli.Ok() {
@@ -34,14 +34,14 @@ func TestCommandLine_Required(t *testing.T) {
 	}
 }
 
-func TestCommandLine_Optional(t *testing.T) {
+func TestParser_Optional(t *testing.T) {
 	cli := Parse("ls")
 	cli.Optional("DIR")
 	if !cli.Ok() {
 		t.Error("unexpected:", cli.Error())
 	}
 }
-func TestCommandLine_Usage(t *testing.T) {
+func TestParser_Usage(t *testing.T) {
 	cli := New("adduser")
 	cli.Flag("-n, --dry-run")
 	_, opt := cli.Option("--uid").IntOpt(0)
@@ -57,7 +57,7 @@ func TestCommandLine_Usage(t *testing.T) {
 	golden.Assert(t, buf.String())
 }
 
-func TestCommandLine_New_panic(t *testing.T) {
+func TestParser_New_panic(t *testing.T) {
 	defer func() {
 		e := recover()
 		if e == nil {
@@ -67,7 +67,7 @@ func TestCommandLine_New_panic(t *testing.T) {
 	New()
 }
 
-func TestCommandLine_Error(t *testing.T) {
+func TestParser_Error(t *testing.T) {
 	ok, bad := asserter.NewErrors(t)
 	ok(Parse("cmd").Error())
 	bad(Parse("mycmd -h").Error())
@@ -93,7 +93,7 @@ func Test_flags(t *testing.T) {
 	}
 }
 
-func TestCommandLine_Arg(t *testing.T) {
+func TestParser_Arg(t *testing.T) {
 	cli := Parse("cp -i 1 /etc")
 	cli.Option("-i").Int(0)
 	assert := asserter.New(t)

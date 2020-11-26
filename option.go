@@ -21,7 +21,7 @@ type Option struct {
 
 // NewOption returns an option defined by a comma separated list of
 // names and arguments to match against. Usually you would call
-// CommandLine.Option(names) over this.
+// Parser.Option(names) over this.
 func NewOption(names string, args ...string) *Option {
 	return &Option{names: names, args: args, argIndex: -1, valIndex: -1}
 }
