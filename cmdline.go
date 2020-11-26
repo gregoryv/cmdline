@@ -1,7 +1,6 @@
 package cmdline
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -31,8 +30,6 @@ type CommandLine struct {
 	args      []string // including command name as first element
 	options   []*Option
 	arguments []*Argument // required
-
-	Help bool // set to true if -h or --help is given
 }
 
 // Ok returns true if no parsing error occured
@@ -53,8 +50,6 @@ func (cli *CommandLine) Error() error {
 	}
 	return nil
 }
-
-var ErrHelp = errors.New("Help requested")
 
 func (cli *CommandLine) parseFailed() error {
 	for _, opt := range cli.options {
