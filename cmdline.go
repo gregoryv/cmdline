@@ -96,12 +96,12 @@ func (cli *CommandLine) WriteUsageTo(w io.Writer) {
 		fmt.Fprintf(w, " [%s]", arg.name)
 	}
 	fmt.Fprint(w, "\n\n")
+	fmt.Fprintln(w, "Options")
 	cli.WriteOptionsTo(w)
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
 func (cli *CommandLine) WriteOptionsTo(w io.Writer) {
-	fmt.Fprintln(w, "Options")
 	for _, opt := range cli.options {
 		def := fmt.Sprintf(" : %v", opt.defaultValue)
 		if opt.quoteValue {
