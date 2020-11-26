@@ -14,7 +14,7 @@ func Example() {
 
 func run(w io.Writer, args ...string) {
 	var (
-		cli      = cmdline.New(args...)
+		cli      = cmdline.NewParser(args...)
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)
 		password = cli.Option("-p, --password").String("")
 		help     = cli.Flag("-h, --help")

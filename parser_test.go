@@ -42,7 +42,7 @@ func TestParser_Optional(t *testing.T) {
 	}
 }
 func TestParser_Usage(t *testing.T) {
-	cli := New("adduser")
+	cli := NewParser("adduser")
 	cli.Flag("-n, --dry-run")
 	_, opt := cli.Option("--uid").IntOpt(0)
 	opt.Doc(
@@ -64,7 +64,7 @@ func TestParser_New_panic(t *testing.T) {
 			t.Error("Should panic on empty args")
 		}
 	}()
-	New()
+	NewParser()
 }
 
 func TestParser_Error(t *testing.T) {

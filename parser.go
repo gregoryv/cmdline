@@ -10,12 +10,12 @@ import (
 // Parse returns a parser from a string starting with the command
 // followed by arguments.
 func Parse(str string) *Parser {
-	return New(strings.Split(str, " ")...)
+	return NewParser(strings.Split(str, " ")...)
 }
 
-// New returns a parser, usually called with
+// NewParser returns a parser, usually called with
 // cmdline.New(os.Args...).  First argument must be the command name
-func New(args ...string) *Parser {
+func NewParser(args ...string) *Parser {
 	if len(args) == 0 {
 		panic("New() missing args")
 	}
@@ -119,13 +119,12 @@ func (cli *Parser) WriteUsageTo(w io.Writer) {
 	cli.WriteOptionsTo(w)
 
 	for _, grp := range cli.groups {
-
 		indent := "    "
 		for _, action := range grp.actions {
 			fmt.Fprintln(w)
 			fmt.Fprintln(w, grp.Name())
 			fmt.Fprintf(w, "%s%s\n", indent, action.Name())
-			extra := New(os.Args...)
+			extra := NewParser(os.Args...)
 			action.ExtraOptions(extra)
 			extra.writeOptionsTo(w, indent)
 		}
