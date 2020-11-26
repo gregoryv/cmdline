@@ -15,7 +15,12 @@ func TestOption(t *testing.T) {
 		verbose = cli.Option("-verbose")
 		max     = cli.Option("-max")
 		last    = cli.Option("-last")
+		ux      = cli.Option("-ux")
 	)
+
+	assert().Equals(ux.Uint8(8), uint8(8))
+	assert().Equals(ux.Uint16(16), uint16(16))
+	assert().Equals(ux.Uint32(32), uint32(32))
 
 	assert().Equals(min.Uint(2), uint64(1))
 	assert().Equals(verbose.Uint(2), uint64(0))

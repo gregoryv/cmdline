@@ -55,6 +55,21 @@ func (opt *Option) IntOpt(def int) (int, *Option) {
 	return iv, opt
 }
 
+// Uint8 same as uint8(Uint(...))
+func (opt *Option) Uint8(def uint8) uint8 {
+	return uint8(opt.Uint(uint64(def)))
+}
+
+// Uint16 same as uint16(Uint(...))
+func (opt *Option) Uint16(def uint16) uint16 {
+	return uint16(opt.Uint(uint64(def)))
+}
+
+// Uint32 same as uint32(Uint(...))
+func (opt *Option) Uint32(def uint32) uint32 {
+	return uint32(opt.Uint(uint64(def)))
+}
+
 // Uint same as UintOpt but does not return the Option
 func (opt *Option) Uint(def uint64) uint64 {
 	v, _ := opt.UintOpt(def)
