@@ -50,7 +50,7 @@ Output
     
     Options
         --uid : 0
-    	 Generated if not given
+            Generated if not given
     
         -p, --password : ""
         -h, --help : false

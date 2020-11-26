@@ -3,6 +3,7 @@ package cmdline
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -21,6 +22,7 @@ func New(args ...string) *CommandLine {
 	cli := &CommandLine{
 		args:    args,
 		options: make([]*Option, 0),
+		groups:  make([]*Group, 0),
 	}
 	return cli
 }
@@ -30,6 +32,23 @@ type CommandLine struct {
 	args      []string // including command name as first element
 	options   []*Option
 	arguments []*Argument // required
+
+	groups []*Group
+}
+
+func (me *CommandLine) Group(name string, v ...Action) (*Group, error) {
+	grp := NewGroup(name, v...)
+	return grp, me.AddGroup(grp)
+}
+
+func (me *CommandLine) AddGroup(grp *Group) error {
+	for _, existing := range me.groups {
+		if existing.Name() == grp.Name() {
+			return fmt.Errorf("group %q already exists", grp.Name())
+		}
+	}
+	me.groups = append(me.groups, grp)
+	return nil
 }
 
 // Ok returns true if no parsing error occured
@@ -98,19 +117,36 @@ func (cli *CommandLine) WriteUsageTo(w io.Writer) {
 	fmt.Fprint(w, "\n\n")
 	fmt.Fprintln(w, "Options")
 	cli.WriteOptionsTo(w)
+
+	for _, grp := range cli.groups {
+
+		indent := "    "
+		for _, action := range grp.actions {
+			fmt.Fprintln(w)
+			fmt.Fprintln(w, grp.Name())
+			fmt.Fprintf(w, "%s%s\n", indent, action.Name())
+			extra := New(os.Args...)
+			action.ExtraOptions(extra)
+			extra.writeOptionsTo(w, indent)
+		}
+	}
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
 func (cli *CommandLine) WriteOptionsTo(w io.Writer) {
+	cli.writeOptionsTo(w, "")
+}
+
+func (cli *CommandLine) writeOptionsTo(w io.Writer, indent string) {
 	for _, opt := range cli.options {
 		def := fmt.Sprintf(" : %v", opt.defaultValue)
 		if opt.quoteValue {
 			def = fmt.Sprintf(" : %q", opt.defaultValue)
 		}
-		fmt.Fprintf(w, "    %s%s\n", opt.names, def)
+		fmt.Fprintf(w, "%s    %s%s\n", indent, opt.names, def)
 		if len(opt.doc) > 0 {
 			for _, line := range opt.doc {
-				fmt.Fprintln(w, "\t", line)
+				fmt.Fprintf(w, "%s        %s\n", indent, line)
 			}
 			fmt.Fprintln(w)
 		}

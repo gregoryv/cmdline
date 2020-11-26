@@ -3,7 +3,7 @@ Usage: adduser [OPTIONS] USERNAME
 Options
     -n, --dry-run : false
     --uid : 0
-	 user id to set on the new account
-	 If not given, one is generated
+        user id to set on the new account
+        If not given, one is generated
 
     -p, --password : ""

@@ -1,6 +1,7 @@
 package cmdline
 
 import (
+	"fmt"
 	"os"
 )
 
@@ -10,7 +11,8 @@ func Example_help() {
 		_    = cli.Flag("-n, --dry-run")
 		help = cli.Flag("-h, --help")
 		// order is important for non options
-		_ = cli.Required("ACTION")
+		_, _ = cli.Group("Actions", &Hi{})
+		_    = cli.Required("ACTION").String()
 	)
 	if help {
 		cli.WriteUsageTo(os.Stdout)
@@ -21,4 +23,24 @@ func Example_help() {
 	// Options
 	//     -n, --dry-run : false
 	//     -h, --help : false
+	//
+	// Actions
+	//     sayHi
+	//         -t, --to : "stranger"
+}
+
+// Hi implements the sayHi action
+type Hi struct {
+	to string
+}
+
+func (me *Hi) Name() string { return "sayHi" }
+
+func (me *Hi) ExtraOptions(cli *CommandLine) {
+	me.to = cli.Option("-t, --to").String("stranger")
+}
+
+func (me *Hi) Run() error {
+	fmt.Printf("Hi, %s!\n", me.to)
+	return nil
 }
