@@ -13,8 +13,7 @@ func Example_help() {
 		_    = cli.Flag("-n, --dry-run")
 		help = cli.Flag("-h, --help")
 		// order is important for non options
-		_, _ = cli.Group("Actions", &Hi{})
-		_    = cli.Required("ACTION").String()
+		_ = cli.RequiredGroup("Actions", "ACTION", &Hi{})
 	)
 	if help {
 		cli.WriteUsageTo(os.Stdout)

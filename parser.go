@@ -35,10 +35,66 @@ type Parser struct {
 	groups []*Group
 }
 
-func (me *Parser) Group(name string, v ...Item) (*Group, error) {
-	grp := NewGroup(name, v...)
-	return grp, me.AddGroup(grp)
+// ----------------------------------------
+
+func (me *Parser) Group(title, name string, items ...Item) *Group {
+	return me.group(title, name, me.Optional(name).String(), items)
 }
+
+func (me *Parser) RequiredGroup(title, name string, items ...Item) *Group {
+	return me.group(title, name, me.Required(name).String(), items)
+}
+
+func (me *Parser) group(title, name, v string, items []Item) *Group {
+	grp := &Group{
+		args:  me.args,
+		title: title,
+		v:     v,
+		items: items,
+	}
+	err := me.AddGroup(grp)
+	if err != nil {
+		panic(fmt.Sprintf("duplicate group %q", title))
+	}
+
+	return grp
+}
+
+type Group struct {
+	args []string // needed for parsing extra options
+
+	title string
+	v     string
+	items []Item
+
+	err error
+}
+
+// Item returns the matching item. Defaults to the first in the group.
+func (me *Group) Item() Item {
+	i, found := me.Find(me.v)
+	if !found {
+		i = me.items[0]
+	}
+	extra := NewParser(me.args...)
+	i.ExtraOptions(extra)
+	return i
+}
+
+func (me *Group) Title() string { return me.title }
+func (me *Group) Items() []Item { return me.items }
+
+// Find returns the named Item or nil if not found.
+func (me *Group) Find(name string) (Item, bool) {
+	for _, a := range me.items {
+		if a.Name() == name {
+			return a, true
+		}
+	}
+	return nil, false
+}
+
+// ----------------------------------------
 
 func (me *Parser) AddGroup(grp *Group) error {
 	for _, existing := range me.groups {
@@ -61,9 +117,11 @@ func (me *Parser) Error() error {
 	if err != nil {
 		return err
 	}
-	for _, arg := range me.Args() {
-		if isOption(arg) {
-			return fmt.Errorf("Unknown option: %v", arg)
+	if len(me.groups) == 0 {
+		for _, arg := range me.Args() {
+			if isOption(arg) {
+				return fmt.Errorf("Unknown option: %v", arg)
+			}
 		}
 	}
 	return nil

@@ -11,10 +11,16 @@ import (
 
 func TestParser_AddGroup_twice(t *testing.T) {
 	cli := Parse("ls -h")
-	cli.Group("first")
-	_, err := cli.Group("first")
-	if err == nil {
-		t.Error("expected error")
+	cli.Group("actions", "selected")
+	defer catchPanic(t)
+	cli.Group("actions", "x")
+}
+
+func catchPanic(t *testing.T) {
+	t.Helper()
+	e := recover()
+	if e == nil {
+		t.Error("should panic")
 	}
 }
 
