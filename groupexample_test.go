@@ -27,5 +27,5 @@ func Example_groupedSubCommands() {
 }
 
 type Runnable interface {
-	Run() error
+	Run()
 }

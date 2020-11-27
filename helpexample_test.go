@@ -13,19 +13,23 @@ func Example_help() {
 		_    = cli.Flag("-n, --dry-run")
 		help = cli.Flag("-h, --help")
 		// order is important for non options
-		_ = cli.RequiredGroup("Actions", "ACTION", &Hi{})
+		_ = cli.Group("Actions", "ACTION",
+			&Ask{}, // first is always default
+			&Hi{},
+		)
 	)
 	if help {
 		cli.WriteUsageTo(os.Stdout)
 	}
 	// output:
-	// Usage: somecmd [OPTIONS] ACTION
+	// Usage: somecmd [OPTIONS] [ACTION]
 	//
 	// Options
 	//     -n, --dry-run : false
 	//     -h, --help : false
 	//
 	// Actions
+	//     askName (default)
 	//     sayHi
 	//         -t, --to : "stranger"
 }
@@ -41,7 +45,11 @@ func (me *Hi) ExtraOptions(cli *cmdline.Parser) {
 	me.to = cli.Option("-t, --to").String("stranger")
 }
 
-func (me *Hi) Run() error {
-	fmt.Printf("Hi, %s!\n", me.to)
-	return nil
-}
+func (me *Hi) Run() { fmt.Printf("Hi, %s!\n", me.to) }
+
+type Ask struct{}
+
+func (me *Ask) Name() string                     { return "askName" }
+func (me *Ask) ExtraOptions(cli *cmdline.Parser) {}
+
+func (me *Ask) Run() { fmt.Printf("What is your name?") }

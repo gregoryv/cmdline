@@ -175,17 +175,26 @@ func (me *Parser) WriteUsageTo(w io.Writer) {
 	fmt.Fprintln(w, "Options")
 	me.WriteOptionsTo(w)
 
+	indent := "    "
 	for _, grp := range me.groups {
-		indent := "    "
-		for _, i := range grp.Items() {
-			fmt.Fprintln(w)
-			fmt.Fprintln(w, grp.Title())
-			fmt.Fprintf(w, "%s%s\n", indent, i.Name())
-			extra := NewParser(os.Args...)
-			i.ExtraOptions(extra)
-			extra.writeOptionsTo(w, indent)
+		fmt.Fprintln(w)
+		fmt.Fprintln(w, grp.Title())
+		writeItem(w, grp.Items()[0], indent, true)
+		for _, item := range grp.Items()[1:] {
+			writeItem(w, item, indent, false)
 		}
 	}
+}
+
+func writeItem(w io.Writer, item Item, indent string, isDefault bool) {
+	if isDefault {
+		fmt.Fprintf(w, "%s%s (default)\n", indent, item.Name())
+	} else {
+		fmt.Fprintf(w, "%s%s\n", indent, item.Name())
+	}
+	extra := NewParser(os.Args...)
+	item.ExtraOptions(extra)
+	extra.writeOptionsTo(w, indent)
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
