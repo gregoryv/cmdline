@@ -2,17 +2,20 @@ package cmdline_test
 
 import "github.com/gregoryv/cmdline"
 
-func Example_runAction() {
+/*
+This example shows how to group a set of options for a sub command.
+*/
+func Example_groupedSubCommands() {
 	var (
-		cli        = cmdline.Parse("somecmd sayHi")
-		actions, _ = cli.Group("ACTION", &Hi{})
+		cli        = cmdline.Parse("somecmd sayHi --to Gopher")
+		actions, _ = cli.Group("Actions", &Hi{})
 		name       = cli.Required("ACTION").String()
 	)
 	action := actions.FindAction(name)
 	action.ExtraOptions(cli)
 	action.(Runnable).Run()
 	// output:
-	// Hi, stranger!
+	// Hi, Gopher!
 }
 
 type Runnable interface {
