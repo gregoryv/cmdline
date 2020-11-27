@@ -49,7 +49,6 @@ func (me *Hi) Run() { fmt.Printf("Hi, %s!\n", me.to) }
 
 type Ask struct{}
 
-func (me *Ask) Name() string                     { return "askName" }
-func (me *Ask) ExtraOptions(cli *cmdline.Parser) {}
+func (me *Ask) Name() string { return "askName" }
 
 func (me *Ask) Run() { fmt.Printf("What is your name?") }

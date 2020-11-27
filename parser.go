@@ -3,7 +3,6 @@ package cmdline
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 )
 
@@ -76,8 +75,11 @@ func (me *Group) Item() Item {
 	if !found {
 		i = me.items[0]
 	}
-	extra := NewParser(me.args...)
-	i.ExtraOptions(extra)
+	switch i := i.(type) {
+	case WithExtraOptions:
+		extra := NewParser(me.args...)
+		i.ExtraOptions(extra)
+	}
 	return i
 }
 
@@ -92,6 +94,16 @@ func (me *Group) Find(name string) (Item, bool) {
 		}
 	}
 	return nil, false
+}
+
+type Item interface {
+	// Name must return one word
+	Name() string
+}
+
+type WithExtraOptions interface {
+	// ExtraOptions is used to parse extra options for a grouped item
+	ExtraOptions(*Parser)
 }
 
 // ----------------------------------------
@@ -179,22 +191,26 @@ func (me *Parser) WriteUsageTo(w io.Writer) {
 	for _, grp := range me.groups {
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, grp.Title())
-		writeItem(w, grp.Items()[0], indent, true)
+		first := grp.Items()[0]
+		writeItem(w, first, me.args, indent, true)
 		for _, item := range grp.Items()[1:] {
-			writeItem(w, item, indent, false)
+			writeItem(w, item, me.args, indent, false)
 		}
 	}
 }
 
-func writeItem(w io.Writer, item Item, indent string, isDefault bool) {
-	if isDefault {
-		fmt.Fprintf(w, "%s%s (default)\n", indent, item.Name())
+func writeItem(w io.Writer, me Item, args []string, indent string, dflt bool) {
+	if dflt {
+		fmt.Fprintf(w, "%s%s (default)\n", indent, me.Name())
 	} else {
-		fmt.Fprintf(w, "%s%s\n", indent, item.Name())
+		fmt.Fprintf(w, "%s%s\n", indent, me.Name())
 	}
-	extra := NewParser(os.Args...)
-	item.ExtraOptions(extra)
-	extra.writeOptionsTo(w, indent)
+	switch me := me.(type) {
+	case WithExtraOptions:
+		extra := NewParser(args...)
+		me.ExtraOptions(extra)
+		extra.writeOptionsTo(w, indent)
+	}
 }
 
 // WriteOptionsTo writes the Options section to the given writer.

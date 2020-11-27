@@ -20,7 +20,6 @@ func Example_groupedSubCommands() {
 		return
 	}
 
-	phrase.ExtraOptions(cli)
 	phrase.(Runnable).Run()
 	// output:
 	// Hi, Gopher!
