@@ -15,14 +15,14 @@ func Example_help() {
 		phrase = cli.Group("Phrases", "PHRASE",
 			// Add objects that implement Named and optional
 			// WithExtraOptions interface
-
-			&Ask{ // first is default
-				Item: "askName",
+			cmdline.Item{"askName", &Ask{}},
+			cmdline.Item{"sayHi", func(cli *cmdline.Parser) interface{} {
+				return &Hi{
+					to: cli.Option("-t, --to").String("stranger"),
+				}
 			},
-			&Hi{
-				Item: "sayHi",
-				to:   "stranger",
 			},
+			cmdline.Item{"compliment", &Compliment{}},
 		).Item()
 	)
 	if help {
@@ -46,18 +46,15 @@ func Example_help() {
 	//     askName (default)
 	//     sayHi
 	//         -t, --to : "stranger"
+	//     compliment
+	//         -s, --someone : "John"
+
 }
 
 // ----------------------------------------
 
 type Hi struct {
-	cmdline.Item // implements the Named interface
-	to           string
-}
-
-// ExtraOptions implements WithExtraOptions interface
-func (me *Hi) ExtraOptions(cli *cmdline.Parser) {
-	me.to = cli.Option("-t, --to").String(me.to)
+	to string
 }
 
 func (me *Hi) Run() { fmt.Printf("Hi, %s!\n", me.to) }
@@ -66,7 +63,23 @@ func (me *Hi) Run() { fmt.Printf("Hi, %s!\n", me.to) }
 
 type Ask struct{ cmdline.Item }
 
-func (me *Ask) Run() { fmt.Printf("What is your name?") }
+func (me *Ask) Run() { fmt.Println("What is your name?") }
+
+// ----------------------------------------
+
+type Compliment struct {
+	cmdline.Item
+	someone string
+}
+
+// ExtraOptions
+func (me *Compliment) ExtraOptions(p *cmdline.Parser) {
+	me.someone = p.Option("-s, --someone").String("John")
+}
+
+func (me *Compliment) Run() {
+	fmt.Printf("%s, don't you look nice today", me.someone)
+}
 
 // ----------------------------------------
 

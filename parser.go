@@ -36,11 +36,11 @@ type Parser struct {
 
 // ----------------------------------------
 
-func (me *Parser) Group(title, name string, items ...interface{}) *Group {
+func (me *Parser) Group(title, name string, items ...Item) *Group {
 	return me.group(title, name, me.Optional(name).String(), items)
 }
 
-func (me *Parser) group(title, name, v string, items []interface{}) *Group {
+func (me *Parser) group(title, name, v string, items []Item) *Group {
 	grp := &Group{
 		args:  me.args,
 		title: title,
@@ -60,7 +60,7 @@ type Group struct {
 
 	title string
 	v     string
-	items []interface{}
+	items []Item
 
 	err error
 }
@@ -79,13 +79,13 @@ func (me *Group) Item() interface{} {
 	return i
 }
 
-func (me *Group) Title() string        { return me.title }
-func (me *Group) Items() []interface{} { return me.items }
+func (me *Group) Title() string { return me.title }
+func (me *Group) Items() []Item { return me.items }
 
 // Find returns the named Item or nil if not found.
 func (me *Group) Find(name string) (interface{}, bool) {
 	for _, item := range me.items {
-		if item.(Named).Name() == name {
+		if item.Name == name {
 			return item, true
 		}
 	}
@@ -188,25 +188,22 @@ func (me *Parser) WriteUsageTo(w io.Writer) {
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, grp.Title())
 		first := grp.Items()[0]
-		writeItem(w, first.(Named), me.args, indent, true)
+		writeItem(w, first, me.args, indent, true)
 		for _, item := range grp.Items()[1:] {
-			writeItem(w, item.(Named), me.args, indent, false)
+			writeItem(w, item, me.args, indent, false)
 		}
 	}
 }
 
-func writeItem(w io.Writer, me Named, args []string, indent string, dflt bool) {
+func writeItem(w io.Writer, me Item, args []string, indent string, dflt bool) {
 	if dflt {
-		fmt.Fprintf(w, "%s%s (default)\n", indent, me.Name())
+		fmt.Fprintf(w, "%s%s (default)\n", indent, me.Name)
 	} else {
-		fmt.Fprintf(w, "%s%s\n", indent, me.Name())
+		fmt.Fprintf(w, "%s%s\n", indent, me.Name)
 	}
-	switch me := me.(type) {
-	case WithExtraOptions:
-		extra := NewParser(args...)
-		me.ExtraOptions(extra)
-		extra.writeOptionsTo(w, indent)
-	}
+	extra := NewParser(args...)
+	me.Load(extra)
+	extra.writeOptionsTo(w, indent)
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
