@@ -9,46 +9,67 @@ import (
 
 func Example_help() {
 	var (
-		cli  = cmdline.Parse("somecmd -h")
-		_    = cli.Flag("-n, --dry-run")
-		help = cli.Flag("-h, --help")
-		// order is important for non options
-		_ = cli.Group("Actions", "ACTION",
-			&Ask{}, // first is always default
-			&Hi{},
-		)
+		cli    = cmdline.Parse("speak sayHi -h")
+		_      = cli.Flag("-n, --dry-run")
+		help   = cli.Flag("-h, --help")
+		phrase = cli.Group("Phrases", "PHRASE",
+			// Add objects that implement Named and optional
+			// WithExtraOptions interface
+
+			&Ask{ // first is default
+				Item: "askName",
+			},
+			&Hi{
+				Item: "sayHi",
+				to:   "stranger",
+			},
+		).Item()
 	)
 	if help {
 		cli.WriteUsageTo(os.Stdout)
+		return
 	}
+	if !cli.Ok() {
+		fmt.Println(cli.Error())
+		return
+	}
+
+	phrase.(runnable).Run()
 	// output:
-	// Usage: somecmd [OPTIONS] [ACTION]
+	// Usage: speak [OPTIONS] [PHRASE]
 	//
 	// Options
 	//     -n, --dry-run : false
 	//     -h, --help : false
 	//
-	// Actions
+	// Phrases
 	//     askName (default)
 	//     sayHi
 	//         -t, --to : "stranger"
 }
 
-// Hi implements the sayHi action
+// ----------------------------------------
+
 type Hi struct {
-	to string
+	cmdline.Item // implements the Named interface
+	to           string
 }
 
-func (me *Hi) Name() string { return "sayHi" }
-
+// ExtraOptions implements WithExtraOptions interface
 func (me *Hi) ExtraOptions(cli *cmdline.Parser) {
-	me.to = cli.Option("-t, --to").String("stranger")
+	me.to = cli.Option("-t, --to").String(me.to)
 }
 
 func (me *Hi) Run() { fmt.Printf("Hi, %s!\n", me.to) }
 
-type Ask struct{}
+// ----------------------------------------
 
-func (me *Ask) Name() string { return "askName" }
+type Ask struct{ cmdline.Item }
 
 func (me *Ask) Run() { fmt.Printf("What is your name?") }
+
+// ----------------------------------------
+
+type runnable interface {
+	Run()
+}
