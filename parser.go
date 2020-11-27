@@ -36,11 +36,11 @@ type Parser struct {
 
 // ----------------------------------------
 
-func (me *Parser) Group(title, name string, items ...Item) *Group {
+func (me *Parser) Group(title, name string, items ...*Item) *Group {
 	return me.group(title, name, me.Optional(name).String(), items)
 }
 
-func (me *Parser) group(title, name, v string, items []Item) *Group {
+func (me *Parser) group(title, name, v string, items []*Item) *Group {
 	grp := &Group{
 		args:  me.args,
 		title: title,
@@ -70,18 +70,18 @@ type Group struct {
 
 	title string
 	v     string
-	items []Item
+	items []*Item
 
 	err error
 }
 
 func (me *Group) New(name string, any interface{}) *Item {
-	item := Item{
+	item := &Item{
 		Name:   name,
 		Loader: any,
 	}
 	me.items = append(me.items, item)
-	return &item
+	return item
 }
 
 // Selected returns the matching item. Defaults to the first in the group.
@@ -90,19 +90,15 @@ func (me *Group) Selected() interface{} {
 	if !found {
 		i = me.items[0]
 	}
-	switch i := i.(type) {
-	case WithExtraOptions:
-		extra := NewParser(me.args...)
-		i.ExtraOptions(extra)
-	}
-	return i
+	extra := NewParser(me.args...)
+	return i.Load(extra)
 }
 
-func (me *Group) Title() string { return me.title }
-func (me *Group) Items() []Item { return me.items }
+func (me *Group) Title() string  { return me.title }
+func (me *Group) Items() []*Item { return me.items }
 
 // Find returns the named Item or nil if not found.
-func (me *Group) Find(name string) (interface{}, bool) {
+func (me *Group) Find(name string) (*Item, bool) {
 	for _, item := range me.items {
 		if item.Name == name {
 			return item, true
@@ -204,7 +200,7 @@ func (me *Parser) WriteUsageTo(w io.Writer) {
 	}
 }
 
-func writeItem(w io.Writer, me Item, args []string, indent string, dflt bool) {
+func writeItem(w io.Writer, me *Item, args []string, indent string, dflt bool) {
 	if dflt {
 		fmt.Fprintf(w, "%s%s (default)\n", indent, me.Name)
 	} else {

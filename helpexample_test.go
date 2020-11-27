@@ -9,21 +9,28 @@ import (
 
 func Example_help() {
 	var (
-		cli  = cmdline.Parse("speak sayHi -h")
+		cli  = cmdline.Parse("speak -h")
 		_    = cli.Flag("-n, --dry-run")
 		help = cli.Flag("-h, --help")
+
+		// Group items
+		phrases = cli.Group("Phrases", "PHRASE")
+
+		// No extra options needed
+		_ = phrases.New("askName", &Ask{})
+
+		// Using builder function
+		_ = phrases.New("sayHi", func(p *cmdline.Parser) interface{} {
+			return &Hi{
+				to: p.Option("-t, --to").String("stranger"),
+			}
+		})
+
+		// Implementing the WithExtraOptions interface
+		_ = phrases.New("compliment", &Compliment{})
+
+		phrase = phrases.Selected()
 	)
-	// Add objects that implement Named and optional
-	// WithExtraOptions interface
-	phrases := cli.Group("Phrases", "PHRASE")
-	phrases.New("askName", &Ask{})
-	phrases.New("sayHi", func(cli *cmdline.Parser) interface{} {
-		return &Hi{
-			to: cli.Option("-t, --to").String("stranger"),
-		}
-	})
-	phrases.New("compliment", &Compliment{})
-	phrase := phrases.Selected()
 
 	if help {
 		cli.WriteUsageTo(os.Stdout)
@@ -78,7 +85,7 @@ func (me *Compliment) ExtraOptions(p *cmdline.Parser) {
 }
 
 func (me *Compliment) Run() {
-	fmt.Printf("%s, don't you look nice today", me.someone)
+	fmt.Printf("%s, you look dashing I must say.", me.someone)
 }
 
 // ----------------------------------------
