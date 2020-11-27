@@ -1,17 +1,27 @@
 package cmdline_test
 
-import "github.com/gregoryv/cmdline"
+import (
+	"fmt"
+	"os"
+
+	"github.com/gregoryv/cmdline"
+)
 
 /*
 This example shows how to group a set of options for a sub command.
 */
 func Example_groupedSubCommands() {
 	var (
-		cli        = cmdline.Parse("somecmd sayHi --to Gopher")
+		cli        = cmdline.Parse("speach sayHi --to Gopher")
 		actions, _ = cli.Group("Actions", &Hi{})
 		name       = cli.Required("ACTION").String()
 	)
-	action := actions.FindAction(name)
+	action, found := actions.Find(name)
+	if !found {
+		fmt.Println("no such action")
+		os.Exit(1)
+	}
+
 	action.ExtraOptions(cli)
 	action.(Runnable).Run()
 	// output:

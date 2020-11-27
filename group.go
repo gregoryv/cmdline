@@ -16,11 +16,11 @@ func (me *Group) Name() string  { return me.name }
 func (me *Group) Items() []Item { return me.items }
 
 // Find returns the named Item or nil if not found.
-func (me *Group) Find(name string) Item {
+func (me *Group) Find(name string) (Item, bool) {
 	for _, a := range me.items {
 		if a.Name() == name {
-			return a
+			return a, true
 		}
 	}
-	return nil
+	return nil, false
 }
