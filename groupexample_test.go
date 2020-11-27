@@ -13,17 +13,17 @@ This example shows how to group a set of options for a sub command.
 func Example_groupedSubCommands() {
 	var (
 		cli        = cmdline.Parse("speach sayHi --to Gopher")
-		actions, _ = cli.Group("Actions", &Hi{})
-		name       = cli.Required("ACTION").String()
+		phrases, _ = cli.Group("Phrases", &Hi{})
+		name       = cli.Required("PHRASE").String()
 	)
-	action, found := actions.Find(name)
+	phrase, found := phrases.Find(name)
 	if !found {
-		fmt.Println("no such action")
+		fmt.Println("no such phrase")
 		os.Exit(1)
 	}
 
-	action.ExtraOptions(cli)
-	action.(Runnable).Run()
+	phrase.ExtraOptions(cli)
+	phrase.(Runnable).Run()
 	// output:
 	// Hi, Gopher!
 }

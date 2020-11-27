@@ -19,12 +19,11 @@ func NewParser(args ...string) *Parser {
 	if len(args) == 0 {
 		panic("New() missing args")
 	}
-	cli := &Parser{
+	return &Parser{
 		args:    args,
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
 	}
-	return cli
 }
 
 // Parser groups arguments for option parsing and usage.
@@ -52,17 +51,17 @@ func (me *Parser) AddGroup(grp *Group) error {
 }
 
 // Ok returns true if no parsing error occured
-func (cli *Parser) Ok() bool {
-	return cli.Error() == nil
+func (me *Parser) Ok() bool {
+	return me.Error() == nil
 }
 
 // Error returns first error of the given options.
-func (cli *Parser) Error() error {
-	err := cli.parseFailed()
+func (me *Parser) Error() error {
+	err := me.parseFailed()
 	if err != nil {
 		return err
 	}
-	for _, arg := range cli.Args() {
+	for _, arg := range me.Args() {
 		if isOption(arg) {
 			return fmt.Errorf("Unknown option: %v", arg)
 		}
@@ -70,13 +69,13 @@ func (cli *Parser) Error() error {
 	return nil
 }
 
-func (cli *Parser) parseFailed() error {
-	for _, opt := range cli.options {
+func (me *Parser) parseFailed() error {
+	for _, opt := range me.options {
 		if opt.err != nil {
 			return opt.err
 		}
 	}
-	for _, arg := range cli.arguments {
+	for _, arg := range me.arguments {
 		if arg.err != nil {
 			return arg.err
 		}
@@ -88,16 +87,16 @@ func (cli *Parser) parseFailed() error {
 // Names should be a comma separated string, e.g.
 //   -n, --dry-run
 //
-func (cli *Parser) Option(names string, doclines ...string) *Option {
-	opt := NewOption(names, cli.args[1:]...)
+func (me *Parser) Option(names string, doclines ...string) *Option {
+	opt := NewOption(names, me.args[1:]...)
 	opt.doc = doclines
-	cli.options = append(cli.options, opt)
+	me.options = append(me.options, opt)
 	return opt
 }
 
 // Flag is short for Option(name).Bool()
-func (cli *Parser) Flag(name string) bool {
-	val, _ := cli.Option(name).BoolOpt()
+func (me *Parser) Flag(name string) bool {
+	val, _ := me.Option(name).BoolOpt()
 	return val
 }
 
@@ -105,9 +104,9 @@ func (cli *Parser) Flag(name string) bool {
 // writer with the first line being
 //
 //   Usage: COMMAND [OPTIONS] ARGUMENTS...
-func (cli *Parser) WriteUsageTo(w io.Writer) {
-	fmt.Fprintf(w, "Usage: %s [OPTIONS]", cli.args[0])
-	for _, arg := range cli.arguments {
+func (me *Parser) WriteUsageTo(w io.Writer) {
+	fmt.Fprintf(w, "Usage: %s [OPTIONS]", me.args[0])
+	for _, arg := range me.arguments {
 		if arg.required {
 			fmt.Fprintf(w, " %s", arg.name)
 			continue
@@ -116,9 +115,9 @@ func (cli *Parser) WriteUsageTo(w io.Writer) {
 	}
 	fmt.Fprint(w, "\n\n")
 	fmt.Fprintln(w, "Options")
-	cli.WriteOptionsTo(w)
+	me.WriteOptionsTo(w)
 
-	for _, grp := range cli.groups {
+	for _, grp := range me.groups {
 		indent := "    "
 		for _, i := range grp.Items() {
 			fmt.Fprintln(w)
@@ -132,12 +131,12 @@ func (cli *Parser) WriteUsageTo(w io.Writer) {
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
-func (cli *Parser) WriteOptionsTo(w io.Writer) {
-	cli.writeOptionsTo(w, "")
+func (me *Parser) WriteOptionsTo(w io.Writer) {
+	me.writeOptionsTo(w, "")
 }
 
-func (cli *Parser) writeOptionsTo(w io.Writer, indent string) {
-	for _, opt := range cli.options {
+func (me *Parser) writeOptionsTo(w io.Writer, indent string) {
+	for _, opt := range me.options {
 		def := fmt.Sprintf(" : %v", opt.defaultValue)
 		if opt.quoteValue {
 			def = fmt.Sprintf(" : %q", opt.defaultValue)
@@ -153,11 +152,11 @@ func (cli *Parser) writeOptionsTo(w io.Writer, indent string) {
 }
 
 // Args returns arguments not matched by any of the options
-func (cli *Parser) Args() []string {
+func (me *Parser) Args() []string {
 	rest := make([]string, 0)
-	for i, arg := range cli.args[1:] {
+	for i, arg := range me.args[1:] {
 		//		fmt.Println("a:", arg)
-		if !cli.wasMatched(i) {
+		if !me.wasMatched(i) {
 			rest = append(rest, arg)
 		}
 	}
@@ -173,8 +172,8 @@ func (me *Parser) Argn(n int) string {
 	return ""
 }
 
-func (cli *Parser) wasMatched(i int) bool {
-	for _, opt := range cli.options {
+func (me *Parser) wasMatched(i int) bool {
+	for _, opt := range me.options {
 		if opt.argIndex == i || opt.valIndex == i {
 			return true
 		}
@@ -182,8 +181,8 @@ func (cli *Parser) wasMatched(i int) bool {
 	return false
 }
 
-func (cli *Parser) String() string {
-	return fmt.Sprintf("Parser: %s", strings.Join(cli.args, " "))
+func (me *Parser) String() string {
+	return fmt.Sprintf("Parser: %s", strings.Join(me.args, " "))
 }
 
 // Required returns a required named argument.
@@ -217,7 +216,5 @@ type Argument struct {
 	required bool
 }
 
-// String
-func (me *Argument) String() string {
-	return me.v
-}
+// String returns the value of this argument
+func (me *Argument) String() string { return me.v }
