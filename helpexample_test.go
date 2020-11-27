@@ -53,9 +53,9 @@ func Example_help() {
 	//     askName (default)
 	//     sayHi
 	//         -t, --to : "stranger"
+	//
 	//     compliment
 	//         -s, --someone : "John"
-
 }
 
 // ----------------------------------------

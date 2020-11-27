@@ -190,7 +190,6 @@ func (me *Parser) WriteUsageTo(w io.Writer) {
 
 	indent := "    "
 	for _, grp := range me.groups {
-		fmt.Fprintln(w)
 		fmt.Fprintln(w, grp.Title())
 		first := grp.Items()[0]
 		writeItem(w, first, me.args, indent, true)
@@ -218,17 +217,24 @@ func (me *Parser) WriteOptionsTo(w io.Writer) {
 
 func (me *Parser) writeOptionsTo(w io.Writer, indent string) {
 	for _, opt := range me.options {
-		def := fmt.Sprintf(" : %v", opt.defaultValue)
-		if opt.quoteValue {
-			def = fmt.Sprintf(" : %q", opt.defaultValue)
+		writeOptionTo(w, opt, indent)
+	}
+	if len(me.options) > 0 {
+		fmt.Fprintln(w)
+	}
+}
+
+func writeOptionTo(w io.Writer, opt *Option, indent string) {
+	def := fmt.Sprintf(" : %v", opt.defaultValue)
+	if opt.quoteValue {
+		def = fmt.Sprintf(" : %q", opt.defaultValue)
+	}
+	fmt.Fprintf(w, "%s    %s%s\n", indent, opt.names, def)
+	if len(opt.doc) > 0 {
+		for _, line := range opt.doc {
+			fmt.Fprintf(w, "%s        %s\n", indent, line)
 		}
-		fmt.Fprintf(w, "%s    %s%s\n", indent, opt.names, def)
-		if len(opt.doc) > 0 {
-			for _, line := range opt.doc {
-				fmt.Fprintf(w, "%s        %s\n", indent, line)
-			}
-			fmt.Fprintln(w)
-		}
+		fmt.Fprintln(w)
 	}
 }
 
