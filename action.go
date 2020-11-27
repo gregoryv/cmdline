@@ -1,6 +1,6 @@
 package cmdline
 
-type Action interface {
+type Item interface {
 	// Name must return one word
 	Name() string
 

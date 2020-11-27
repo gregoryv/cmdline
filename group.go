@@ -1,22 +1,23 @@
 package cmdline
 
-func NewGroup(name string, v ...Action) *Group {
+func NewGroup(name string, v ...Item) *Group {
 	return &Group{
-		name:    name,
-		actions: v,
+		name:  name,
+		items: v,
 	}
 }
 
 type Group struct {
-	name    string
-	actions []Action
+	name  string
+	items []Item
 }
 
-func (me *Group) Name() string { return me.name }
+func (me *Group) Name() string  { return me.name }
+func (me *Group) Items() []Item { return me.items }
 
-// FindAction returns the named action or nil if not found.
-func (me *Group) FindAction(name string) Action {
-	for _, a := range me.actions {
+// Find returns the named Item or nil if not found.
+func (me *Group) Find(name string) Item {
+	for _, a := range me.items {
 		if a.Name() == name {
 			return a
 		}

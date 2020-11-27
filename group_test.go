@@ -2,9 +2,9 @@ package cmdline
 
 import "testing"
 
-func TestGroup_FindAction_returns_nil_on_undefined_action(t *testing.T) {
+func TestGroup_Find_returns_nil_on_undefined_item(t *testing.T) {
 	grp := NewGroup("empty")
-	if grp.FindAction("any") != nil {
+	if grp.Find("any") != nil {
 		t.Fail()
 	}
 }

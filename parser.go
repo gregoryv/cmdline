@@ -36,7 +36,7 @@ type Parser struct {
 	groups []*Group
 }
 
-func (me *Parser) Group(name string, v ...Action) (*Group, error) {
+func (me *Parser) Group(name string, v ...Item) (*Group, error) {
 	grp := NewGroup(name, v...)
 	return grp, me.AddGroup(grp)
 }
@@ -120,12 +120,12 @@ func (cli *Parser) WriteUsageTo(w io.Writer) {
 
 	for _, grp := range cli.groups {
 		indent := "    "
-		for _, action := range grp.actions {
+		for _, i := range grp.Items() {
 			fmt.Fprintln(w)
 			fmt.Fprintln(w, grp.Name())
-			fmt.Fprintf(w, "%s%s\n", indent, action.Name())
+			fmt.Fprintf(w, "%s%s\n", indent, i.Name())
 			extra := NewParser(os.Args...)
-			action.ExtraOptions(extra)
+			i.ExtraOptions(extra)
 			extra.writeOptionsTo(w, indent)
 		}
 	}
