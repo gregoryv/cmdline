@@ -86,7 +86,7 @@ func (me *Group) New(name string, any interface{}) *Item {
 
 // Selected returns the matching item. Defaults to the first in the group.
 func (me *Group) Selected() interface{} {
-	i, found := me.Find(me.v)
+	i, found := me.find(me.v)
 	if !found {
 		i = me.items[0]
 	}
@@ -98,18 +98,13 @@ func (me *Group) Title() string  { return me.title }
 func (me *Group) Items() []*Item { return me.items }
 
 // Find returns the named Item or nil if not found.
-func (me *Group) Find(name string) (*Item, bool) {
+func (me *Group) find(name string) (*Item, bool) {
 	for _, item := range me.items {
 		if item.Name == name {
 			return item, true
 		}
 	}
 	return nil, false
-}
-
-type Named interface {
-	// Name must return one word
-	Name() string
 }
 
 type WithExtraOptions interface {
