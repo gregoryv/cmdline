@@ -42,8 +42,8 @@ func (me *Parser) Group(name string, v ...Item) (*Group, error) {
 
 func (me *Parser) AddGroup(grp *Group) error {
 	for _, existing := range me.groups {
-		if existing.Name() == grp.Name() {
-			return fmt.Errorf("group %q already exists", grp.Name())
+		if existing.Title() == grp.Title() {
+			return fmt.Errorf("group %q already exists", grp.Title())
 		}
 	}
 	me.groups = append(me.groups, grp)
@@ -121,7 +121,7 @@ func (me *Parser) WriteUsageTo(w io.Writer) {
 		indent := "    "
 		for _, i := range grp.Items() {
 			fmt.Fprintln(w)
-			fmt.Fprintln(w, grp.Name())
+			fmt.Fprintln(w, grp.Title())
 			fmt.Fprintf(w, "%s%s\n", indent, i.Name())
 			extra := NewParser(os.Args...)
 			i.ExtraOptions(extra)

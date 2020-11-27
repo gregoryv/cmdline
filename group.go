@@ -1,18 +1,18 @@
 package cmdline
 
-func NewGroup(name string, v ...Item) *Group {
+func NewGroup(title string, v ...Item) *Group {
 	return &Group{
-		name:  name,
+		title: title,
 		items: v,
 	}
 }
 
 type Group struct {
-	name  string
+	title string
 	items []Item
 }
 
-func (me *Group) Name() string  { return me.name }
+func (me *Group) Title() string { return me.title }
 func (me *Group) Items() []Item { return me.items }
 
 // Find returns the named Item or nil if not found.
