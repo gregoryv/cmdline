@@ -9,22 +9,22 @@ import (
 
 func Example_help() {
 	var (
-		cli    = cmdline.Parse("speak sayHi -h")
-		_      = cli.Flag("-n, --dry-run")
-		help   = cli.Flag("-h, --help")
-		phrase = cli.Group("Phrases", "PHRASE",
-			// Add objects that implement Named and optional
-			// WithExtraOptions interface
-			cmdline.Item{"askName", &Ask{}},
-			cmdline.Item{"sayHi", func(cli *cmdline.Parser) interface{} {
-				return &Hi{
-					to: cli.Option("-t, --to").String("stranger"),
-				}
-			},
-			},
-			cmdline.Item{"compliment", &Compliment{}},
-		).Item()
+		cli  = cmdline.Parse("speak sayHi -h")
+		_    = cli.Flag("-n, --dry-run")
+		help = cli.Flag("-h, --help")
 	)
+	// Add objects that implement Named and optional
+	// WithExtraOptions interface
+	phrases := cli.Group("Phrases", "PHRASE")
+	phrases.New("askName", &Ask{})
+	phrases.New("sayHi", func(cli *cmdline.Parser) interface{} {
+		return &Hi{
+			to: cli.Option("-t, --to").String("stranger"),
+		}
+	})
+	phrases.New("compliment", &Compliment{})
+	phrase := phrases.Selected()
+
 	if help {
 		cli.WriteUsageTo(os.Stdout)
 		return

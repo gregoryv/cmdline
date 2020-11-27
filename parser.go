@@ -75,8 +75,17 @@ type Group struct {
 	err error
 }
 
-// Item returns the matching item. Defaults to the first in the group.
-func (me *Group) Item() interface{} {
+func (me *Group) New(name string, any interface{}) *Item {
+	item := Item{
+		Name:   name,
+		Loader: any,
+	}
+	me.items = append(me.items, item)
+	return &item
+}
+
+// Selected returns the matching item. Defaults to the first in the group.
+func (me *Group) Selected() interface{} {
 	i, found := me.Find(me.v)
 	if !found {
 		i = me.items[0]
