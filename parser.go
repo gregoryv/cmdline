@@ -47,12 +47,22 @@ func (me *Parser) group(title, name, v string, items []Item) *Group {
 		v:     v,
 		items: items,
 	}
-	err := me.AddGroup(grp)
+	err := me.addGroup(grp)
 	if err != nil {
 		panic(fmt.Sprintf("duplicate group %q", title))
 	}
 
 	return grp
+}
+
+func (me *Parser) addGroup(grp *Group) error {
+	for _, existing := range me.groups {
+		if existing.Title() == grp.Title() {
+			return fmt.Errorf("group %q already exists", grp.Title())
+		}
+	}
+	me.groups = append(me.groups, grp)
+	return nil
 }
 
 type Group struct {
@@ -103,16 +113,6 @@ type WithExtraOptions interface {
 }
 
 // ----------------------------------------
-
-func (me *Parser) AddGroup(grp *Group) error {
-	for _, existing := range me.groups {
-		if existing.Title() == grp.Title() {
-			return fmt.Errorf("group %q already exists", grp.Title())
-		}
-	}
-	me.groups = append(me.groups, grp)
-	return nil
-}
 
 // Ok returns true if no parsing error occured
 func (me *Parser) Ok() bool {
