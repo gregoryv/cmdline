@@ -36,8 +36,12 @@ func TestParser_not_Ok(t *testing.T) {
 	args := "ls -r ."
 	cli := Parse(args)
 	cli.Option("-v").String("")
+	phrases := cli.Group("Phrases", "PHRASE")
+	phrases.New("hello", nil)
+	phrases.Selected()
 	if cli.Ok() {
-		t.Errorf("parse option -v from line %q", args)
+		t.Log(cli.Error())
+		t.Errorf("%q was ok, but -r is not defined", args)
 	}
 }
 

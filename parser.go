@@ -42,7 +42,7 @@ func (me *Parser) Group(title, name string, items ...*Item) *Group {
 
 func (me *Parser) group(title, name, v string, items []*Item) *Group {
 	grp := &Group{
-		args:  me.args,
+		args:  me.Args(),
 		title: title,
 		v:     v,
 		items: items,
@@ -90,8 +90,10 @@ func (me *Group) Selected() interface{} {
 	if !found {
 		i = me.items[0]
 	}
-	extra := NewParser(me.args...)
-	return i.Load(extra)
+	extra := NewParser(append([]string{me.title}, me.args...)...)
+	sel := i.Load(extra)
+	me.err = extra.Error()
+	return sel
 }
 
 func (me *Group) Title() string  { return me.title }
@@ -136,17 +138,23 @@ func (me *Parser) Error() error {
 }
 
 func (me *Parser) parseFailed() error {
-	for _, opt := range me.options {
-		if opt.err != nil {
-			return opt.err
+	var err error
+	setErr := func(e error) {
+		if err != nil {
+			return
 		}
+		err = e
+	}
+	for _, opt := range me.options {
+		setErr(opt.err)
 	}
 	for _, arg := range me.arguments {
-		if arg.err != nil {
-			return arg.err
-		}
+		setErr(arg.err)
 	}
-	return nil
+	for _, grp := range me.groups {
+		setErr(grp.err)
+	}
+	return err
 }
 
 // Option returns a new option with the given names.
