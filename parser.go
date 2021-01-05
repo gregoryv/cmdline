@@ -86,9 +86,14 @@ func (me *Group) New(name string, any interface{}) *Item {
 
 // Selected returns the matching item. Defaults to the first in the group.
 func (me *Group) Selected() interface{} {
-	i, found := me.find(me.v)
-	if !found {
-		i = me.items[0]
+	i := me.items[0]
+	if me.v != "" {
+		var found bool
+		i, found = me.find(me.v)
+		if !found {
+			me.err = fmt.Errorf("invalid %s", me.title)
+			return nil
+		}
 	}
 	extra := NewParser(append([]string{me.title}, me.args...)...)
 	sel := i.Load(extra)
