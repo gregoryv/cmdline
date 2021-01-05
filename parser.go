@@ -42,6 +42,7 @@ func (me *Parser) Group(title, name string, items ...*Item) *Group {
 
 func (me *Parser) group(title, name, v string, items []*Item) *Group {
 	grp := &Group{
+		name:  name,
 		args:  me.Args(),
 		title: title,
 		v:     v,
@@ -66,6 +67,7 @@ func (me *Parser) addGroup(grp *Group) error {
 }
 
 type Group struct {
+	name string
 	args []string // needed for parsing extra options
 
 	title string
@@ -91,7 +93,7 @@ func (me *Group) Selected() interface{} {
 		var found bool
 		i, found = me.find(me.v)
 		if !found {
-			me.err = fmt.Errorf("invalid %s", me.title)
+			me.err = fmt.Errorf("invalid %s", me.name)
 			return nil
 		}
 	}
