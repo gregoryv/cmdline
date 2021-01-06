@@ -44,8 +44,8 @@ func (opt *Option) Int(def int) int {
 // IntOpt returns int value from the arguments or the given default value.
 func (opt *Option) IntOpt(def int) (int, *Option) {
 	opt.setDefault(def)
-	v, found := opt.stringArg()
-	if !found {
+	v, err := opt.stringArg()
+	if err != nil {
 		return def, opt
 	}
 	iv, err := strconv.Atoi(v)
@@ -79,8 +79,12 @@ func (opt *Option) Uint(def uint64) uint64 {
 // UintOpt returns an unsigned int option
 func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 	opt.setDefault(def)
-	v, found := opt.stringArg()
-	if !found {
+	v, err := opt.stringArg()
+	if err != nil {
+		opt.fail()
+		return def, opt
+	}
+	if v == "" {
 		return def, opt
 	}
 	iv, err := strconv.ParseUint(v, 0, 64)
@@ -101,18 +105,22 @@ func (opt *Option) String(def string) string {
 func (opt *Option) StringOpt(def string) (string, *Option) {
 	opt.setDefault(def)
 	opt.quoteValue = true
-	v, found := opt.stringArg()
-	if !found {
+	// todo , have to distinquish between option not found and value not found
+	v, err := opt.stringArg()
+	if err != nil {
 		opt.fail()
 		return def, opt
 	}
 	if isOption(v) {
 		opt.fail()
 	}
+	if v == "" {
+		return def, opt
+	}
 	return v, opt
 }
 
-func (opt *Option) stringArg() (string, bool) {
+func (opt *Option) stringArg() (string, error) {
 	for i, arg := range opt.args {
 		if opt.match(arg) {
 			opt.argIndex = i
@@ -120,18 +128,19 @@ func (opt *Option) stringArg() (string, bool) {
 			// argument is -i=value
 			eqIndex := strings.Index(arg, "=")
 			if eqIndex > 0 {
-				return arg[eqIndex+1:], true
+				return arg[eqIndex+1:], nil
 			}
 			isLast := len(opt.args)-1 == i
 			if isLast {
-				return "", false
+				opt.fail()
+				return "", fmt.Errorf("missing value")
 			}
 			opt.valIndex = i + 1
 			// argument is -i
-			return opt.args[i+1], true
+			return opt.args[i+1], nil
 		}
 	}
-	return "", false
+	return "", nil
 }
 
 func (opt *Option) match(arg string) bool {
@@ -166,8 +175,8 @@ func (opt *Option) Bool() bool {
 	return val
 }
 
-// BoolOpt returns bool value from the arguments or the given default value.
-// The Option is returned for more configuration.
+// BoolOpt returns bool value from the arguments or the given default
+// value. The Option is returned for more configuration.
 func (opt *Option) BoolOpt() (bool, *Option) {
 	opt.setDefault(false)
 	v := opt.boolArg()

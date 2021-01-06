@@ -2,20 +2,26 @@ package cmdline
 
 import (
 	"testing"
-
-	"github.com/gregoryv/asserter"
 )
 
-func Test_default_string_option(t *testing.T) {
-	cli := Parse("mycmd")
-	got := cli.Option("-b").String("default")
-	if got != "default" {
-		t.Error("unexpected:", got)
+func Test_without_options(t *testing.T) {
+	cli := Parse("cmd")
+	cli.Option("-b").String("default")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_non_options(t *testing.T) {
+	cli := Parse("cmd qwark")
+	cli.Flag("-h")
+	if !cli.Ok() {
+		t.Error(cli.Error())
 	}
 }
 
 func Test_missing_string_option(t *testing.T) {
-	cli := Parse("mycmd -a -b=1")
+	cli := Parse("cmd -a -b=1")
 	got := cli.Option("-a").String("")
 	cli.Option("-b").Int(0)
 	if cli.Ok() {
@@ -24,56 +30,73 @@ func Test_missing_string_option(t *testing.T) {
 }
 
 func Test_quoted_string_option(t *testing.T) {
-	cli := Parse(`mycmd -a "-b=1"`)
+	cli := Parse(`cmd -a "-b=1"`)
 	got := cli.Option("-a").String("")
 	if !cli.Ok() {
 		t.Error(cli.Error(), got)
 	}
 }
 
-func TestOption(t *testing.T) {
-	assert := asserter.New(t)
-
-	var (
-		cli     = Parse("countstars -verbose -min 1 -filter alien -last")
-		min     = cli.Option("-min")
-		verbose = cli.Option("-verbose")
-		max     = cli.Option("-max")
-		last    = cli.Option("-last")
-		ux      = cli.Option("-ux")
-	)
-
-	assert().Equals(ux.Uint8(8), uint8(8))
-	assert().Equals(ux.Uint16(16), uint16(16))
-	assert().Equals(ux.Uint32(32), uint32(32))
-
-	assert().Equals(min.Uint(2), uint64(1))
-	assert().Equals(verbose.Uint(2), uint64(0))
-	assert().Equals(max.Uint(2), uint64(2))
-	//assert().Equals(last.Uint(2), uint64(0))
-
-	assert().Equals(min.Int(2), 1)
-	assert().Equals(verbose.Int(2), 0)
-	assert().Equals(max.Int(2), 2)
-
-	assert().Equals(min.Bool(), true)
-	assert().Equals(verbose.Bool(), true)
-	assert().Equals(max.Bool(), false)
-
-	assert().Equals(min.String("s"), "1")
-	assert().Equals(verbose.String("s"), "-min")
-	assert(verbose.err != nil).Error(verbose.err)
-
-	assert().Equals(max.String("s"), "s")
-
-	// fixme
-	//assert().Equals(last.String("s"), "")
-	//assert(last.err != nil).Error(last.err)
-	_ = last
+func Test_default_uint8_option(t *testing.T) {
+	cli := Parse("cmd")
+	got := cli.Option("-a").Uint8(8)
+	if got != 8 {
+		t.Error("unexpected:", got)
+	}
 }
 
-func TestOption_String(t *testing.T) {
-	got := NewOption("-n", "-n", "john").String("doe")
-	assert := asserter.New(t)
-	assert().Equals(got, "john")
+func Test_default_uin16_option(t *testing.T) {
+	cli := Parse("cmd")
+	got := cli.Option("-a").Uint16(16)
+	if got != 16 {
+		t.Error("unexpected:", got)
+	}
+}
+
+func Test_default_uin32_option(t *testing.T) {
+	cli := Parse("cmd")
+	got := cli.Option("-a").Uint32(32)
+	if got != 32 {
+		t.Error("unexpected:", got)
+	}
+}
+
+func Test_default_uint_option(t *testing.T) {
+	cli := Parse("cmd")
+	got := cli.Option("-a").Uint(99)
+	if got != 99 {
+		t.Error("unexpected:", got)
+	}
+}
+
+func Test_missing_uint_option(t *testing.T) {
+	cli := Parse("cmd -a")
+	cli.Option("-a").Uint(0)
+	if cli.Ok() {
+		t.Fail()
+	}
+}
+
+func Test_bad_uint_option(t *testing.T) {
+	cli := Parse("cmd -a v")
+	cli.Option("-a").Uint(0)
+	if cli.Ok() {
+		t.Fail()
+	}
+}
+
+func Test_missing_int_option(t *testing.T) {
+	cli := Parse("cmd -a")
+	cli.Option("-a").Int(0)
+	if cli.Ok() {
+		t.Fail()
+	}
+}
+
+func Test_default_bool_option(t *testing.T) {
+	cli := Parse("cmd")
+	got := cli.Option("-h").Bool()
+	if got == true {
+		t.Error("unexpected:", got)
+	}
 }
