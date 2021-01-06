@@ -3,6 +3,7 @@ package cmdline
 import (
 	"bytes"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -87,14 +88,25 @@ func TestParser_New_panic(t *testing.T) {
 }
 
 func TestParser_Error(t *testing.T) {
-	ok, bad := asserter.NewErrors(t)
-	ok(Parse("cmd").Error())
+	_, bad := asserter.NewErrors(t)
+
 	bad(Parse("mycmd -h").Error())
 	bad(Parse("mycmd -nosuch").Error())
 
 	cli := Parse("cmd -i=k")
 	cli.Option("-i").Int(10)
 	bad(cli.Error())
+}
+
+func Test_Parser_reports_first_error(t *testing.T) {
+	cli := Parse("cmd -a=notint -b=1 -c=notint")
+	cli.Option("-a").Int(0)
+	cli.Option("-b").Int(0)
+	cli.Option("-c").Int(0)
+	err := cli.Error()
+	if !strings.Contains(err.Error(), "-a") {
+		t.Error(err)
+	}
 }
 
 func Test_flags(t *testing.T) {

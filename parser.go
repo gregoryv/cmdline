@@ -129,11 +129,9 @@ func (me *Parser) Error() error {
 	if err != nil {
 		return err
 	}
-	if len(me.groups) == 0 {
-		for _, arg := range me.Args() {
-			if isOption(arg) {
-				return fmt.Errorf("Unknown option: %v", arg)
-			}
+	for _, arg := range me.Args() {
+		if isOption(arg) {
+			return fmt.Errorf("Unknown option: %v", arg)
 		}
 	}
 	return nil
