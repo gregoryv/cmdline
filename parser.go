@@ -116,11 +116,6 @@ func (me *Group) find(name string) (*Item, bool) {
 	return nil, false
 }
 
-type WithExtraOptions interface {
-	// ExtraOptions is used to parse extra options for a grouped item
-	ExtraOptions(*Parser)
-}
-
 // ----------------------------------------
 
 // Ok returns true if no parsing error occured

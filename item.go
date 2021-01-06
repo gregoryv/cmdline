@@ -5,7 +5,8 @@ type Item struct {
 	Loader interface{}
 }
 
-// Load
+// Load returns the item with extra options if it implements
+// WithExtraOptions interface.
 func (me *Item) Load(p *Parser) interface{} {
 	switch l := me.Loader.(type) {
 	case func(*Parser) interface{}:
@@ -16,4 +17,9 @@ func (me *Item) Load(p *Parser) interface{} {
 	default:
 		return l
 	}
+}
+
+type WithExtraOptions interface {
+	// ExtraOptions is used to parse extra options for a grouped item
+	ExtraOptions(*Parser)
 }
