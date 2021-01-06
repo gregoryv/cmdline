@@ -101,7 +101,11 @@ func (opt *Option) String(def string) string {
 func (opt *Option) StringOpt(def string) (string, *Option) {
 	opt.setDefault(def)
 	opt.quoteValue = true
-	v, _ := opt.stringArg()
+	v, found := opt.stringArg()
+	if !found {
+		opt.fail()
+		return def, opt
+	}
 	if v == "" {
 		return def, opt
 	}

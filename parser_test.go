@@ -2,51 +2,83 @@ package cmdline
 
 import (
 	"bytes"
-	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/gregoryv/asserter"
-	"github.com/gregoryv/golden"
 )
 
-func TestParser_AddGroup_twice(t *testing.T) {
+func Test_parser_constructor_panics(t *testing.T) {
+	defer expectPanic(t)
+	NewParser()
+}
+
+func Test_groups_are_unique(t *testing.T) {
+	defer expectPanic(t)
 	cli := Parse("ls -h")
 	cli.Group("actions", "selected")
-	defer catchPanic(t)
 	cli.Group("actions", "x")
 }
 
-func catchPanic(t *testing.T) {
+func expectPanic(t *testing.T) {
 	t.Helper()
-	e := recover()
-	if e == nil {
+	if e := recover(); e == nil {
 		t.Error("should panic")
 	}
 }
 
-func TestParser_Ok(t *testing.T) {
-	cli := Parse("ls -r .")
-	cli.Flag("-r")
+func Test_no_arguments_is_ok(t *testing.T) {
+	cli := Parse("ls")
 	if !cli.Ok() {
 		t.Error("unexpected:", cli.Error())
 	}
 }
 
-func TestParser_not_Ok(t *testing.T) {
-	args := "ls -r ."
-	cli := Parse(args)
-	cli.Option("-v").String("")
-	phrases := cli.Group("Phrases", "PHRASE")
-	phrases.New("hello", nil)
-	phrases.Selected()
+func Test_missing_last_value(t *testing.T) {
+	cli := Parse("mycmd -a=1 -b")
+	cli.Option("-a").Int(0)
+	cli.Option("-b").String("")
 	if cli.Ok() {
-		t.Log(cli.Error())
-		t.Errorf("%q was ok, but -r is not defined", args)
+		t.Fail()
 	}
 }
 
-func TestParser_Required(t *testing.T) {
+func Test_parser_string_option(t *testing.T) {
+	cli := Parse("mycmd -a=1 -b=k")
+	cli.Option("-a").Int(0)
+	got := cli.Option("-b").String("")
+	if got != "k" {
+		t.Fail()
+	}
+}
+
+func Test_default_string_option(t *testing.T) {
+	cli := Parse("mycmd")
+	got := cli.Option("-b").String("d")
+	if got != "d" {
+		t.Fail()
+	}
+}
+
+func Test_single_group_item_is_selected(t *testing.T) {
+	cli := Parse("mycmd hello")
+	phrases := cli.Group("Phrases", "PHRASE")
+	phrases.New("hello", nil)
+	phrases.Selected()
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_unknown_group_item(t *testing.T) {
+	cli := Parse("mycmd car")
+	nouns := cli.Group("Nouns", "NOUN")
+	nouns.New("plane", nil)
+	nouns.Selected()
+	if cli.Ok() {
+		t.Error("should fail")
+	}
+}
+
+func Test_required_argument(t *testing.T) {
 	cli := Parse("mkdir")
 	cli.Required("DIR")
 	if cli.Ok() {
@@ -54,48 +86,12 @@ func TestParser_Required(t *testing.T) {
 	}
 }
 
-func TestParser_Optional(t *testing.T) {
+func Test_optional_argument(t *testing.T) {
 	cli := Parse("ls")
 	cli.Optional("DIR")
 	if !cli.Ok() {
 		t.Error("unexpected:", cli.Error())
 	}
-}
-func TestParser_Usage(t *testing.T) {
-	cli := NewParser("adduser")
-	cli.Flag("-n, --dry-run")
-	_, opt := cli.Option("--uid").IntOpt(0)
-	opt.Doc(
-		"user id to set on the new account",
-		"If not given, one is generated",
-	)
-	cli.Option("-p, --password").String("")
-	cli.Required("USERNAME").String()
-
-	var buf bytes.Buffer
-	cli.WriteUsageTo(&buf)
-	golden.Assert(t, buf.String())
-}
-
-func TestParser_New_panic(t *testing.T) {
-	defer func() {
-		e := recover()
-		if e == nil {
-			t.Error("Should panic on empty args")
-		}
-	}()
-	NewParser()
-}
-
-func TestParser_Error(t *testing.T) {
-	_, bad := asserter.NewErrors(t)
-
-	bad(Parse("mycmd -h").Error())
-	bad(Parse("mycmd -nosuch").Error())
-
-	cli := Parse("cmd -i=k")
-	cli.Option("-i").Int(10)
-	bad(cli.Error())
 }
 
 func Test_Parser_reports_first_error(t *testing.T) {
@@ -109,33 +105,46 @@ func Test_Parser_reports_first_error(t *testing.T) {
 	}
 }
 
-func Test_flags(t *testing.T) {
-	args := "x -h a b"
-	cli := Parse(args)
-	if !cli.Flag("-h") {
-		t.Errorf("-h failed for %q", args)
-	}
-	if cli.Flag("--h") {
-		t.Errorf("--h was ok for %q", args)
-	}
-	got := cli.Args()
-	if !reflect.DeepEqual(got, []string{"a", "b"}) {
-		t.Error(got)
+func Test_usage_output_with_extended_docs(t *testing.T) {
+	cli := NewParser("adduser")
+	cli.Flag("-n, --dry-run")
+	_, opt := cli.Option("--uid").IntOpt(0)
+	opt.Doc(
+		"user id to set on the new account",
+		"If not given, one is generated",
+	)
+	cli.Option("-p, --password").String("")
+	cli.Required("USERNAME").String()
+
+	var buf bytes.Buffer
+	cli.WriteUsageTo(&buf)
+	got := buf.String()
+	if !strings.Contains(got, "one is generated") {
+		t.Error("incomplete")
+		t.Log(got)
 	}
 }
 
-func TestParser_Arg(t *testing.T) {
-	cli := Parse("cp -i 1 /etc")
-	cli.Option("-i").Int(0)
-	assert := asserter.New(t)
-	arg1 := cli.Required("FROM").String()
-	assert().Equals(arg1, "/etc")
-	arg2 := cli.Required("TO").String()
-	assert().Equals(arg2, "")
+func Test_invalid_int_argument(t *testing.T) {
+	cli := Parse("cmd -i=k")
+	cli.Option("-i").Int(10)
+	if cli.Ok() {
+		t.Error("should fail")
+	}
+}
+
+func Test_undefined_option(t *testing.T) {
+	cli := Parse("cmd -nosuch")
+	if cli.Ok() {
+		t.Error("should fail")
+	}
 }
 
 func Test_stringer(t *testing.T) {
-	cli := Parse("mycmd -help -i=4")
-	assert := asserter.New(t)
-	assert().Contains(cli.String(), "mycmd -help -i=4")
+	exp := "mycmd -help -i=4"
+	cli := Parse(exp)
+	got := cli.String()
+	if !strings.Contains(got, exp) {
+		t.Error("\n", exp, "\n", got)
+	}
 }
