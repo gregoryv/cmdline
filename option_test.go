@@ -6,6 +6,31 @@ import (
 	"github.com/gregoryv/asserter"
 )
 
+func Test_default_string_option(t *testing.T) {
+	cli := Parse("mycmd")
+	got := cli.Option("-b").String("default")
+	if got != "default" {
+		t.Error("unexpected:", got)
+	}
+}
+
+func Test_missing_string_option(t *testing.T) {
+	cli := Parse("mycmd -a -b=1")
+	got := cli.Option("-a").String("")
+	cli.Option("-b").Int(0)
+	if cli.Ok() {
+		t.Error("should fail:", got)
+	}
+}
+
+func Test_quoted_string_option(t *testing.T) {
+	cli := Parse(`mycmd -a "-b=1"`)
+	got := cli.Option("-a").String("")
+	if !cli.Ok() {
+		t.Error(cli.Error(), got)
+	}
+}
+
 func TestOption(t *testing.T) {
 	assert := asserter.New(t)
 

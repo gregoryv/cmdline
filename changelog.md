@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Fix issue with missing string values, eg. "-str -flag" fails instead
+  of using "-flag" as the value.
 - Fail if unknown option is given even if groups are present
 
 ## [0.4.2] 2020-11-27

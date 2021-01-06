@@ -50,14 +50,6 @@ func Test_parser_string_option(t *testing.T) {
 	}
 }
 
-func Test_default_string_option(t *testing.T) {
-	cli := Parse("mycmd")
-	got := cli.Option("-b").String("d")
-	if got != "d" {
-		t.Fail()
-	}
-}
-
 func Test_single_group_item_is_selected(t *testing.T) {
 	cli := Parse("mycmd hello")
 	phrases := cli.Group("Phrases", "PHRASE")

@@ -106,13 +106,12 @@ func (opt *Option) StringOpt(def string) (string, *Option) {
 		opt.fail()
 		return def, opt
 	}
-	if v == "" {
-		return def, opt
+	if isOption(v) {
+		opt.fail()
 	}
 	return v, opt
 }
 
-// todo rewrite to return string and error
 func (opt *Option) stringArg() (string, bool) {
 	for i, arg := range opt.args {
 		if opt.match(arg) {
