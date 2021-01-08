@@ -85,6 +85,14 @@ func Test_bad_uint_option(t *testing.T) {
 	}
 }
 
+func Test_default_int_option(t *testing.T) {
+	cli := Parse("cmd")
+	got := cli.Option("-a").Int(99)
+	if got != 99 {
+		t.Error("unexpected:", got)
+	}
+}
+
 func Test_missing_int_option(t *testing.T) {
 	cli := Parse("cmd -a")
 	cli.Option("-a").Int(0)

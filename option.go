@@ -46,6 +46,10 @@ func (opt *Option) IntOpt(def int) (int, *Option) {
 	opt.setDefault(def)
 	v, err := opt.stringArg()
 	if err != nil {
+		opt.fail()
+		return def, opt
+	}
+	if v == "" {
 		return def, opt
 	}
 	iv, err := strconv.Atoi(v)
