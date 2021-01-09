@@ -26,8 +26,8 @@ This package fixes opinionated issues with using the flag package.
             help     = cli.Flag("-h, --help")
     
             // parse and name non options
-            username = cli.Required("USERNAME").String()
-            note     = cli.Optional("NOTE").String()
+            username = cli.Required("USERNAME").String("")
+            note     = cli.Optional("NOTE").String("")
         )
     
         switch {

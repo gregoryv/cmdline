@@ -37,7 +37,7 @@ type Parser struct {
 // ----------------------------------------
 
 func (me *Parser) Group(title, name string, items ...*Item) *Group {
-	return me.group(title, name, me.Optional(name).String(), items)
+	return me.group(title, name, me.Optional(name).String(""), items)
 }
 
 func (me *Parser) group(title, name, v string, items []*Item) *Group {
@@ -291,7 +291,7 @@ func (me *Parser) Required(name string) *Argument {
 	return arg
 }
 
-// Optional returns a required named argument.
+// Optional returns an optional  named argument.
 func (me *Parser) Optional(name string) *Argument {
 	arg := &Argument{
 		name: name,
@@ -309,4 +309,9 @@ type Argument struct {
 }
 
 // String returns the value of this argument
-func (me *Argument) String() string { return me.v }
+func (me *Argument) String(def string) string {
+	if me.v == "" {
+		return def
+	}
+	return me.v
+}

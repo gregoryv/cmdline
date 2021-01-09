@@ -20,8 +20,8 @@ func run(w io.Writer, args ...string) {
 		help     = cli.Flag("-h, --help")
 
 		// parse and name non options
-		username = cli.Required("USERNAME").String()
-		note     = cli.Optional("NOTE").String()
+		username = cli.Required("USERNAME").String("")
+		note     = cli.Optional("NOTE").String("")
 	)
 
 	switch {
