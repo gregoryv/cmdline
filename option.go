@@ -200,3 +200,29 @@ func (opt *Option) boolArg() bool {
 func (opt *Option) fail() {
 	opt.err = fmt.Errorf("Invalid option: %s", opt.names)
 }
+
+// ---------------------------------------- Float64 returns float64
+// value from the arguments or the given default value.
+func (opt *Option) Float64(def float64) float64 {
+	v, _ := opt.Float64Opt(def)
+	return v
+}
+
+// Float64Opt returns float64 value from the arguments or the given
+// default value.
+func (opt *Option) Float64Opt(def float64) (float64, *Option) {
+	opt.setDefault(def)
+	v, err := opt.stringArg()
+	if err != nil {
+		opt.fail()
+		return def, opt
+	}
+	if v == "" {
+		return def, opt
+	}
+	iv, err := strconv.ParseFloat(v, 64)
+	if err != nil {
+		opt.fail()
+	}
+	return iv, opt
+}

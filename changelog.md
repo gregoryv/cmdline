@@ -4,8 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [0.5.0] 2021-02-11
 
+- Add Float64 options
 - Argument.String() takes default value
 - Fix issue with missing string values, eg. "-str -flag" fails instead
   of using "-flag" as the value.

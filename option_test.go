@@ -108,3 +108,27 @@ func Test_default_bool_option(t *testing.T) {
 		t.Error("unexpected:", got)
 	}
 }
+
+func Test_default_float64_option(t *testing.T) {
+	cli := Parse("cmd")
+	got := cli.Option("-min").Float64(0.1)
+	if got != 0.1 {
+		t.Error("unexpected:", got)
+	}
+}
+
+func Test_missing_float64_option(t *testing.T) {
+	cli := Parse("cmd -min")
+	got := cli.Option("-min").Float64(0.1)
+	if got != 0.1 {
+		t.Error("unexpected:", got)
+	}
+}
+
+func Test_bad_float64_option(t *testing.T) {
+	cli := Parse("cmd -min bad")
+	got := cli.Option("-min").Float64(0.1)
+	if got != 0.0 {
+		t.Error("unexpected:", got)
+	}
+}
