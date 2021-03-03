@@ -4,7 +4,7 @@
 
 
 
-Package [cmdline](https:/godoc.org/pkg/github.com/gregoryv/cmdline) provides a means to parse command line arguments.
+Package [cmdline](https://pkg.go.dev/pkg/github.com/gregoryv/cmdline) provides a means to parse command line arguments.
 
 This package fixes opinionated issues with using the flag package.
 

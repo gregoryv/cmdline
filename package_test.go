@@ -64,8 +64,8 @@ func replaceLeft(s, text string) string {
 
 func godoc(project string) *Element {
 	var (
-		base = "https://godoc.org/pkg/"
-		href = path.Join(base, "github.com", project)
+		base = "https://pkg.go.dev/pkg/"
+		href = base + path.Join("github.com", project)
 		text = path.Base(project)
 	)
 	return A(Href(href), text)
