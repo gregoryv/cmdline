@@ -1,9 +1,9 @@
 module github.com/gregoryv/cmdline
 
-go 1.12
+go 1.16
 
 require (
-	github.com/gregoryv/asserter v0.4.0
+	github.com/gregoryv/asserter v0.4.0 // indirect
 	github.com/gregoryv/find v0.2.0 // indirect
 	github.com/gregoryv/gocyclo v0.1.0 // indirect
 	github.com/gregoryv/nexus v0.4.0 // indirect
