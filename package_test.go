@@ -1,21 +1,14 @@
 package cmdline_test
 
 import (
-	"bufio"
-	"bytes"
 	"path"
-	"strings"
 	"testing"
 
 	. "github.com/gregoryv/web"
-	"github.com/gregoryv/web/files"
 )
 
 func Test_generate_readme(t *testing.T) {
 	project := "gregoryv/cmdline"
-
-	var usage bytes.Buffer
-	run(&usage, "adduser", "-h")
 
 	body := Body(
 		travisBadge(project),
@@ -35,31 +28,11 @@ func Test_generate_readme(t *testing.T) {
 			Li("Skip pointer variations"),
 			Li("Include required arguments"),
 		),
-
-		H2("Example"),
-		Pre(
-			strings.ReplaceAll(
-				files.MustLoadLines("example_test.go", 15, 1),
-				"\t", "    ",
-			),
-		),
-		P("Output"),
-		Pre(usage.String()),
 	)
 	page := NewFile("README.md",
 		Html(body),
 	)
 	page.SaveTo(".")
-}
-
-func replaceLeft(s, text string) string {
-	var sb strings.Builder
-	scanner := bufio.NewScanner(strings.NewReader(text))
-	for scanner.Scan() {
-		sb.WriteString(strings.Replace(scanner.Text(), s, "", 1))
-		sb.WriteString("\n")
-	}
-	return sb.String()
 }
 
 func godoc(project string) *Element {
