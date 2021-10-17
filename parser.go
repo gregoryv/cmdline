@@ -17,14 +17,18 @@ func NewBasicParser() *Basic {
 type Basic struct {
 	*Parser
 
-	sync.Once
-	help bool
+	sync.Once // used to parse the help flag only once
+	help      bool
 }
 
 // Parse checks for errors or if the help flag is given writes usage
 // to os.Stdout
 func (me *Basic) Parse() {
-	me.Parser.Parse()
+	if !me.Ok() {
+		log.Println(me.Error())
+		log.Println("Try -h or --help, for more information")
+		me.exit(1)
+	}
 	me.Once.Do(me.helpFlag)
 	if me.help {
 		me.WriteUsageTo(os.Stdout)
