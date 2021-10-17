@@ -4,7 +4,6 @@ package cmdline
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
 	"sync"
@@ -25,13 +24,13 @@ type Basic struct {
 // Parse checks for errors or if the help flag is given writes usage
 // to os.Stdout
 func (me *Basic) Parse() {
-	if !me.Ok() {
-		log.Println(me.Error())
-		log.Println("Try -h or --help, for more information")
-		me.exit(1)
-	}
 	me.Once.Do(me.helpFlag)
-	if me.help {
+	switch {
+	case !me.Ok():
+		fmt.Println(me.Error())
+		fmt.Println("Try -h or --help, for more information")
+		me.exit(1)
+	case me.help:
 		me.WriteUsageTo(os.Stdout)
 		me.exit(0)
 	}
@@ -75,7 +74,7 @@ type Parser struct {
 // Parse checks parsing errors and exits on errors
 func (me *Parser) Parse() {
 	if !me.Ok() {
-		log.Println(me.Error())
+		fmt.Println(me.Error())
 		me.exit(1)
 	}
 }

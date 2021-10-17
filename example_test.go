@@ -49,3 +49,15 @@ func ExampleNewParser() {
 	// use options ...
 	fmt.Fprintln(os.Stdout, uid, username, password, note)
 }
+
+func ExampleNewBasicParser_help() {
+	cli := cmdline.NewBasicParser()
+	cli.SetArgs("adduser", "-no-such")
+	cli.SetExit(func(int) {})
+	cli.Parse()
+
+	// output:
+	// Unknown option: -no-such
+	// Try -h or --help, for more information
+
+}
