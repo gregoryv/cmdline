@@ -1,3 +1,4 @@
+// Package cmdline provides a way to parse command line arguments.
 package cmdline
 
 import (
