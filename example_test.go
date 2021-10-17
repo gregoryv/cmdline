@@ -7,7 +7,23 @@ import (
 	"github.com/gregoryv/cmdline"
 )
 
-func Example() {
+func ExampleNewBasicParser() {
+	var (
+		cli      = cmdline.NewBasicParser()
+		uid      = cli.Option("--uid", "Generated if not given").Int(0)
+		password = cli.Option("-p, --password, $PASSWORD").String("")
+
+		// parse and name non options
+		username = cli.Required("USERNAME").String("")
+		note     = cli.Optional("NOTE").String("")
+	)
+	cli.Parse()
+
+	// use options ...
+	fmt.Fprintln(os.Stdout, uid, username, password, note)
+}
+
+func ExampleNewParser() {
 	var (
 		cli      = cmdline.NewParser()
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)

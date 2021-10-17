@@ -7,12 +7,12 @@ import (
 	"github.com/gregoryv/cmdline"
 )
 
-func Example_help() {
+func ExampleParser_WriteUsageTo() {
+	cli := cmdline.NewBasicParser()
+	cli.SetArgs("speak")
 	var (
-		cli  = cmdline.Parse("speak -h")
-		_    = cli.Flag("-n, --dry-run")
-		_    = cli.Option("-u, --username, $USER").String("")
-		help = cli.Flag("-h, --help")
+		_ = cli.Flag("-n, --dry-run")
+		_ = cli.Option("-u, --username, $USER").String("")
 
 		// Group items
 		phrases = cli.Group("Phrases", "PHRASE")
@@ -29,20 +29,9 @@ func Example_help() {
 
 		// Implementing the WithExtraOptions interface
 		_ = phrases.New("compliment", &Compliment{})
-
-		phrase = phrases.Selected()
 	)
+	cli.WriteUsageTo(os.Stdout)
 
-	if help {
-		cli.WriteUsageTo(os.Stdout)
-		return
-	}
-	if !cli.Ok() {
-		fmt.Println(cli.Error())
-		return
-	}
-
-	phrase.(runnable).Run()
 	// output:
 	// Usage: speak [OPTIONS] [PHRASE]
 	//
