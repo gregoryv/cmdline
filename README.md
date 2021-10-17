@@ -27,13 +27,8 @@ This package is different from the builtin package flag.
     )
     
     func Example() {
-    	os.Setenv("PASSWORD", "secret")
-    
     	var (
-    		cli = cmdline.NewParser(
-    			// os.Args...
-    			"adduser", "--uid", "100", "john", "x91",
-    		)
+    		cli      = cmdline.NewParser()
     		uid      = cli.Option("--uid", "Generated if not given").Int(0)
     		password = cli.Option("-p, --password, $PASSWORD").String("")
     		help     = cli.Flag("-h, --help")
@@ -54,9 +49,8 @@ This package is different from the builtin package flag.
     		os.Exit(1)
     	}
     
+    	// use options ...
     	fmt.Fprintln(os.Stdout, uid, username, password, note)
-    	// output:
-    	// 100 john secret x91
     }
     
 

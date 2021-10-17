@@ -11,6 +11,7 @@ func Example_help() {
 	var (
 		cli  = cmdline.Parse("speak -h")
 		_    = cli.Flag("-n, --dry-run")
+		_    = cli.Option("-u, --username, $USER").String("")
 		help = cli.Flag("-h, --help")
 
 		// Group items
@@ -47,6 +48,7 @@ func Example_help() {
 	//
 	// Options
 	//     -n, --dry-run
+	//     -u, --username, $USER : ""
 	//     -h, --help
 	//
 	// Phrases

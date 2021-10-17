@@ -10,17 +10,16 @@ import (
 // Parse returns a parser from a string starting with the command
 // followed by arguments.
 func Parse(str string) *Parser {
-	return NewParser(strings.Split(str, " ")...)
+	p := NewParser()
+	p.SetArgs(strings.Split(str, " ")...)
+	return p
 }
 
-// NewParser returns a parser, usually called with
-// cmdline.New(os.Args...).  First argument must be the command name
-func NewParser(args ...string) *Parser {
-	if len(args) == 0 {
-		panic("New() missing args")
-	}
+// NewParser returns a parser. First argument must be the command
+// name.
+func NewParser() *Parser {
 	return &Parser{
-		args:    args,
+		args:    os.Args,
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
 		envMap:  os.Getenv,
@@ -39,6 +38,8 @@ type Parser struct {
 }
 
 // ----------------------------------------
+
+func (me *Parser) SetArgs(args ...string) { me.args = args }
 
 func (me *Parser) Group(title, name string, items ...*Item) *Group {
 	return me.group(title, name, me.Optional(name).String(""), items)
@@ -101,7 +102,8 @@ func (me *Group) Selected() interface{} {
 			return nil
 		}
 	}
-	extra := NewParser(append([]string{me.title}, me.args...)...)
+	extra := NewParser()
+	extra.args = append([]string{me.title}, me.args...)
 	sel := i.Load(extra)
 	me.err = extra.Error()
 	return sel
@@ -218,7 +220,8 @@ func writeItem(w io.Writer, me *Item, args []string, indent string, dflt bool) {
 	} else {
 		fmt.Fprintf(w, "%s%s\n", indent, me.Name)
 	}
-	extra := NewParser(args...)
+	extra := NewParser()
+	extra.args = args
 	me.Load(extra)
 	extra.writeOptionsTo(w, indent)
 }

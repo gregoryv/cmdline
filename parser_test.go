@@ -2,13 +2,17 @@ package cmdline
 
 import (
 	"bytes"
+	"os"
+	"reflect"
 	"strings"
 	"testing"
 )
 
-func Test_parser_constructor_panics(t *testing.T) {
-	defer expectPanic(t)
-	NewParser()
+func Test_parser_constructor_uses_osArgs(t *testing.T) {
+	p := NewParser()
+	if !reflect.DeepEqual(p.args, os.Args) {
+		t.Fail()
+	}
 }
 
 func Test_groups_are_unique(t *testing.T) {
@@ -98,7 +102,8 @@ func Test_Parser_reports_first_error(t *testing.T) {
 }
 
 func Test_usage_output_with_extended_docs(t *testing.T) {
-	cli := NewParser("adduser")
+	cli := NewParser()
+	cli.args = []string{"adduser"}
 	cli.Flag("-n, --dry-run")
 	_, opt := cli.Option("--uid").IntOpt(0)
 	opt.Doc(
