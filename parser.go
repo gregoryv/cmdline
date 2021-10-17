@@ -3,6 +3,7 @@ package cmdline
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 )
@@ -15,6 +16,7 @@ func NewParser() *Parser {
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
 		envMap:  os.Getenv,
+		exit:    os.Exit,
 	}
 }
 
@@ -27,11 +29,19 @@ type Parser struct {
 	groups []*Group
 
 	envMap func(string) string
+	exit   func(int)
 }
 
-// ----------------------------------------
+// Parse checks parsing errors and exits on errors
+func (me *Parser) Parse() {
+	if !me.Ok() {
+		log.Println(me.Error())
+		me.exit(1)
+	}
+}
 
 func (me *Parser) SetArgs(args ...string) { me.args = args }
+func (me *Parser) SetExit(v func(int))    { me.exit = v }
 
 func (me *Parser) Group(title, name string, items ...*Item) *Group {
 	return me.group(title, name, me.Optional(name).String(""), items)

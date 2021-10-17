@@ -8,6 +8,20 @@ import (
 	"testing"
 )
 
+func Test_parser_checks_errors(t *testing.T) {
+	cli := NewParser()
+	cli.SetArgs("test", "-no-such")
+	var code int
+	cli.SetExit(func(v int) { code = v })
+	var (
+		_ = cli.Flag("-h, --help")
+	)
+	cli.Parse()
+	if code != 1 {
+		t.Error("exit code:", code)
+	}
+}
+
 func Test_parser_constructor_uses_osArgs(t *testing.T) {
 	p := NewParser()
 	if !reflect.DeepEqual(p.args, os.Args) {
