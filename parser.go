@@ -6,7 +6,42 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 )
+
+// NewBasicParser returns a parser including help options -h, --help.
+func NewBasicParser() *Basic {
+	return &Basic{Parser: NewParser()}
+}
+
+type Basic struct {
+	*Parser
+
+	sync.Once
+	help bool
+}
+
+// Parse checks for errors or if the help flag is given writes usage
+// to os.Stdout
+func (me *Basic) Parse() {
+	me.Parser.Parse()
+	me.Once.Do(me.helpFlag)
+	if me.help {
+		me.WriteUsageTo(os.Stdout)
+		me.exit(0)
+	}
+}
+
+func (me *Basic) WriteUsageTo(w io.Writer) {
+	me.Once.Do(me.helpFlag)
+	me.Parser.WriteUsageTo(w)
+}
+
+func (me *Basic) helpFlag() {
+	me.help = me.Flag("-h, --help")
+}
+
+// ----------------------------------------
 
 // NewParser returns a parser. First argument must be the command
 // name.

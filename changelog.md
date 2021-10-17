@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Add NewBasicParser to simplify parsers using -h, --help for usage
 - Add method Parser.Parse with default error checking
 - Remove func Parse
 - NewParser defaults to using os.Args if none are given

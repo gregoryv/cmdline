@@ -2,11 +2,24 @@ package cmdline
 
 import (
 	"bytes"
+	"io/ioutil"
+	"log"
 	"os"
 	"reflect"
 	"strings"
 	"testing"
 )
+
+func Test_basic_parser_shows_help(t *testing.T) {
+	cli := NewBasicParser()
+	cli.SetArgs("test", "-h")
+	var code int
+	cli.SetExit(func(v int) { code = v })
+	cli.Parse()
+	if code != 0 {
+		t.Error("exit code:", code)
+	}
+}
 
 func Test_parser_checks_errors(t *testing.T) {
 	cli := NewParser()
@@ -16,6 +29,7 @@ func Test_parser_checks_errors(t *testing.T) {
 	var (
 		_ = cli.Flag("-h, --help")
 	)
+	log.SetOutput(ioutil.Discard)
 	cli.Parse()
 	if code != 1 {
 		t.Error("exit code:", code)
