@@ -11,7 +11,7 @@ func Example() {
 	var (
 		cli = cmdline.NewParser(
 			// os.Args...
-			"adduser", "-p", "secret", "--uid", "100", "john",
+			"adduser", "-p", "secret", "--uid", "100", "john", "x91",
 		)
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)
 		password = cli.Option("-p, --password").String("")
@@ -25,12 +25,15 @@ func Example() {
 	switch {
 	case help:
 		cli.WriteUsageTo(os.Stdout)
+		os.Exit(0)
 
 	case !cli.Ok():
 		fmt.Fprintln(os.Stderr, cli.Error())
 		fmt.Fprintln(os.Stderr, "Try --help for more information")
-
-	default:
-		fmt.Fprintln(os.Stdout, uid, username, password, note)
+		os.Exit(1)
 	}
+
+	fmt.Fprintln(os.Stdout, uid, username, password, note)
+	// output:
+	// 100 john secret x91
 }
