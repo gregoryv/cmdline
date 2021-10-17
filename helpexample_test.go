@@ -46,8 +46,8 @@ func Example_help() {
 	// Usage: speak [OPTIONS] [PHRASE]
 	//
 	// Options
-	//     -n, --dry-run : false
-	//     -h, --help : false
+	//     -n, --dry-run
+	//     -h, --help
 	//
 	// Phrases
 	//     askName (default)

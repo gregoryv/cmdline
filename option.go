@@ -182,7 +182,7 @@ func (opt *Option) Bool() bool {
 // BoolOpt returns bool value from the arguments or the given default
 // value. The Option is returned for more configuration.
 func (opt *Option) BoolOpt() (bool, *Option) {
-	opt.setDefault(false)
+	opt.setDefault("")
 	v := opt.boolArg()
 	return v, opt
 }

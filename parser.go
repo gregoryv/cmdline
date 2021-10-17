@@ -230,10 +230,14 @@ func (me *Parser) writeOptionsTo(w io.Writer, indent string) {
 }
 
 func writeOptionTo(w io.Writer, opt *Option, indent string) {
-	def := fmt.Sprintf(" : %v", opt.defaultValue)
+	var def string
+	if opt.defaultValue != "" {
+		def = fmt.Sprintf(" : %v", opt.defaultValue)
+	}
 	if opt.quoteValue {
 		def = fmt.Sprintf(" : %q", opt.defaultValue)
 	}
+
 	fmt.Fprintf(w, "%s    %s%s\n", indent, opt.names, def)
 	if len(opt.doc) > 0 {
 		for _, line := range opt.doc {
