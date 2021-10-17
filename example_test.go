@@ -8,13 +8,15 @@ import (
 )
 
 func Example() {
+	os.Setenv("PASSWORD", "secret")
+
 	var (
 		cli = cmdline.NewParser(
 			// os.Args...
-			"adduser", "-p", "secret", "--uid", "100", "john", "x91",
+			"adduser", "--uid", "100", "john", "x91",
 		)
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)
-		password = cli.Option("-p, --password").String("")
+		password = cli.Option("-p, --password, $PASSWORD").String("")
 		help     = cli.Flag("-h, --help")
 
 		// parse and name non options

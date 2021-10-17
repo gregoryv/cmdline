@@ -3,6 +3,7 @@ package cmdline
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -22,6 +23,7 @@ func NewParser(args ...string) *Parser {
 		args:    args,
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
+		envMap:  os.Getenv,
 	}
 }
 
@@ -32,6 +34,8 @@ type Parser struct {
 	arguments []*Argument // required
 
 	groups []*Group
+
+	envMap func(string) string
 }
 
 // ----------------------------------------
@@ -163,8 +167,12 @@ func (me *Parser) parseFailed() error {
 // Names should be a comma separated string, e.g.
 //   -n, --dry-run
 //
+// You can also include an environment variable to use as default
+// value in the names, e.g.
+//   -t, --token, $COGNITO_TOKEN
 func (me *Parser) Option(names string, doclines ...string) *Option {
 	opt := NewOption(names, me.args[1:]...)
+	opt.envMap = me.envMap
 	opt.doc = doclines
 	me.options = append(me.options, opt)
 	return opt

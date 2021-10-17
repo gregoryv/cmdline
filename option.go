@@ -2,6 +2,7 @@ package cmdline
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -17,6 +18,8 @@ type Option struct {
 
 	argIndex int // position in args for e.g. --username
 	valIndex int // position for option value, same as argIndex if e.g. --i=1
+
+	envMap func(string) string
 }
 
 // NewOption returns an option defined by a comma separated list of
@@ -144,14 +147,28 @@ func (opt *Option) stringArg() (string, error) {
 			return opt.args[i+1], nil
 		}
 	}
-	return "", nil
+	return opt.envValue(), nil
+}
+
+// If last element in option names starts with $ expand it
+func (opt *Option) envValue() string {
+	names := opt.argNames()
+	env := names[len(names)-1] // last element
+	if env[0] != '$' {
+		return ""
+	}
+	return os.Expand(env, opt.envMap)
+}
+
+func (opt *Option) argNames() []string {
+	return strings.Split(strings.ReplaceAll(opt.names, " ", ""), ",")
 }
 
 func (opt *Option) match(arg string) bool {
 	if !isOption(arg) {
 		return false
 	}
-	names := strings.Split(strings.ReplaceAll(opt.names, " ", ""), ",")
+	names := opt.argNames()
 	argName, _ := nameAndValue(arg)
 	for _, name := range names {
 		if name == argName {

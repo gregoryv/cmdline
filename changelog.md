@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Option names can include $ENV_NAME to parse environment variabls
 - Usage no longer writes " : false" for flag options, it's implied
 
 ## [0.5.2] 2021-03-21
