@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	. "github.com/gregoryv/web"
+	"github.com/gregoryv/web/files"
 )
 
 func Test_generate_readme(t *testing.T) {
@@ -29,6 +30,11 @@ func Test_generate_readme(t *testing.T) {
 			Li("There are no pointer variations"),
 			Li("Parsing non option arguments"),
 			Li("There is no magic help"),
+		),
+
+		H2("Example"),
+		Pre(
+			files.MustLoad("example_test.go"),
 		),
 	)
 	page := NewFile("README.md",

@@ -2,19 +2,17 @@ package cmdline_test
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/gregoryv/cmdline"
 )
 
 func Example() {
-	run(os.Stdout, "adduser", "-p", "secret", "--uid", "100", "john")
-}
-
-func run(w io.Writer, args ...string) {
 	var (
-		cli      = cmdline.NewParser(args...)
+		cli = cmdline.NewParser(
+			// os.Args...
+			"adduser", "-p", "secret", "--uid", "100", "john",
+		)
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)
 		password = cli.Option("-p, --password").String("")
 		help     = cli.Flag("-h, --help")
@@ -26,13 +24,13 @@ func run(w io.Writer, args ...string) {
 
 	switch {
 	case help:
-		cli.WriteUsageTo(w)
+		cli.WriteUsageTo(os.Stdout)
 
 	case !cli.Ok():
-		fmt.Fprintln(w, cli.Error())
-		fmt.Fprintln(w, "Try --help for more information")
+		fmt.Fprintln(os.Stderr, cli.Error())
+		fmt.Fprintln(os.Stderr, "Try --help for more information")
 
 	default:
-		fmt.Fprintln(w, uid, username, password, note)
+		fmt.Fprintln(os.Stdout, uid, username, password, note)
 	}
 }
