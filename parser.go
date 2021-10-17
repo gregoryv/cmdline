@@ -7,14 +7,6 @@ import (
 	"strings"
 )
 
-// Parse returns a parser from a string starting with the command
-// followed by arguments.
-func Parse(str string) *Parser {
-	p := NewParser()
-	p.SetArgs(strings.Split(str, " ")...)
-	return p
-}
-
 // NewParser returns a parser. First argument must be the command
 // name.
 func NewParser() *Parser {

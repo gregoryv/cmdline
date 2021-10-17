@@ -1,6 +1,7 @@
 package cmdline
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -131,4 +132,12 @@ func Test_bad_float64_option(t *testing.T) {
 	if got != 0.0 {
 		t.Error("unexpected:", got)
 	}
+}
+
+// Parse returns a parser from a string starting with the command
+// followed by arguments.
+func Parse(str string) *Parser {
+	p := NewParser()
+	p.SetArgs(strings.Split(str, " ")...)
+	return p
 }

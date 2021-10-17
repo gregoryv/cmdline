@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Remove func Parse
 - NewParser defaults to using os.Args if none are given
 - Option names can include $ENV_NAME to parse environment variabls
 - Usage no longer writes " : false" for flag options, it's implied
