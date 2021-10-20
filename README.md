@@ -2,7 +2,7 @@
 
 [![Go](https://github.com/gregoryv/cmdline/actions/workflows/go.yml/badge.svg)](https://github.com/gregoryv/cmdline/actions/workflows/go.yml)
 [![Code coverage](https://codecov.io/gh/gregoryv/cmdline/branch/master/graph/badge.svg)](https://codecov.io/gh/gregoryv/cmdline)
-[![Maintainability](https://api.codeclimate.com/v1/badges/3dbee57c607ffec60702/maintainability)](https://codeclimate.com/github/gregoryv/cmdlinemaintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d1e0ac639370f6fc982e/maintainability)](https://codeclimate.com/github/gregoryv/cmdline/maintainability)
 
 
 Package [cmdline](https://pkg.go.dev/pkg/github.com/gregoryv/cmdline) provides a means to parse command line arguments.
