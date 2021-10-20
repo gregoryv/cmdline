@@ -50,13 +50,15 @@ func (me *Basic) helpFlag() {
 // NewParser returns a parser. First argument must be the command
 // name.
 func NewParser() *Parser {
-	return &Parser{
+	p := &Parser{
 		args:    os.Args,
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
 		envMap:  os.Getenv,
 		exit:    os.Exit,
 	}
+	p.usage = &Usage{p}
+	return p
 }
 
 // Parser groups arguments for option parsing and usage.
@@ -69,6 +71,8 @@ type Parser struct {
 
 	envMap func(string) string
 	exit   func(int)
+
+	usage *Usage
 }
 
 // Parse checks parsing errors and exits on errors
@@ -232,71 +236,13 @@ func (me *Parser) Flag(name string) bool {
 //
 //   Usage: COMMAND [OPTIONS] ARGUMENTS...
 func (me *Parser) WriteUsageTo(w io.Writer) {
-	fmt.Fprintf(w, "Usage: %s [OPTIONS]", me.args[0])
-	for _, arg := range me.arguments {
-		if arg.required {
-			fmt.Fprintf(w, " %s", arg.name)
-			continue
-		}
-		fmt.Fprintf(w, " [%s]", arg.name)
-	}
-	fmt.Fprint(w, "\n\n")
-	fmt.Fprintln(w, "Options")
-	me.WriteOptionsTo(w)
-
-	indent := "    "
-	for _, grp := range me.groups {
-		fmt.Fprintln(w, grp.Title())
-		first := grp.Items()[0]
-		writeItem(w, first, me.args, indent, true)
-		for _, item := range grp.Items()[1:] {
-			writeItem(w, item, me.args, indent, false)
-		}
-	}
+	me.usage.WriteTo(w)
 }
 
-func writeItem(w io.Writer, me *Item, args []string, indent string, dflt bool) {
-	if dflt {
-		fmt.Fprintf(w, "%s%s (default)\n", indent, me.Name)
-	} else {
-		fmt.Fprintf(w, "%s%s\n", indent, me.Name)
-	}
-	extra := NewParser()
-	extra.args = args
-	me.Load(extra)
-	extra.writeOptionsTo(w, indent)
-}
-
-// WriteOptionsTo writes the Options section to the given writer.
-func (me *Parser) WriteOptionsTo(w io.Writer) {
-	me.writeOptionsTo(w, "")
-}
-
-func (me *Parser) writeOptionsTo(w io.Writer, indent string) {
-	for _, opt := range me.options {
-		writeOptionTo(w, opt, indent)
-	}
-	if len(me.options) > 0 {
-		fmt.Fprintln(w)
-	}
-}
-
-func writeOptionTo(w io.Writer, opt *Option, indent string) {
-	var def string
-	if opt.defaultValue != "" {
-		def = fmt.Sprintf(" : %v", opt.defaultValue)
-	}
-	if opt.quoteValue {
-		def = fmt.Sprintf(" : %q", opt.defaultValue)
-	}
-
-	fmt.Fprintf(w, "%s    %s%s\n", indent, opt.names, def)
-	if len(opt.doc) > 0 {
-		for _, line := range opt.doc {
-			fmt.Fprintf(w, "%s        %s\n", indent, line)
-		}
-		fmt.Fprintln(w)
-	}
+// Usage returns the currently documented options for further
+// documentation.
+func (me *Parser) Usage() *Usage {
+	return me.usage
 }
 
 // Args returns arguments not matched by any of the options
