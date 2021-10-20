@@ -37,7 +37,7 @@ func ExampleNewParser() {
 
 	switch {
 	case help:
-		cli.WriteUsageTo(os.Stdout)
+		cli.Usage().WriteTo(os.Stdout)
 		os.Exit(0)
 
 	case !cli.Ok():

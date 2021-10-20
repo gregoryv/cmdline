@@ -3,7 +3,6 @@ package cmdline
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strings"
 	"sync"
@@ -31,14 +30,14 @@ func (me *Basic) Parse() {
 		fmt.Println("Try -h or --help, for more information")
 		me.exit(1)
 	case me.help:
-		me.WriteUsageTo(os.Stdout)
+		me.Usage().WriteTo(os.Stdout)
 		me.exit(0)
 	}
 }
 
-func (me *Basic) WriteUsageTo(w io.Writer) {
+func (me *Basic) Usage() *Usage {
 	me.Once.Do(me.helpFlag)
-	me.Parser.WriteUsageTo(w)
+	return me.Parser.Usage()
 }
 
 func (me *Basic) helpFlag() {
@@ -229,14 +228,6 @@ func (me *Parser) Option(names string, doclines ...string) *Option {
 func (me *Parser) Flag(name string) bool {
 	val, _ := me.Option(name).BoolOpt()
 	return val
-}
-
-// WriteUsageTo writes names, defaults and documentation to the given
-// writer with the first line being
-//
-//   Usage: COMMAND [OPTIONS] ARGUMENTS...
-func (me *Parser) WriteUsageTo(w io.Writer) {
-	me.usage.WriteTo(w)
 }
 
 // Usage returns the currently documented options for further

@@ -7,7 +7,7 @@ import (
 	"github.com/gregoryv/cmdline"
 )
 
-func ExampleParser_WriteUsageTo() {
+func ExampleUsage() {
 	cli := cmdline.NewBasicParser()
 	cli.SetArgs("speak")
 	var (
@@ -30,7 +30,7 @@ func ExampleParser_WriteUsageTo() {
 		// Implementing the WithExtraOptions interface
 		_ = phrases.New("compliment", &Compliment{})
 	)
-	cli.WriteUsageTo(os.Stdout)
+	cli.Usage().WriteTo(os.Stdout)
 
 	// output:
 	// Usage: speak [OPTIONS] [PHRASE]
