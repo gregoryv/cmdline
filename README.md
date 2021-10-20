@@ -14,7 +14,6 @@ This package is different from the builtin package flag.
 - Easy way to default to environment variables
 - There are no pointer variations
 - Parsing non option arguments
-- There is no magic help
 
 ## Example
 
