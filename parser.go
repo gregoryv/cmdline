@@ -35,6 +35,8 @@ func (me *Basic) Parse() {
 	}
 }
 
+// Usage returns the usage for further documentation. If Parse method
+// has not been called, it adds the help flag.
 func (me *Basic) Usage() *Usage {
 	me.Once.Do(me.helpFlag)
 	return me.Parser.Usage()
@@ -56,7 +58,7 @@ func NewParser() *Parser {
 		envMap:  os.Getenv,
 		exit:    os.Exit,
 	}
-	p.usage = &Usage{p}
+	p.usage = &Usage{Parser: p}
 	return p
 }
 
@@ -87,6 +89,11 @@ func (me *Parser) SetExit(v func(int))    { me.exit = v }
 
 func (me *Parser) Group(title, name string, items ...*Item) *Group {
 	return me.group(title, name, me.Optional(name).String(""), items)
+}
+
+// Preface is the same as Usage().Preface
+func (me *Parser) Preface(lines ...string) {
+	me.usage.Preface(lines...)
 }
 
 func (me *Parser) group(title, name, v string, items []*Item) *Group {

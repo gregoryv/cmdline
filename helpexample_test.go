@@ -9,6 +9,11 @@ import (
 
 func ExampleUsage() {
 	cli := cmdline.NewBasicParser()
+	cli.Preface(
+		"speak - talks back to you",
+		"Author: Gregory Vincic",
+	)
+
 	cli.SetArgs("speak")
 	var (
 		_ = cli.Flag("-n, --dry-run")
@@ -34,6 +39,9 @@ func ExampleUsage() {
 
 	// output:
 	// Usage: speak [OPTIONS] [PHRASE]
+	//
+	// speak - talks back to you
+	// Author: Gregory Vincic
 	//
 	// Options
 	//     -n, --dry-run

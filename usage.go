@@ -3,39 +3,58 @@ package cmdline
 import (
 	"fmt"
 	"io"
+	"strings"
+
+	"github.com/gregoryv/nexus"
 )
 
 // type Usage is for documenting the configured parser
 type Usage struct {
 	*Parser
+
+	preface strings.Builder
+}
+
+// Preface adds lines just before the options section
+func (me *Usage) Preface(lines ...string) {
+	for _, line := range lines {
+		me.preface.WriteString(line)
+		me.preface.WriteString("\n")
+	}
 }
 
 // WriteUsageTo writes names, defaults and documentation to the given
 // writer with the first line being
 //
 //   Usage: COMMAND [OPTIONS] ARGUMENTS...
-func (me *Usage) WriteTo(w io.Writer) {
-	fmt.Fprintf(w, "Usage: %s [OPTIONS]", me.args[0])
+func (me *Usage) WriteTo(w io.Writer) (int64, error) {
+	p, err := nexus.NewPrinter(w)
+	p.Printf("Usage: %s [OPTIONS]", me.args[0])
+	// Named arguments
 	for _, arg := range me.arguments {
 		if arg.required {
-			fmt.Fprintf(w, " %s", arg.name)
+			p.Printf(" %s", arg.name)
 			continue
 		}
-		fmt.Fprintf(w, " [%s]", arg.name)
+		p.Printf(" [%s]", arg.name)
 	}
-	fmt.Fprint(w, "\n\n")
-	fmt.Fprintln(w, "Options")
-	me.WriteOptionsTo(w)
+	// Preface
+	p.Print("\n\n")
+	p.Println(me.preface.String())
+	// Options
+	p.Println("Options")
+	me.WriteOptionsTo(p)
 
 	indent := "    "
 	for _, grp := range me.groups {
-		fmt.Fprintln(w, grp.Title())
+		p.Println(grp.Title())
 		first := grp.Items()[0]
-		writeItem(w, first, me.args, indent, true)
+		writeItem(p, first, me.args, indent, true)
 		for _, item := range grp.Items()[1:] {
-			writeItem(w, item, me.args, indent, false)
+			writeItem(p, item, me.args, indent, false)
 		}
 	}
+	return p.Written, *err
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
