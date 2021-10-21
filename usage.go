@@ -67,7 +67,6 @@ func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 		}
 	}
 	me.writeExamples(p)
-	p.Print("\n\n")
 	return p.Written, *err
 }
 
@@ -90,7 +89,7 @@ func (me *Usage) writeExamples(p *nexus.Printer) {
 		return
 	}
 	p.Println("Examples")
-	p.Println(me.examples.String())
+	p.Print(me.examples.String())
 }
 
 func (me *Usage) writeOptionsTo(w io.Writer, indent string) {

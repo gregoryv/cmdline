@@ -2,19 +2,20 @@ package cmdline_test
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/gregoryv/cmdline"
 )
 
 func ExampleUsage_WriteTo() {
 	cli := cmdline.NewBasicParser()
+	// only needed for this example
+	cli.SetArgs("speak", "-h")
+	cli.SetExit(func(int) {})
+
 	cli.Preface(
 		"speak - talks back to you",
 		"Author: Gregory Vincic",
 	)
-
-	cli.SetArgs("speak")
 	var (
 		_ = cli.Flag("-n, --dry-run")
 		_ = cli.Option("-u, --username, $USER").String("")
@@ -41,8 +42,7 @@ func ExampleUsage_WriteTo() {
 		"    $ speek sayHi -t John",
 		"    Hi, John!",
 	)
-
-	cli.Usage().WriteTo(os.Stdout)
+	cli.Parse()
 
 	// output:
 	// Usage: speak [OPTIONS] [PHRASE]

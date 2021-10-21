@@ -24,6 +24,7 @@ type Basic struct {
 // to os.Stdout
 func (me *Basic) Parse() {
 	me.Once.Do(me.helpFlag)
+
 	switch {
 	case !me.Ok():
 		fmt.Println(me.Error())
@@ -43,7 +44,7 @@ func (me *Basic) Usage() *Usage {
 }
 
 func (me *Basic) helpFlag() {
-	me.help = me.Flag("-h, --help")
+	me.help = me.Parser.Flag("-h, --help")
 }
 
 // ----------------------------------------
