@@ -4,8 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [0.7.0] 2021-10-21
 
+- Add example command
 - Add optional examples section to usage
 - Add optional preface to usage
 - Remove method Parser.WriteUsageTo, use Parser.Usage().WriteTo
