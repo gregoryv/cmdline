@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
-- Add optional preface to usage output
+- Add optional examples section to usage
+- Add optional preface to usage
 - Remove method Parser.WriteUsageTo, use Parser.Usage().WriteTo
 - Add type Usage
 

@@ -218,7 +218,7 @@ func (opt *Option) fail() {
 	opt.err = fmt.Errorf("Invalid option: %s", opt.names)
 }
 
-// ---------------------------------------- Float64 returns float64
+// Float64 returns float64
 // value from the arguments or the given default value.
 func (opt *Option) Float64(def float64) float64 {
 	v, _ := opt.Float64Opt(def)

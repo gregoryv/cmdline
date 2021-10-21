@@ -12,7 +12,8 @@ import (
 type Usage struct {
 	*Parser
 
-	preface strings.Builder
+	preface  strings.Builder
+	examples strings.Builder
 }
 
 // Preface adds lines just before the options section
@@ -21,6 +22,18 @@ func (me *Usage) Preface(lines ...string) {
 		me.preface.WriteString(line)
 		me.preface.WriteString("\n")
 	}
+}
+
+// Example adds an examples section. The examples are place last after
+// options and named arguments. Examples are plain text and not
+// evaluated in any way.
+func (me *Usage) Example(lines ...string) {
+	for _, line := range lines {
+		me.examples.WriteString(indent)
+		me.examples.WriteString(line)
+		me.examples.WriteString("\n")
+	}
+	me.examples.WriteString("\n")
 }
 
 // WriteUsageTo writes names, defaults and documentation to the given
@@ -40,12 +53,11 @@ func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 	}
 	// Preface
 	p.Print("\n\n")
-	p.Println(me.preface.String())
+	me.writePreface(p)
 	// Options
 	p.Println("Options")
 	me.WriteOptionsTo(p)
 
-	indent := "    "
 	for _, grp := range me.groups {
 		p.Println(grp.Title())
 		first := grp.Items()[0]
@@ -54,12 +66,31 @@ func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 			writeItem(p, item, me.args, indent, false)
 		}
 	}
+	me.writeExamples(p)
+	p.Print("\n\n")
 	return p.Written, *err
 }
+
+const indent = "    "
 
 // WriteOptionsTo writes the Options section to the given writer.
 func (me *Usage) WriteOptionsTo(w io.Writer) {
 	me.writeOptionsTo(w, "")
+}
+
+func (me *Usage) writePreface(p *nexus.Printer) {
+	if me.preface.Len() == 0 {
+		return
+	}
+	p.Println(me.preface.String())
+}
+
+func (me *Usage) writeExamples(p *nexus.Printer) {
+	if me.examples.Len() == 0 {
+		return
+	}
+	p.Println("Examples")
+	p.Println(me.examples.String())
 }
 
 func (me *Usage) writeOptionsTo(w io.Writer, indent string) {

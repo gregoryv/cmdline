@@ -7,7 +7,7 @@ import (
 	"github.com/gregoryv/cmdline"
 )
 
-func ExampleUsage() {
+func ExampleUsage_WriteTo() {
 	cli := cmdline.NewBasicParser()
 	cli.Preface(
 		"speak - talks back to you",
@@ -35,6 +35,13 @@ func ExampleUsage() {
 		// Implementing the WithExtraOptions interface
 		_ = phrases.New("compliment", &Compliment{})
 	)
+	u := cli.Usage()
+	u.Example(
+		"Greet",
+		"    $ speek sayHi -t John",
+		"    Hi, John!",
+	)
+
 	cli.Usage().WriteTo(os.Stdout)
 
 	// output:
@@ -55,6 +62,11 @@ func ExampleUsage() {
 	//
 	//     compliment
 	//         -s, --someone : "John"
+	//
+	// Examples
+	//     Greet
+	//         $ speek sayHi -t John
+	//         Hi, John!
 }
 
 // ----------------------------------------
