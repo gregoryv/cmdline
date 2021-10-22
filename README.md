@@ -5,7 +5,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/d1e0ac639370f6fc982e/maintainability)](https://codeclimate.com/github/gregoryv/cmdline/maintainability)
 
 
-Package [cmdline](https://pkg.go.dev/pkg/github.com/gregoryv/cmdline) provides a means to parse command line arguments.
+Package [cmdline](https://pkg.go.dev/pkg/github.com/gregoryv/cmdline) provides a parser for command line arguments.
 This package is different from the builtin package flag.
 - Options are used when parsing arguments
 - Flag is a boolean option
@@ -14,6 +14,7 @@ This package is different from the builtin package flag.
 - Easy way to default to environment variables
 - There are no pointer variations
 - Parsing non option arguments
+- Usage output with optional examples and preface
 
 ## Example
 

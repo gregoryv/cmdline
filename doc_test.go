@@ -19,7 +19,7 @@ func Test_generate_readme(t *testing.T) {
 		Br(),
 		P(
 			"Package ", godoc(project),
-			" provides a means to parse command line arguments.",
+			" provides a parser for command line arguments.",
 		),
 		P("This package is different from the builtin package flag."),
 		Ol(
@@ -30,6 +30,7 @@ func Test_generate_readme(t *testing.T) {
 			Li("Easy way to default to environment variables"),
 			Li("There are no pointer variations"),
 			Li("Parsing non option arguments"),
+			Li("Usage output with optional examples and preface"),
 		),
 
 		H2("Example"),
@@ -37,10 +38,10 @@ func Test_generate_readme(t *testing.T) {
 			files.MustLoadFunc("example_test.go", "ExampleNewBasicParser"),
 		),
 	)
-	page := NewFile("README.md",
+	page := NewPage(
 		Html(body),
 	)
-	page.SaveTo(".")
+	page.SaveAs("README.md")
 }
 
 func godoc(project string) *Element {
