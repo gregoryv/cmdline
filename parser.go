@@ -48,16 +48,18 @@ func (me *Basic) helpFlag() {
 }
 
 // ----------------------------------------
+var DefaultShell = NewShell()
 
-// NewParser returns a parser. First argument must be the command
-// name.
+// NewParser returns a parser using the DefaultShell
 func NewParser() *Parser {
+	sh := DefaultShell
 	p := &Parser{
-		args:    os.Args,
+		sh:      sh,
+		args:    sh.Args(),
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
-		envMap:  os.Getenv,
-		exit:    os.Exit,
+		envMap:  sh.Getenv,
+		exit:    sh.Exit,
 	}
 	p.usage = &Usage{Parser: p}
 	return p
@@ -65,6 +67,8 @@ func NewParser() *Parser {
 
 // Parser groups arguments for option parsing and usage.
 type Parser struct {
+	sh Shell
+
 	args      []string // including command name as first element
 	options   []*Option
 	arguments []*Argument // required
@@ -84,6 +88,8 @@ func (me *Parser) Parse() {
 		me.exit(1)
 	}
 }
+
+func (me *Parser) SetShell(sh Shell) { me.sh = sh; me.args = sh.Args() }
 
 func (me *Parser) SetArgs(args ...string) { me.args = args }
 func (me *Parser) SetExit(v func(int))    { me.exit = v }

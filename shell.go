@@ -105,11 +105,15 @@ func (me *TestShell) Stdout() io.Writer      { return &me.Out }
 func (me *TestShell) Stderr() io.Writer      { return &me.Err }
 
 // Exit sets ExitCode
-func (me *TestShell) Exit(code int) { me.ExitCode = code }
+func (me *TestShell) Exit(code int) {
+	me.ExitCode = code
+	os.Chdir(me.origin)
+}
 
 // Fatal logs the given values and calls the Exit method
 func (me *TestShell) Fatal(v ...interface{}) {
 	log.Println(v...)
+	os.Chdir(me.origin)
 	me.Exit(1)
 }
 
