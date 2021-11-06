@@ -89,7 +89,11 @@ func (me *Parser) Parse() {
 	}
 }
 
-func (me *Parser) SetShell(sh Shell) { me.sh = sh; me.args = sh.Args() }
+func (me *Parser) SetShell(sh Shell) {
+	me.sh = sh
+	me.args = sh.Args()
+	me.exit = sh.Exit
+}
 
 func (me *Parser) SetArgs(args ...string) { me.args = args }
 func (me *Parser) SetExit(v func(int))    { me.exit = v }
