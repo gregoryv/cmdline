@@ -138,7 +138,7 @@ func Test_bad_float64_option(t *testing.T) {
 // followed by arguments.
 func Parse(t *testing.T, str string) *Parser {
 	p := NewParser()
-	sh := NewTestShell(strings.Split(str, " ")...)
+	sh := NewShellT(strings.Split(str, " ")...)
 	p.SetShell(sh)
 	t.Cleanup(sh.Cleanup)
 	return p

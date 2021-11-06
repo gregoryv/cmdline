@@ -8,7 +8,8 @@ import (
 )
 
 func TestNewShell(t *testing.T) {
-	sh, _ := NewShell().(*ossh)
+	sh := NewShellOS()
+	// override the exit so we can test it
 	sh.exit = func(v int) {
 		if v != 1 {
 			t.Error("got exit code", v)
@@ -18,7 +19,7 @@ func TestNewShell(t *testing.T) {
 }
 
 func TestNewTestShell(t *testing.T) {
-	sh := NewTestShell()
+	sh := NewShellT()
 	defer sh.Cleanup()
 
 	testShell(t, sh)
@@ -35,7 +36,6 @@ func TestNewTestShell(t *testing.T) {
 	if !strings.Contains(got, "hello") {
 		t.Error(got)
 	}
-
 }
 
 func testShell(t *testing.T, cmd Shell) {
