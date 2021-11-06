@@ -30,6 +30,15 @@ func Test_basic_parser_checks_errors(t *testing.T) {
 	}
 }
 
+func Test_parser_checks_errors(t *testing.T) {
+	cli := NewParser()
+	sh := NewShellT("test", "-no-such")
+	cli.SetShell(sh)
+	cli.Parse()
+	if sh.ExitCode != 1 {
+		t.Error(sh.Dump())
+	}
+}
 func Test_parser_constructor_uses_osArgs(t *testing.T) {
 	p := NewParser()
 	if !reflect.DeepEqual(p.args, os.Args) {
