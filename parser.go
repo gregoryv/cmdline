@@ -16,14 +16,14 @@ func NewBasicParser() *Basic {
 type Basic struct {
 	*Parser
 
-	sync.Once // used to parse the help flag only once
-	help      bool
+	defineHelp sync.Once // used to parse the help flag only once
+	help       bool
 }
 
 // Parse checks for errors or if the help flag is given writes usage
 // to os.Stdout
 func (me *Basic) Parse() {
-	me.Once.Do(me.helpFlag)
+	me.defineHelp.Do(me.helpFlag)
 
 	switch {
 	case !me.Ok():
@@ -39,7 +39,7 @@ func (me *Basic) Parse() {
 // Usage returns the usage for further documentation. If Parse method
 // has not been called, it adds the help flag.
 func (me *Basic) Usage() *Usage {
-	me.Once.Do(me.helpFlag)
+	me.defineHelp.Do(me.helpFlag)
 	return me.Parser.Usage()
 }
 
