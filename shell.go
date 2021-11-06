@@ -36,12 +36,23 @@ type ShellOS struct {
 	exit func(code int)
 }
 
+// Getenv returns os.Getenv
 func (me *ShellOS) Getenv(key string) string { return os.Getenv(key) }
-func (me *ShellOS) Args() []string           { return os.Args }
-func (me *ShellOS) Getwd() (string, error)   { return os.Getwd() }
-func (me *ShellOS) Stdin() io.Reader         { return os.Stdin }
-func (me *ShellOS) Stdout() io.Writer        { return os.Stdout }
-func (me *ShellOS) Stderr() io.Writer        { return os.Stderr }
+
+// Args returns os.Args
+func (me *ShellOS) Args() []string { return os.Args }
+
+// Getwd returns os.Getwd
+func (me *ShellOS) Getwd() (string, error) { return os.Getwd() }
+
+// Stdin returns os.Stdin
+func (me *ShellOS) Stdin() io.Reader { return os.Stdin }
+
+// Stdout returns os.Stdout
+func (me *ShellOS) Stdout() io.Writer { return os.Stdout }
+
+// Stderr returns os.Stderr
+func (me *ShellOS) Stderr() io.Writer { return os.Stderr }
 
 // Exit returns the given exit code
 func (me *ShellOS) Exit(code int) { me.exit(code) }
