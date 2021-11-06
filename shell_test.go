@@ -18,7 +18,7 @@ func TestNewShell(t *testing.T) {
 	testShell(t, sh)
 }
 
-func TestNewTestShell(t *testing.T) {
+func TestNewShellT(t *testing.T) {
 	sh := NewShellT()
 	defer sh.Cleanup()
 

@@ -11,27 +11,22 @@ import (
 
 func Test_basic_parser_shows_help(t *testing.T) {
 	cli := NewBasicParser()
-	cli.SetArgs("test", "-h")
-	var code int
-	cli.SetExit(func(v int) { code = v })
+	sh := NewShellT("test", "-h")
+	cli.SetShell(sh)
 	cli.Parse()
-	if code != 0 {
-		t.Error("exit code:", code)
+	if sh.ExitCode != 0 {
+		t.Error(sh.Dump())
 	}
 }
 
-func Test_parser_checks_errors(t *testing.T) {
-	cli := NewParser()
-	cli.SetArgs("test", "-no-such")
-	var code int
-	cli.SetExit(func(v int) { code = v })
-	var (
-		_ = cli.Flag("-h, --help")
-	)
+func Test_basic_parser_checks_errors(t *testing.T) {
+	cli := NewBasicParser()
+	sh := NewShellT("test", "-no-such")
+	cli.SetShell(sh)
 	log.SetOutput(ioutil.Discard)
 	cli.Parse()
-	if code != 1 {
-		t.Error("exit code:", code)
+	if sh.ExitCode != 1 {
+		t.Error(sh.Dump())
 	}
 }
 

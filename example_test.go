@@ -52,12 +52,10 @@ func ExampleNewParser() {
 
 func ExampleNewBasicParser_help() {
 	cli := cmdline.NewBasicParser()
-	cli.SetArgs("adduser", "-no-such")
-	cli.SetExit(func(int) {})
 	cli.Parse()
-
 	// output:
-	// Unknown option: -no-such
-	// Try -h or --help, for more information
+	// Usage: test [OPTIONS]
 
+	// Options
+	//     -h, --help
 }
