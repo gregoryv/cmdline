@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_ShellOS(t *testing.T) {
+func TestShellOS(t *testing.T) {
 	sh := NewShellOS()
 
 	if sh.Getenv("PWD") == "" {
@@ -19,7 +19,7 @@ func Test_ShellOS(t *testing.T) {
 	}
 }
 
-func Test_ShellOS_io(t *testing.T) {
+func TestShellOS_io(t *testing.T) {
 	sh := NewShellOS()
 
 	if sh.Stdin() == nil {
@@ -33,7 +33,7 @@ func Test_ShellOS_io(t *testing.T) {
 	}
 }
 
-func Test_ShellOS_exits(t *testing.T) {
+func TestShellOS_exits(t *testing.T) {
 	sh := NewShellOS()
 
 	// override the exit so we can test it

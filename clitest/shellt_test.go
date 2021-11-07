@@ -3,15 +3,45 @@ package clitest
 import (
 	"strings"
 	"testing"
-
-	"github.com/gregoryv/asserter"
 )
 
-func TestNewShellT(t *testing.T) {
+func TestShellT(t *testing.T) {
 	sh := NewShellT()
 	defer sh.Cleanup()
 
-	testShell(t, sh)
+	if sh.Getenv("PWD") == "" {
+		t.Error(`sh.Getenv("PWD") failed `)
+	}
+	if len(sh.Args()) == 0 {
+		t.Error("empty sh.Args")
+	}
+
+	wd, _ := sh.Getwd()
+	if wd == "" {
+		t.Error("empty sh.Getwd()")
+	}
+}
+
+func TestShellT_io(t *testing.T) {
+	sh := NewShellT()
+	defer sh.Cleanup()
+
+	if sh.Stdin() == nil {
+		t.Error("nil sh.Stdin")
+	}
+	if sh.Stdout() == nil {
+		t.Error("nil sh.Stdout")
+	}
+	if sh.Stderr() == nil {
+		t.Error("nil sh.Stderr")
+	}
+	sh.Fatal()
+	sh.Exit(1)
+}
+
+func TestShellT_dumps(t *testing.T) {
+	sh := NewShellT()
+	defer sh.Cleanup()
 
 	// dump contains exit code
 	got := sh.Dump()
@@ -25,20 +55,4 @@ func TestNewShellT(t *testing.T) {
 	if !strings.Contains(got, "hello") {
 		t.Error(got)
 	}
-}
-
-func testShell(t *testing.T, cmd *ShellT) {
-	t.Helper()
-	assert := asserter.Wrap(t).Assert
-
-	assert(cmd.Getenv("PWD") != "").Error(`cmd.Getenv("PWD") failed `)
-	assert(len(cmd.Args()) != 0).Error("empty cmd.Args")
-
-	wd, _ := cmd.Getwd()
-	assert(wd != "").Error("empty cmd.Getwd()")
-	assert(cmd.Stdin() != nil).Error("nil cmd.Stdin")
-	assert(cmd.Stdout() != nil).Error("nil cmd.Stdout")
-	assert(cmd.Stderr() != nil).Error("nil cmd.Stderr")
-	cmd.Fatal()
-	cmd.Exit(1)
 }
