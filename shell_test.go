@@ -2,31 +2,46 @@ package cmdline
 
 import (
 	"testing"
-
-	"github.com/gregoryv/asserter"
 )
 
-func TestNewShell(t *testing.T) {
+func Test_ShellOS(t *testing.T) {
 	sh := NewShellOS()
+
+	if sh.Getenv("PWD") == "" {
+		t.Error(`sh.Getenv("PWD") failed `)
+	}
+	if len(sh.Args()) == 0 {
+		t.Error("empty sh.Args")
+	}
+	wd, _ := sh.Getwd()
+	if wd == "" {
+		t.Error("empty sh.Getwd()")
+	}
+}
+
+func Test_ShellOS_io(t *testing.T) {
+	sh := NewShellOS()
+
+	if sh.Stdin() == nil {
+		t.Error("nil sh.Stdin")
+	}
+	if sh.Stdout() == nil {
+		t.Error("nil sh.Stdout")
+	}
+	if sh.Stderr() == nil {
+		t.Error("nil sh.Stderr")
+	}
+}
+
+func Test_ShellOS_exits(t *testing.T) {
+	sh := NewShellOS()
+
 	// override the exit so we can test it
 	sh.exit = func(v int) {
 		if v != 1 {
 			t.Error("got exit code", v)
 		}
 	}
-	assert := asserter.Wrap(t).Assert
-
-	assert(sh.Getenv("PWD") != "").Error(`sh.Getenv("PWD") failed `)
-	assert(len(sh.Args()) != 0).Error("empty sh.Args")
-
-	wd, err := sh.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert(wd != "").Error("empty sh.Getwd()")
-	assert(sh.Stdin() != nil).Error("nil sh.Stdin")
-	assert(sh.Stdout() != nil).Error("nil sh.Stdout")
-	assert(sh.Stderr() != nil).Error("nil sh.Stderr")
 	sh.Fatal()
 	sh.Exit(1)
 }
