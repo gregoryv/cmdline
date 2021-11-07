@@ -29,10 +29,10 @@ func (me *Basic) Parse() {
 	case !me.Ok():
 		fmt.Println(me.Error())
 		fmt.Println("Try -h or --help, for more information")
-		me.exit(1)
+		me.sh.Exit(1)
 	case me.help:
 		me.Usage().WriteTo(os.Stdout)
-		me.exit(0)
+		me.sh.Exit(0)
 	}
 }
 
@@ -59,7 +59,6 @@ func NewParser() *Parser {
 		options: make([]*Option, 0),
 		groups:  make([]*Group, 0),
 		envMap:  sh.Getenv,
-		exit:    sh.Exit,
 	}
 	p.usage = &Usage{Parser: p}
 	return p
@@ -76,7 +75,6 @@ type Parser struct {
 	groups []*Group
 
 	envMap func(string) string
-	exit   func(int)
 
 	usage *Usage
 }
@@ -85,18 +83,16 @@ type Parser struct {
 func (me *Parser) Parse() {
 	if !me.Ok() {
 		fmt.Println(me.Error())
-		me.exit(1)
+		me.sh.Exit(1)
 	}
 }
 
 func (me *Parser) SetShell(sh Shell) {
 	me.sh = sh
 	me.args = sh.Args()
-	me.exit = sh.Exit
 }
 
 func (me *Parser) SetArgs(args ...string) { me.args = args }
-func (me *Parser) SetExit(v func(int))    { me.exit = v }
 
 func (me *Parser) Group(title, name string, items ...*Item) *Group {
 	return me.group(title, name, me.Optional(name).String(""), items)

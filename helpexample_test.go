@@ -4,13 +4,14 @@ import (
 	"fmt"
 
 	"github.com/gregoryv/cmdline"
+	"github.com/gregoryv/cmdline/clitest"
 )
 
 func ExampleUsage_WriteTo() {
 	cli := cmdline.NewBasicParser()
 	// only needed for this example
-	cli.SetArgs("speak", "-h")
-	cli.SetExit(func(int) {})
+	sh := clitest.NewShellT("speak", "-h")
+	cli.SetShell(sh)
 
 	cli.Preface(
 		"speak - talks back to you",
