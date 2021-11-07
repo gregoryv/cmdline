@@ -7,11 +7,13 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/gregoryv/cmdline/clitest"
 )
 
 func Test_basic_parser_shows_help(t *testing.T) {
 	cli := NewBasicParser()
-	sh := NewShellT("test", "-h")
+	sh := clitest.NewShellT("test", "-h")
 	cli.SetShell(sh)
 	cli.Parse()
 	if sh.ExitCode != 0 {
@@ -21,7 +23,7 @@ func Test_basic_parser_shows_help(t *testing.T) {
 
 func Test_basic_parser_checks_errors(t *testing.T) {
 	cli := NewBasicParser()
-	sh := NewShellT("test", "-no-such")
+	sh := clitest.NewShellT("test", "-no-such")
 	cli.SetShell(sh)
 	log.SetOutput(ioutil.Discard)
 	cli.Parse()
@@ -32,7 +34,7 @@ func Test_basic_parser_checks_errors(t *testing.T) {
 
 func Test_parser_checks_errors(t *testing.T) {
 	cli := NewParser()
-	sh := NewShellT("test", "-no-such")
+	sh := clitest.NewShellT("test", "-no-such")
 	cli.SetShell(sh)
 	cli.Parse()
 	if sh.ExitCode != 1 {

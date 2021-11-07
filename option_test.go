@@ -3,6 +3,8 @@ package cmdline
 import (
 	"strings"
 	"testing"
+
+	"github.com/gregoryv/cmdline/clitest"
 )
 
 func Test_without_options(t *testing.T) {
@@ -138,7 +140,7 @@ func Test_bad_float64_option(t *testing.T) {
 // followed by arguments.
 func Parse(t *testing.T, str string) *Parser {
 	p := NewParser()
-	sh := NewShellT(strings.Split(str, " ")...)
+	sh := clitest.NewShellT(strings.Split(str, " ")...)
 	p.SetShell(sh)
 	t.Cleanup(sh.Cleanup)
 	return p
