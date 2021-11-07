@@ -92,8 +92,6 @@ func (me *Parser) SetShell(sh Shell) {
 	me.args = sh.Args()
 }
 
-func (me *Parser) SetArgs(args ...string) { me.args = args }
-
 func (me *Parser) Group(title, name string, items ...*Item) *Group {
 	return me.group(title, name, me.Optional(name).String(""), items)
 }

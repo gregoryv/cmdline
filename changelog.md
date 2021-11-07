@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Replace Parser.SetArgs and SetExit with SetShell
 - Add types Shell, ShellOS and ShellT
 
 ## [0.7.0] 2021-10-21
