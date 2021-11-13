@@ -26,13 +26,14 @@ func (me *Basic) Parse() {
 	me.defineHelp.Do(me.helpFlag)
 
 	switch {
+	case me.help:
+		me.Usage().WriteTo(os.Stdout)
+		me.sh.Exit(0)
+
 	case !me.Ok():
 		fmt.Println(me.Error())
 		fmt.Println("Try -h or --help, for more information")
 		me.sh.Exit(1)
-	case me.help:
-		me.Usage().WriteTo(os.Stdout)
-		me.sh.Exit(0)
 	}
 }
 
