@@ -31,7 +31,7 @@ func ExampleNewParser() {
 		help     = cli.Flag("-h, --help")
 
 		// parse and name non options
-		username = cli.Required("USERNAME").String("")
+		username = cli.Argument("USERNAME").String("")
 		note     = cli.Optional("NOTE").String("")
 	)
 
@@ -53,10 +53,11 @@ func ExampleNewParser() {
 func ExampleParser_Usage() {
 	os.Args = []string{"mycmd"} // just for this test
 	cli := cmdline.NewBasicParser()
+	cli.Argument("FILES...").Strings("file1", "file2")
 	cli.Usage().WriteTo(os.Stdout)
 	// output:
 	//
-	// Usage: mycmd [OPTIONS]
+	// Usage: mycmd [OPTIONS] [FILES...]
 	//
 	// Options
 	//     -h, --help

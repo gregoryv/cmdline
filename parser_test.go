@@ -176,3 +176,33 @@ func Test_stringer(t *testing.T) {
 		t.Error("\n", exp, "\n", got)
 	}
 }
+
+func TestParser_Argument_default_value(t *testing.T) {
+	cli := Parse(t, "touch")
+	got := cli.Argument("FILES...").Strings("file")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got[0] != "file" {
+		t.Error("incorrect value:", got)
+	}
+}
+
+func TestParser_Argument_multiple(t *testing.T) {
+	cli := Parse(t, "touch a b")
+	got := cli.Argument("FILES...").Strings()
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got[1] != "b" {
+		t.Error("incorrect value:", got)
+	}
+}
+
+func TestParser_Argument_multiple_missing(t *testing.T) {
+	cli := Parse(t, "touch")
+	cli.Argument("FILES...").Strings()
+	if cli.Ok() {
+		t.Error("should fail")
+	}
+}

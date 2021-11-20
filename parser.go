@@ -308,6 +308,16 @@ func (me *Parser) Optional(name string) *Argument {
 	return arg
 }
 
+// Argument returns an named argument
+func (me *Parser) Argument(name string) *Argument {
+	arg := &Argument{
+		name: name,
+		v:    me.parseMultiArg(name),
+	}
+	me.arguments = append(me.arguments, arg)
+	return arg
+}
+
 func (me *Parser) parseMultiArg(name string) []string {
 	if isMulti(name) {
 		return me.Args()
@@ -327,13 +337,26 @@ type Argument struct {
 	required bool
 }
 
-// String returns the value of this argument
+// String returns the value of this argument or the given default
 func (me *Argument) String(def string) string {
 	v := me.v
 	if len(v) == 0 || v[0] == "" {
 		return def
 	}
 	return v[0]
+}
+
+// Strings returns the values of this argument. If no default is given
+// this argument is considered required.
+func (me *Argument) Strings(def ...string) []string {
+	if len(me.v) == 0 {
+		if len(def) == 0 {
+			me.required = true
+			me.err = fmt.Errorf("missing %s", me.name)
+		}
+		return def
+	}
+	return me.v
 }
 
 func isMulti(v string) bool {
