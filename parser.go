@@ -287,10 +287,11 @@ func (me *Parser) String() string {
 func (me *Parser) Required(name string) *Argument {
 	arg := &Argument{
 		name:     name,
-		v:        me.Argn(len(me.arguments)),
+		v:        me.parseMultiArg(name),
 		required: true,
 	}
-	if arg.v == "" {
+
+	if len(arg.v) == 0 {
 		arg.err = fmt.Errorf("missing %s", name)
 	}
 	me.arguments = append(me.arguments, arg)
@@ -301,23 +302,45 @@ func (me *Parser) Required(name string) *Argument {
 func (me *Parser) Optional(name string) *Argument {
 	arg := &Argument{
 		name: name,
-		v:    me.Argn(len(me.arguments)),
+		v:    me.parseMultiArg(name),
 	}
 	me.arguments = append(me.arguments, arg)
 	return arg
 }
 
+func (me *Parser) parseMultiArg(name string) []string {
+	if isMulti(name) {
+		return me.Args()
+	}
+	// parse one argument
+	v := me.Argn(len(me.arguments))
+	if v == "" {
+		return nil
+	}
+	return []string{v}
+}
+
 type Argument struct {
 	name     string
-	v        string
+	v        []string
 	err      error
 	required bool
 }
 
 // String returns the value of this argument
 func (me *Argument) String(def string) string {
-	if me.v == "" {
+	v := me.v
+	if len(v) == 0 || v[0] == "" {
 		return def
 	}
-	return me.v
+	return v[0]
+}
+
+func isMulti(v string) bool {
+	l := len(v)
+	if l <= 3 {
+		return false
+	}
+	end := v[l-3:]
+	return end == "..."
 }

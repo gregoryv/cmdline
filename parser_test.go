@@ -115,6 +115,25 @@ func Test_required_argument(t *testing.T) {
 	}
 }
 
+func Test_required_multi_argument(t *testing.T) {
+	cli := Parse(t, "touch")
+	cli.Required("FILES...")
+	if cli.Ok() {
+		t.Errorf("expected failure when required FILES... is missing")
+	}
+}
+
+func Test_multi_argument_default_string(t *testing.T) {
+	cli := Parse(t, "touch")
+	got := cli.Required("FILES...").String("file")
+	if cli.Ok() {
+		t.Errorf("expected failure when required FILES... is missing")
+	}
+	if got != "file" {
+		t.Error("incorrect value:", got)
+	}
+}
+
 func Test_optional_argument(t *testing.T) {
 	cli := Parse(t, "ls")
 	cli.Optional("DIR")
