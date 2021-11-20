@@ -50,12 +50,14 @@ func ExampleNewParser() {
 	fmt.Fprintln(os.Stdout, uid, username, password, note)
 }
 
-func ExampleNewBasicParser_help() {
+func ExampleParser_Usage() {
+	os.Args = []string{"mycmd"} // just for this test
 	cli := cmdline.NewBasicParser()
-	cli.Parse()
+	cli.Usage().WriteTo(os.Stdout)
 	// output:
-	// Usage: test [OPTIONS]
-
+	//
+	// Usage: mycmd [OPTIONS]
+	//
 	// Options
 	//     -h, --help
 }
