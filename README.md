@@ -24,8 +24,8 @@ This package is different from the builtin package flag.
     		uid		= cli.Option("--uid", "Generated if not given").Int(0)
     		password	= cli.Option("-p, --password, $PASSWORD").String("")
     
-    		username	= cli.Required("USERNAME").String("")
-    		note		= cli.Optional("NOTE").String("")
+    		username	= cli.Argument("USERNAME").String("")
+    		note		= cli.Argument("NOTE").String("")
     	)
     	cli.Parse()
     

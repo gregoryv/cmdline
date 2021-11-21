@@ -107,17 +107,9 @@ func Test_unknown_group_item(t *testing.T) {
 	}
 }
 
-func Test_required_argument(t *testing.T) {
-	cli := Parse(t, "mkdir")
-	cli.Required("DIR")
-	if cli.Ok() {
-		t.Errorf("expected failure when required DIR is missing")
-	}
-}
-
 func Test_required_multi_argument(t *testing.T) {
 	cli := Parse(t, "touch")
-	cli.Required("FILES...")
+	cli.Argument("FILES...").Strings()
 	if cli.Ok() {
 		t.Errorf("expected failure when required FILES... is missing")
 	}
@@ -125,20 +117,12 @@ func Test_required_multi_argument(t *testing.T) {
 
 func Test_multi_argument_default_string(t *testing.T) {
 	cli := Parse(t, "touch")
-	got := cli.Required("FILES...").String("file")
-	if cli.Ok() {
-		t.Errorf("expected failure when required FILES... is missing")
+	got := cli.Argument("FILES...").String("file")
+	if !cli.Ok() {
+		t.Error(cli.Error())
 	}
 	if got != "file" {
 		t.Error("incorrect value:", got)
-	}
-}
-
-func Test_optional_argument(t *testing.T) {
-	cli := Parse(t, "ls")
-	cli.Optional("DIR")
-	if !cli.Ok() {
-		t.Error("unexpected:", cli.Error())
 	}
 }
 

@@ -94,7 +94,11 @@ func (me *Parser) SetShell(sh Shell) {
 }
 
 func (me *Parser) Group(title, name string, items ...*Item) *Group {
-	return me.group(title, name, me.Optional(name).String(""), items)
+	def := ""
+	if len(items) > 0 {
+		def = items[0].Name
+	}
+	return me.group(title, name, me.Argument(name).String(def), items)
 }
 
 // Preface is the same as Usage().Preface
@@ -281,31 +285,6 @@ func (me *Parser) wasMatched(i int) bool {
 
 func (me *Parser) String() string {
 	return fmt.Sprintf("Parser: %s", strings.Join(me.args, " "))
-}
-
-// Required returns a required named argument.
-func (me *Parser) Required(name string) *Argument {
-	arg := &Argument{
-		name:     name,
-		v:        me.parseMultiArg(name),
-		required: true,
-	}
-
-	if len(arg.v) == 0 {
-		arg.err = fmt.Errorf("missing %s", name)
-	}
-	me.arguments = append(me.arguments, arg)
-	return arg
-}
-
-// Optional returns an optional  named argument.
-func (me *Parser) Optional(name string) *Argument {
-	arg := &Argument{
-		name: name,
-		v:    me.parseMultiArg(name),
-	}
-	me.arguments = append(me.arguments, arg)
-	return arg
 }
 
 // Argument returns an named argument

@@ -16,7 +16,7 @@ func Test_usage_output_with_extended_docs(t *testing.T) {
 		"If not given, one is generated",
 	)
 	cli.Option("-p, --password").String("")
-	cli.Required("USERNAME").String("")
+	cli.Argument("USERNAME").String("")
 
 	var buf bytes.Buffer
 	cli.Usage().WriteTo(&buf)

@@ -14,8 +14,8 @@ func ExampleNewBasicParser() {
 		password = cli.Option("-p, --password, $PASSWORD").String("")
 
 		// parse and name non options
-		username = cli.Required("USERNAME").String("")
-		note     = cli.Optional("NOTE").String("")
+		username = cli.Argument("USERNAME").String("")
+		note     = cli.Argument("NOTE").String("")
 	)
 	cli.Parse()
 
@@ -32,7 +32,7 @@ func ExampleNewParser() {
 
 		// parse and name non options
 		username = cli.Argument("USERNAME").String("")
-		note     = cli.Optional("NOTE").String("")
+		note     = cli.Argument("NOTE").String("")
 	)
 
 	switch {
