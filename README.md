@@ -20,7 +20,7 @@ This package is different from the builtin package flag.
 
     func ExampleNewBasicParser() {
     	var (
-    		cli		= cmdline.NewBasicParser()
+    		cli		= NewBasicParser()
     		uid		= cli.Option("--uid", "Generated if not given").Int(0)
     		password	= cli.Option("-p, --password, $PASSWORD").String("")
     

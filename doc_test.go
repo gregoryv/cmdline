@@ -35,7 +35,7 @@ func Test_generate_readme(t *testing.T) {
 
 		H2("Example"),
 		Pre(
-			files.MustLoadFunc("example_test.go", "ExampleNewBasicParser"),
+			files.MustLoadFunc("parser_test.go", "ExampleNewBasicParser"),
 		),
 	)
 	page := NewPage(

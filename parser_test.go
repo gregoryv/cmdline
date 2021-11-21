@@ -1,6 +1,7 @@
 package cmdline
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -10,6 +11,62 @@ import (
 
 	"github.com/gregoryv/cmdline/clitest"
 )
+
+func ExampleNewBasicParser() {
+	var (
+		cli      = NewBasicParser()
+		uid      = cli.Option("--uid", "Generated if not given").Int(0)
+		password = cli.Option("-p, --password, $PASSWORD").String("")
+
+		// parse and name non options
+		username = cli.NamedArg("USERNAME").String("")
+		note     = cli.NamedArg("NOTE").String("")
+	)
+	cli.Parse()
+
+	// use options ...
+	fmt.Fprintln(os.Stdout, uid, username, password, note)
+}
+
+func ExampleNewParser() {
+	var (
+		cli      = NewParser()
+		uid      = cli.Option("--uid", "Generated if not given").Int(0)
+		password = cli.Option("-p, --password, $PASSWORD").String("")
+		help     = cli.Flag("-h, --help")
+
+		// parse and name non options
+		username = cli.NamedArg("USERNAME").String("")
+		note     = cli.NamedArg("NOTE").String("")
+	)
+
+	switch {
+	case help:
+		cli.Usage().WriteTo(os.Stdout)
+		os.Exit(0)
+
+	case !cli.Ok():
+		fmt.Fprintln(os.Stderr, cli.Error())
+		fmt.Fprintln(os.Stderr, "Try --help for more information")
+		os.Exit(1)
+	}
+
+	// use options ...
+	fmt.Fprintln(os.Stdout, uid, username, password, note)
+}
+
+func ExampleParser_Usage() {
+	os.Args = []string{"mycmd"} // just for this test
+	cli := NewBasicParser()
+	cli.NamedArg("FILES...").Strings("file1", "file2")
+	cli.Usage().WriteTo(os.Stdout)
+	// output:
+	//
+	// Usage: mycmd [OPTIONS] [FILES...]
+	//
+	// Options
+	//     -h, --help
+}
 
 func Test_basic_parser_shows_help(t *testing.T) {
 	cli := NewBasicParser()

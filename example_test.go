@@ -2,63 +2,106 @@ package cmdline_test
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/gregoryv/cmdline"
+	"github.com/gregoryv/cmdline/clitest"
 )
 
-func ExampleNewBasicParser() {
-	var (
-		cli      = cmdline.NewBasicParser()
-		uid      = cli.Option("--uid", "Generated if not given").Int(0)
-		password = cli.Option("-p, --password, $PASSWORD").String("")
+func ExampleUsage_WriteTo() {
+	cli := cmdline.NewBasicParser()
 
-		// parse and name non options
-		username = cli.NamedArg("USERNAME").String("")
-		note     = cli.NamedArg("NOTE").String("")
+	// only needed for this example
+	cli.SetShell(clitest.NewShellT("speak", "-h"))
+
+	cli.Preface(
+		"speak - talks back to you",
+		"Author: Gregory Vincic",
+	)
+	var (
+		_ = cli.Flag("-n, --dry-run")
+		_ = cli.Option("-u, --username, $USER").String("")
+
+		// Group items
+		phrases = cli.Group("Phrases", "PHRASE")
+
+		// No extra options needed
+		_ = phrases.New("askName", &Ask{})
+
+		// Using builder function
+		_ = phrases.New("sayHi", func(p *cmdline.Parser) interface{} {
+			return &Hi{
+				to: p.Option("-t, --to").String("stranger"),
+			}
+		})
+
+		// Implementing the WithExtraOptions interface
+		_ = phrases.New("compliment", &Compliment{})
+	)
+	u := cli.Usage()
+	u.Example(
+		"Greet",
+		"    $ speek sayHi -t John",
+		"    Hi, John!",
 	)
 	cli.Parse()
 
-	// use options ...
-	fmt.Fprintln(os.Stdout, uid, username, password, note)
-}
-
-func ExampleNewParser() {
-	var (
-		cli      = cmdline.NewParser()
-		uid      = cli.Option("--uid", "Generated if not given").Int(0)
-		password = cli.Option("-p, --password, $PASSWORD").String("")
-		help     = cli.Flag("-h, --help")
-
-		// parse and name non options
-		username = cli.NamedArg("USERNAME").String("")
-		note     = cli.NamedArg("NOTE").String("")
-	)
-
-	switch {
-	case help:
-		cli.Usage().WriteTo(os.Stdout)
-		os.Exit(0)
-
-	case !cli.Ok():
-		fmt.Fprintln(os.Stderr, cli.Error())
-		fmt.Fprintln(os.Stderr, "Try --help for more information")
-		os.Exit(1)
-	}
-
-	// use options ...
-	fmt.Fprintln(os.Stdout, uid, username, password, note)
-}
-
-func ExampleParser_Usage() {
-	os.Args = []string{"mycmd"} // just for this test
-	cli := cmdline.NewBasicParser()
-	cli.NamedArg("FILES...").Strings("file1", "file2")
-	cli.Usage().WriteTo(os.Stdout)
 	// output:
+	// Usage: speak [OPTIONS] [PHRASE]
 	//
-	// Usage: mycmd [OPTIONS] [FILES...]
+	// speak - talks back to you
+	// Author: Gregory Vincic
 	//
 	// Options
+	//     -n, --dry-run
+	//     -u, --username, $USER : ""
 	//     -h, --help
+	//
+	// Phrases
+	//     askName (default)
+	//     sayHi
+	//         -t, --to : "stranger"
+	//
+	//     compliment
+	//         -s, --someone : "John"
+	//
+	// Examples
+	//     Greet
+	//         $ speek sayHi -t John
+	//         Hi, John!
+}
+
+// ----------------------------------------
+
+type Hi struct {
+	to string
+}
+
+func (me *Hi) Run() { fmt.Printf("Hi, %s!\n", me.to) }
+
+// ----------------------------------------
+
+type Ask struct{ cmdline.Item }
+
+func (me *Ask) Run() { fmt.Println("What is your name?") }
+
+// ----------------------------------------
+
+type Compliment struct {
+	cmdline.Item
+	someone string
+}
+
+// ExtraOptions
+func (me *Compliment) ExtraOptions(p *cmdline.Parser) {
+	me.someone = p.Option("-s, --someone").String("John")
+}
+
+func (me *Compliment) Run() {
+	fmt.Printf("%s, you look dashing I must say.", me.someone)
+}
+
+// ----------------------------------------
+
+type runnable interface {
+	Run()
 }
