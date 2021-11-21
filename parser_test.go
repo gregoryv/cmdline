@@ -109,7 +109,7 @@ func Test_unknown_group_item(t *testing.T) {
 
 func Test_required_multi_argument(t *testing.T) {
 	cli := Parse(t, "touch")
-	cli.Argument("FILES...").Strings()
+	cli.NamedArg("FILES...").Strings()
 	if cli.Ok() {
 		t.Errorf("expected failure when required FILES... is missing")
 	}
@@ -117,7 +117,7 @@ func Test_required_multi_argument(t *testing.T) {
 
 func Test_multi_argument_default_string(t *testing.T) {
 	cli := Parse(t, "touch")
-	got := cli.Argument("FILES...").String("file")
+	got := cli.NamedArg("FILES...").String("file")
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
@@ -163,7 +163,7 @@ func Test_stringer(t *testing.T) {
 
 func TestParser_Argument_default_value(t *testing.T) {
 	cli := Parse(t, "touch")
-	got := cli.Argument("FILES...").Strings("file")
+	got := cli.NamedArg("FILES...").Strings("file")
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
@@ -174,7 +174,7 @@ func TestParser_Argument_default_value(t *testing.T) {
 
 func TestParser_Argument_multiple(t *testing.T) {
 	cli := Parse(t, "touch a b")
-	got := cli.Argument("FILES...").Strings()
+	got := cli.NamedArg("FILES...").Strings()
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
@@ -185,7 +185,7 @@ func TestParser_Argument_multiple(t *testing.T) {
 
 func TestParser_Argument_multiple_missing(t *testing.T) {
 	cli := Parse(t, "touch")
-	cli.Argument("FILES...").Strings()
+	cli.NamedArg("FILES...").Strings()
 	if cli.Ok() {
 		t.Error("should fail")
 	}

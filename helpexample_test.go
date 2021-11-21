@@ -9,9 +9,9 @@ import (
 
 func ExampleUsage_WriteTo() {
 	cli := cmdline.NewBasicParser()
+
 	// only needed for this example
-	sh := clitest.NewShellT("speak", "-h")
-	cli.SetShell(sh)
+	cli.SetShell(clitest.NewShellT("speak", "-h"))
 
 	cli.Preface(
 		"speak - talks back to you",

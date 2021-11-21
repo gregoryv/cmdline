@@ -49,6 +49,8 @@ func (me *Basic) helpFlag() {
 }
 
 // ----------------------------------------
+
+// DefaultShell is used by all new parsers.
 var DefaultShell = NewShellOS()
 
 // NewParser returns a parser using the DefaultShell
@@ -71,7 +73,7 @@ type Parser struct {
 
 	args      []string // including command name as first element
 	options   []*Option
-	arguments []*Argument // required
+	arguments []*NamedArg // required
 
 	groups []*Group
 
@@ -98,7 +100,7 @@ func (me *Parser) Group(title, name string, items ...*Item) *Group {
 	if len(items) > 0 {
 		def = items[0].Name
 	}
-	return me.group(title, name, me.Argument(name).String(def), items)
+	return me.group(title, name, me.NamedArg(name).String(def), items)
 }
 
 // Preface is the same as Usage().Preface
@@ -265,7 +267,7 @@ func (me *Parser) Args() []string {
 	return rest
 }
 
-// Argn returns the n:th argument of remaining arguments starting at 0.
+// Argn returns the n:th NamedArg of remaining arguments starting at 0.
 func (me *Parser) Argn(n int) string {
 	rest := me.Args()
 	if n < len(rest) {
@@ -287,9 +289,9 @@ func (me *Parser) String() string {
 	return fmt.Sprintf("Parser: %s", strings.Join(me.args, " "))
 }
 
-// Argument returns an named argument
-func (me *Parser) Argument(name string) *Argument {
-	arg := &Argument{
+// NamedArg returns an named argument
+func (me *Parser) NamedArg(name string) *NamedArg {
+	arg := &NamedArg{
 		name: name,
 		v:    me.parseMultiArg(name),
 	}
@@ -309,15 +311,15 @@ func (me *Parser) parseMultiArg(name string) []string {
 	return []string{v}
 }
 
-type Argument struct {
+type NamedArg struct {
 	name     string
 	v        []string
 	err      error
 	required bool
 }
 
-// String returns the value of this argument or the given default
-func (me *Argument) String(def string) string {
+// String returns the value of this NamedArg or the given default
+func (me *NamedArg) String(def string) string {
 	v := me.v
 	if len(v) == 0 || v[0] == "" {
 		return def
@@ -326,8 +328,8 @@ func (me *Argument) String(def string) string {
 }
 
 // Strings returns the values of this argument. If no default is given
-// this argument is considered required.
-func (me *Argument) Strings(def ...string) []string {
+// this NamedArg is considered required.
+func (me *NamedArg) Strings(def ...string) []string {
 	if len(me.v) == 0 {
 		if len(def) == 0 {
 			me.required = true

@@ -24,8 +24,8 @@ func (me *Usage) Preface(lines ...string) {
 	}
 }
 
-// Example adds an examples section. The examples are place last after
-// options and named arguments. Examples are plain text and not
+// Example adds an examples section. The examples are placed last
+// after options and named arguments. Examples are plain text and not
 // evaluated in any way.
 func (me *Usage) Example(lines ...string) {
 	for _, line := range lines {

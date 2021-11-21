@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
-- Replace Parser.Optional and Parser.Required with Parser.Argument
+- Replace Parser.Optional and Parser.Required with Parser.NamedArg
+- Add type NamedArg
 
 ## [0.8.1] 2021-11-13
 

@@ -14,8 +14,8 @@ func ExampleNewBasicParser() {
 		password = cli.Option("-p, --password, $PASSWORD").String("")
 
 		// parse and name non options
-		username = cli.Argument("USERNAME").String("")
-		note     = cli.Argument("NOTE").String("")
+		username = cli.NamedArg("USERNAME").String("")
+		note     = cli.NamedArg("NOTE").String("")
 	)
 	cli.Parse()
 
@@ -31,8 +31,8 @@ func ExampleNewParser() {
 		help     = cli.Flag("-h, --help")
 
 		// parse and name non options
-		username = cli.Argument("USERNAME").String("")
-		note     = cli.Argument("NOTE").String("")
+		username = cli.NamedArg("USERNAME").String("")
+		note     = cli.NamedArg("NOTE").String("")
 	)
 
 	switch {
@@ -53,7 +53,7 @@ func ExampleNewParser() {
 func ExampleParser_Usage() {
 	os.Args = []string{"mycmd"} // just for this test
 	cli := cmdline.NewBasicParser()
-	cli.Argument("FILES...").Strings("file1", "file2")
+	cli.NamedArg("FILES...").Strings("file1", "file2")
 	cli.Usage().WriteTo(os.Stdout)
 	// output:
 	//

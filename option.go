@@ -132,7 +132,7 @@ func (opt *Option) stringArg() (string, error) {
 		if opt.match(arg) {
 			opt.argIndex = i
 			opt.valIndex = i
-			// argument is -i=value
+			// NamedArg is -i=value
 			eqIndex := strings.Index(arg, "=")
 			if eqIndex > 0 {
 				return arg[eqIndex+1:], nil
@@ -143,7 +143,7 @@ func (opt *Option) stringArg() (string, error) {
 				return "", fmt.Errorf("missing value")
 			}
 			opt.valIndex = i + 1
-			// argument is -i
+			// NamedArg is -i
 			return opt.args[i+1], nil
 		}
 	}
