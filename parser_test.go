@@ -69,7 +69,7 @@ func ExampleParser_Usage_optionalNamedArguments() {
 }
 
 func ExampleParser_Usage_requiredNamedArguments() {
-	os.Args = []string{"mycmd"} // just for this test
+	os.Args = []string{"mycmd", "-h"} // just for this test
 	cli := NewBasicParser()
 	cli.NamedArg("FILES...").Strings()
 	cli.Usage().WriteTo(os.Stdout)
@@ -236,7 +236,7 @@ func TestParser_Argument_default_value(t *testing.T) {
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
-	if got[0] != "file" {
+	if len(got) == 0 || got[0] != "file" {
 		t.Error("incorrect value:", got)
 	}
 }

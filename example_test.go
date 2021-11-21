@@ -46,7 +46,7 @@ func ExampleUsage_WriteTo() {
 	cli.Parse()
 
 	// output:
-	// Usage: speak [OPTIONS] [PHRASE]
+	// Usage: speak [OPTIONS] PHRASE
 	//
 	// speak - talks back to you
 	// Author: Gregory Vincic

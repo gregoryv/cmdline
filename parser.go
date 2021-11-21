@@ -263,7 +263,7 @@ func (me *Parser) Args() []string {
 	return rest
 }
 
-// Argn returns the n:th NamedArg of remaining arguments starting at 0.
+// Argn returns the n:th of remaining arguments starting at 0.
 func (me *Parser) Argn(n int) string {
 	rest := me.Args()
 	if n < len(rest) {
@@ -307,6 +307,8 @@ func (me *Parser) parseMultiArg(name string) []string {
 	return []string{v}
 }
 
+// ----------------------------------------
+
 type NamedArg struct {
 	name     string
 	v        []string
@@ -316,7 +318,9 @@ type NamedArg struct {
 
 // String returns the value of this NamedArg or the given default
 func (me *NamedArg) String(def string) string {
+	me.required = (def == "")
 	v := me.v
+
 	if len(v) == 0 || v[0] == "" {
 		return def
 	}
@@ -326,11 +330,11 @@ func (me *NamedArg) String(def string) string {
 // Strings returns the values of this argument. If no default is given
 // this NamedArg is considered required.
 func (me *NamedArg) Strings(def ...string) []string {
-	if len(me.v) == 0 {
-		if len(def) == 0 {
-			me.required = true
-			me.err = fmt.Errorf("missing %s", me.name)
-		}
+	me.required = (len(def) == 0)
+	switch {
+	case len(me.v) == 0 && me.required:
+		me.err = fmt.Errorf("missing %s", me.name)
+	case len(me.v) == 0 && !me.required:
 		return def
 	}
 	return me.v
