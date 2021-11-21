@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Change Parser.Group signature, removing items argument
 - Replace Parser.Optional and Parser.Required with Parser.NamedArg
 - Add type NamedArg
 

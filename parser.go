@@ -95,12 +95,8 @@ func (me *Parser) SetShell(sh Shell) {
 	me.args = sh.Args()
 }
 
-func (me *Parser) Group(title, name string, items ...*Item) *Group {
-	def := ""
-	if len(items) > 0 {
-		def = items[0].Name
-	}
-	return me.group(title, name, me.NamedArg(name).String(def), items)
+func (me *Parser) Group(title, name string) *Group {
+	return me.group(title, name, me.NamedArg(name).String(""))
 }
 
 // Preface is the same as Usage().Preface
@@ -108,13 +104,13 @@ func (me *Parser) Preface(lines ...string) {
 	me.usage.Preface(lines...)
 }
 
-func (me *Parser) group(title, name, v string, items []*Item) *Group {
+func (me *Parser) group(title, name, v string) *Group {
 	grp := &Group{
 		name:  name,
 		args:  me.Args(),
 		title: title,
 		v:     v,
-		items: items,
+		items: make([]*Item, 0),
 	}
 	err := me.addGroup(grp)
 	if err != nil {
