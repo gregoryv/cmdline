@@ -55,7 +55,7 @@ func ExampleNewParser() {
 	fmt.Fprintln(os.Stdout, uid, username, password, note)
 }
 
-func ExampleParser_Usage() {
+func ExampleParser_Usage_optionalNamedArguments() {
 	os.Args = []string{"mycmd"} // just for this test
 	cli := NewBasicParser()
 	cli.NamedArg("FILES...").Strings("file1", "file2")
@@ -68,6 +68,18 @@ func ExampleParser_Usage() {
 	//     -h, --help
 }
 
+func ExampleParser_Usage_requiredNamedArguments() {
+	os.Args = []string{"mycmd"} // just for this test
+	cli := NewBasicParser()
+	cli.NamedArg("FILES...").Strings()
+	cli.Usage().WriteTo(os.Stdout)
+	// output:
+	//
+	// Usage: mycmd [OPTIONS] FILES...
+	//
+	// Options
+	//     -h, --help
+}
 func Test_basic_parser_shows_help(t *testing.T) {
 	cli := NewBasicParser()
 	sh := clitest.NewShellT("test", "-h")
