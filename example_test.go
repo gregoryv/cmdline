@@ -20,6 +20,7 @@ func ExampleUsage_WriteTo() {
 	var (
 		_ = cli.Flag("-n, --dry-run")
 		_ = cli.Option("-u, --username, $USER").String("")
+		_ = cli.Option("-r, --role").Enum("user", "user", "admin")
 
 		// Group items
 		phrases = cli.Group("Phrases", "PHRASE")
@@ -54,6 +55,7 @@ func ExampleUsage_WriteTo() {
 	// Options
 	//     -n, --dry-run
 	//     -u, --username, $USER : ""
+	//     -r, --role : "user" [user admin]
 	//     -h, --help
 	//
 	// Phrases

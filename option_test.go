@@ -7,6 +7,30 @@ import (
 	"github.com/gregoryv/cmdline/clitest"
 )
 
+func Test_ok_enum_single_value(t *testing.T) {
+	cli := Parse(t, "cmd")
+	cli.Option("-l, --letter").Enum("a")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_ok_enum(t *testing.T) {
+	cli := Parse(t, "cmd -l a")
+	cli.Option("-l, --letter").Enum("c", "a", "b")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_incorrect_enum(t *testing.T) {
+	cli := Parse(t, "cmd -l x")
+	cli.Option("-l, --letter").Enum("c", "a", "b", "c")
+	if cli.Ok() {
+		t.Error("x is not a valid enum")
+	}
+}
+
 func Test_without_options(t *testing.T) {
 	cli := Parse(t, "cmd")
 	cli.Option("-b").String("default")

@@ -121,8 +121,16 @@ func writeOptionTo(w io.Writer, opt *Option, indent string) {
 	if opt.quoteValue {
 		def = fmt.Sprintf(" : %q", opt.defaultValue)
 	}
+	var enum string
+	if len(opt.enumerated) > 0 {
+		enum = fmt.Sprintf(" %v", opt.enumerated)
+	}
 
-	fmt.Fprintf(w, "%s    %s%s\n", indent, opt.names, def)
+	fmt.Fprintf(w, "%s    %s%s%v\n", indent, opt.names, def, enum)
+	writeDocTo(w, opt, indent)
+}
+
+func writeDocTo(w io.Writer, opt *Option, indent string) {
 	if len(opt.doc) > 0 {
 		for _, line := range opt.doc {
 			fmt.Fprintf(w, "%s        %s\n", indent, line)

@@ -12,6 +12,7 @@ type Option struct {
 	args         []string // without command
 	names        string
 	defaultValue string
+	enumerated   []string
 	quoteValue   bool // in usage output
 	doc          []string
 	err          error
@@ -100,6 +101,32 @@ func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 	}
 	return iv, opt
 
+}
+
+// Enum same as EnumOpt but does not return the Option
+func (opt *Option) Enum(def string, possible ...string) string {
+	val, _ := opt.EnumOpt(def, possible...)
+	return val
+}
+
+// Enum returns an enumerated string. It's ok to only have one.
+func (opt *Option) EnumOpt(def string, possible ...string) (string, *Option) {
+	if len(possible) == 0 {
+		possible = []string{def}
+	}
+	val, opt := opt.StringOpt(def)
+
+	if val != def {
+		index := make(map[string]interface{})
+		for _, e := range possible {
+			index[e] = nil
+		}
+		if _, found := index[val]; !found {
+			opt.err = fmt.Errorf("incorrect %s %q", opt.names, val)
+		}
+	}
+	opt.enumerated = possible
+	return val, opt
 }
 
 // String same as StringOpt but does not return the Option.
