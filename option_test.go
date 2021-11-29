@@ -1,11 +1,25 @@
 package cmdline
 
 import (
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/gregoryv/cmdline/clitest"
 )
+
+func ExampleOption_Enum() {
+	cli := NewParser()
+	cli.Option("-a, --animal").Enum("snake", "snake", "bear", "goat")
+
+	cli.Usage().WriteTo(os.Stdout)
+	// output:
+	//
+	// Usage: mycmd [OPTIONS]
+	//
+	// Options
+	//     -a, --animal : "snake" [snake bear goat]
+}
 
 func Test_ok_enum_single_value(t *testing.T) {
 	cli := Parse(t, "cmd")
