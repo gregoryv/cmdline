@@ -9,6 +9,7 @@ import (
 )
 
 func ExampleOption_Enum() {
+	os.Args = []string{"mycmd"} // just for this test
 	cli := NewParser()
 	cli.Option("-a, --animal").Enum("snake", "snake", "bear", "goat")
 
