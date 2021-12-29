@@ -51,7 +51,7 @@ func (me *Basic) helpFlag() {
 // ----------------------------------------
 
 // DefaultShell is used by all new parsers.
-var DefaultShell = NewShellOS()
+var DefaultShell Shell = NewShellOS()
 
 // NewParser returns a parser using the DefaultShell
 func NewParser() *Parser {
