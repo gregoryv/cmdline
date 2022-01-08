@@ -3,7 +3,6 @@ package cmdline
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"sync"
 )
@@ -27,7 +26,7 @@ func (me *Basic) Parse() {
 
 	switch {
 	case me.help:
-		me.Usage().WriteTo(os.Stdout)
+		me.Usage().WriteTo(me.Parser.sh.Stdout())
 		me.sh.Exit(0)
 
 	case !me.Ok():

@@ -37,10 +37,11 @@ func Example_envOption() {
 }
 
 func ExampleParseBool() {
-	yes := []string{"1", "y", "yes", "Yes", "YES", "true", "True", "TRUE"}
-	no := []string{"", "0", "n", "no", "No", "NO", "false", "False", "FALSE"}
-
-	for _, v := range append(yes, no...) {
+	in := []string{
+		"1", "y", "yes", "Yes", "YES", "true", "True", "TRUE",
+		"0", "n", "no", "No", "NO", "false", "False", "FALSE", "",
+	}
+	for _, v := range in {
 		got, _ := ParseBool(v)
 		fmt.Printf("%-5s %v\n", v, got)
 	}
@@ -55,7 +56,6 @@ func ExampleParseBool() {
 	// true  true
 	// True  true
 	// TRUE  true
-	//       false
 	// 0     false
 	// n     false
 	// no    false
@@ -64,6 +64,7 @@ func ExampleParseBool() {
 	// false false
 	// False false
 	// FALSE false
+	//       false
 	// parse bool "other"
 
 }

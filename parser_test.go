@@ -88,6 +88,10 @@ func Test_basic_parser_shows_help(t *testing.T) {
 	if sh.ExitCode != 0 {
 		t.Error(sh.Dump())
 	}
+	got := sh.Dump()
+	if !strings.Contains(got, "Usage") {
+		t.Error("dumped!")
+	}
 }
 
 func Test_basic_parser_checks_errors(t *testing.T) {

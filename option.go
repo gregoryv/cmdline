@@ -245,6 +245,8 @@ func (opt *Option) boolArg() bool {
 	return v
 }
 
+// ParseBool returns true if the string evaluates to a true
+// expression. See example for possible values.
 func ParseBool(v string) (bool, error) {
 	switch v {
 	case "1", "y", "yes", "Yes", "YES", "true", "True", "TRUE":

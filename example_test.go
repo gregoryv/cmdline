@@ -11,7 +11,8 @@ func ExampleUsage_WriteTo() {
 	cli := cmdline.NewBasicParser()
 
 	// only needed for this example
-	cli.SetShell(clitest.NewShellT("speak", "-h"))
+	sh := clitest.NewShellT("speak", "-h")
+	cli.SetShell(sh)
 
 	cli.Preface(
 		"speak - talks back to you",
@@ -45,7 +46,7 @@ func ExampleUsage_WriteTo() {
 		"    Hi, John!",
 	)
 	cli.Parse()
-
+	fmt.Println(sh.Out.String())
 	// output:
 	// Usage: speak [OPTIONS] PHRASE
 	//
