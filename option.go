@@ -238,7 +238,21 @@ func (opt *Option) boolArg() bool {
 			return true
 		}
 	}
-	return false
+	v, err := ParseBool(opt.envValue())
+	if err != nil {
+		opt.err = fmt.Errorf("Invalid bool: %w", err)
+	}
+	return v
+}
+
+func ParseBool(v string) (bool, error) {
+	switch v {
+	case "1", "y", "yes", "Yes", "YES", "true", "True", "TRUE":
+		return true, nil
+	case "", "0", "n", "no", "No", "NO", "false", "False", "FALSE":
+		return false, nil
+	}
+	return false, fmt.Errorf("parse bool %q", v)
 }
 
 func (opt *Option) fail() {

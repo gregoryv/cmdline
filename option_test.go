@@ -25,13 +25,47 @@ func ExampleOption_Enum() {
 
 func Example_envOption() {
 	os.Setenv("PASSWORD", "secret")
+	os.Setenv("VERBOSE", "true")
 	var (
-		cli  = NewParser()
-		pass = cli.Option("-p, --password, $PASSWORD").String("")
+		cli     = NewParser()
+		pass    = cli.Option("-p, --password, $PASSWORD").String("")
+		verbose = cli.Flag("-V, --verbose, $VERBOSE")
 	)
-	fmt.Println(pass)
+	fmt.Println(pass, verbose)
 	// output:
-	// secret
+	// secret true
+}
+
+func ExampleParseBool() {
+	yes := []string{"1", "y", "yes", "Yes", "YES", "true", "True", "TRUE"}
+	no := []string{"", "0", "n", "no", "No", "NO", "false", "False", "FALSE"}
+
+	for _, v := range append(yes, no...) {
+		got, _ := ParseBool(v)
+		fmt.Printf("%-5s %v\n", v, got)
+	}
+	_, err := ParseBool("other")
+	fmt.Println(err)
+	//output:
+	// 1     true
+	// y     true
+	// yes   true
+	// Yes   true
+	// YES   true
+	// true  true
+	// True  true
+	// TRUE  true
+	//       false
+	// 0     false
+	// n     false
+	// no    false
+	// No    false
+	// NO    false
+	// false false
+	// False false
+	// FALSE false
+	// parse bool "other"
+
 }
 
 func Test_ok_enum_single_value(t *testing.T) {
@@ -63,6 +97,15 @@ func Test_without_options(t *testing.T) {
 	cli.Option("-b").String("default")
 	if !cli.Ok() {
 		t.Error(cli.Error())
+	}
+}
+
+func Test_flag_env(t *testing.T) {
+	os.Setenv("FLAG", "jibberish")
+	cli := Parse(t, "")
+	cli.Flag("-f, $FLAG")
+	if cli.Ok() {
+		t.Error("should fail")
 	}
 }
 
