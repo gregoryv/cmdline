@@ -19,16 +19,21 @@ This package is different from the builtin package flag.
 ## Example
 
     func ExampleNewBasicParser() {
+    	os.Setenv("VERBOSE", "yes")
     	var (
     		cli		= NewBasicParser()
     		uid		= cli.Option("--uid", "Generated if not given").Int(0)
     		password	= cli.Option("-p, --password, $PASSWORD").String("")
+    		verbose		= cli.Flag("-V, --verbose, $VERBOSE")
     
     		username	= cli.NamedArg("USERNAME").String("")
     		note		= cli.NamedArg("NOTE").String("")
     	)
     	cli.Parse()
     
+    	if !verbose {
+    		log.SetOutput(ioutil.Discard)
+    	}
     	fmt.Fprintln(os.Stdout, uid, username, password, note)
     }
 

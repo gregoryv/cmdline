@@ -13,10 +13,12 @@ import (
 )
 
 func ExampleNewBasicParser() {
+	os.Setenv("VERBOSE", "yes")
 	var (
 		cli      = NewBasicParser()
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)
 		password = cli.Option("-p, --password, $PASSWORD").String("")
+		verbose  = cli.Flag("-V, --verbose, $VERBOSE")
 
 		// parse and name non options
 		username = cli.NamedArg("USERNAME").String("")
@@ -25,6 +27,9 @@ func ExampleNewBasicParser() {
 	cli.Parse()
 
 	// use options ...
+	if !verbose {
+		log.SetOutput(ioutil.Discard)
+	}
 	fmt.Fprintln(os.Stdout, uid, username, password, note)
 }
 
