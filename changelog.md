@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
-- Flags from environment 1,y,yes,Yes,YES=true, 0,n,no,No,NO=false
+- Parse errors are written to the configured Stderr
+- Flags from environment 1,y,yes,Yes,YES=true, 0,n,no,No,NO,""=false
 
 ## [0.10.1] 2021-12-29
 

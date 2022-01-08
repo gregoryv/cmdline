@@ -30,8 +30,8 @@ func (me *Basic) Parse() {
 		me.sh.Exit(0)
 
 	case !me.Ok():
-		fmt.Println(me.Error())
-		fmt.Println("Try -h or --help, for more information")
+		fmt.Fprintln(me.sh.Stderr(), me.Error())
+		fmt.Fprintln(me.sh.Stderr(), "Try -h or --help, for more information")
 		me.sh.Exit(1)
 	}
 }
@@ -84,7 +84,7 @@ type Parser struct {
 // Parse checks parsing errors and exits on errors
 func (me *Parser) Parse() {
 	if !me.Ok() {
-		fmt.Println(me.Error())
+		fmt.Fprintln(me.sh.Stderr(), me.Error())
 		me.sh.Exit(1)
 	}
 }
