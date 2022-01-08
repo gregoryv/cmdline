@@ -1,6 +1,7 @@
 package cmdline
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -20,6 +21,17 @@ func ExampleOption_Enum() {
 	//
 	// Options
 	//     -a, --animal : "snake" [snake bear goat]
+}
+
+func Example_envOption() {
+	os.Setenv("PASSWORD", "secret")
+	var (
+		cli  = NewParser()
+		pass = cli.Option("-p, --password, $PASSWORD").String("")
+	)
+	fmt.Println(pass)
+	// output:
+	// secret
 }
 
 func Test_ok_enum_single_value(t *testing.T) {
