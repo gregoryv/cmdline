@@ -19,6 +19,7 @@ func ExampleNewBasicParser() {
 		uid      = cli.Option("--uid", "Generated if not given").Int(0)
 		password = cli.Option("-p, --password, $PASSWORD").String("")
 		verbose  = cli.Flag("-V, --verbose, $VERBOSE")
+		role     = cli.Option("-r, --role").Enum("guest", "admin", "nobody")
 
 		// parse and name non options
 		username = cli.NamedArg("USERNAME").String("")
@@ -30,7 +31,7 @@ func ExampleNewBasicParser() {
 	if !verbose {
 		log.SetOutput(ioutil.Discard)
 	}
-	fmt.Fprintln(os.Stdout, uid, username, password, note)
+	fmt.Fprintln(os.Stdout, uid, username, password, note, role)
 }
 
 func ExampleNewParser() {

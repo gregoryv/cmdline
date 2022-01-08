@@ -25,6 +25,7 @@ This package is different from the builtin package flag.
     		uid		= cli.Option("--uid", "Generated if not given").Int(0)
     		password	= cli.Option("-p, --password, $PASSWORD").String("")
     		verbose		= cli.Flag("-V, --verbose, $VERBOSE")
+    		role		= cli.Option("-r, --role").Enum("guest", "admin", "nobody")
     
     		username	= cli.NamedArg("USERNAME").String("")
     		note		= cli.NamedArg("NOTE").String("")
@@ -34,6 +35,6 @@ This package is different from the builtin package flag.
     	if !verbose {
     		log.SetOutput(ioutil.Discard)
     	}
-    	fmt.Fprintln(os.Stdout, uid, username, password, note)
+    	fmt.Fprintln(os.Stdout, uid, username, password, note, role)
     }
 
