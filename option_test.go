@@ -9,6 +9,16 @@ import (
 	"github.com/gregoryv/cmdline/clitest"
 )
 
+func ExampleOption_Url() {
+	var (
+		cli = NewParser()
+		u   = cli.Option("-s, --server").Url("tcp://127.0.0.1:2345")
+	)
+	fmt.Println(u.Scheme, u.Hostname(), u.Port())
+	// output:
+	// tcp 127.0.0.1 2345
+}
+
 func ExampleOption_Enum() {
 	os.Args = []string{"mycmd"} // just for this test
 	cli := NewParser()
@@ -67,6 +77,38 @@ func ExampleParseBool() {
 	//       false
 	// parse bool "other"
 
+}
+
+func Test_ok_url(t *testing.T) {
+	cli := Parse(t, "cmd -h localhost")
+	cli.Option("-h, --host").Url("https://example.com:443")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_incorrect_url(t *testing.T) {
+	cli := Parse(t, "cmd -h %gh&%ij")
+	cli.Option("-h, --host").Url("example.com")
+	if cli.Ok() {
+		t.Error("not a valid url")
+	}
+}
+
+func Test_incorrect_url_missing(t *testing.T) {
+	cli := Parse(t, "cmd -h")
+	cli.Option("-h, --host").Url("example.com")
+	if cli.Ok() {
+		t.Error("not a valid url")
+	}
+}
+
+func Test_incorrect_url_default(t *testing.T) {
+	cli := Parse(t, "cmd")
+	cli.Option("-h, --host").Url("%gh&%ij")
+	if cli.Ok() {
+		t.Error("not a valid url")
+	}
 }
 
 func Test_ok_enum_single_value(t *testing.T) {

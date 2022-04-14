@@ -2,6 +2,7 @@ package cmdline
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -101,6 +102,36 @@ func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 	}
 	return iv, opt
 
+}
+
+func (opt *Option) Url(def string) *url.URL {
+	u, _ := opt.UrlOpt(def)
+	return u
+}
+
+func (opt *Option) UrlOpt(def string) (*url.URL, *Option) {
+	opt.setDefault(def)
+	defUrl, err := url.Parse(def)
+	if err != nil {
+		opt.fail()
+		opt.err = err
+		return nil, opt
+	}
+	v, err := opt.stringArg()
+	if err != nil {
+		opt.fail()
+		return defUrl, opt
+	}
+	if v == "" {
+		return defUrl, opt
+	}
+	u, err := url.Parse(v)
+	if err != nil {
+		opt.fail()
+		opt.err = err
+		return defUrl, opt
+	}
+	return u, opt
 }
 
 // Enum same as EnumOpt but does not return the Option
