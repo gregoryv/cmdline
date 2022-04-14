@@ -9,6 +9,16 @@ import (
 	"github.com/gregoryv/cmdline/clitest"
 )
 
+func Example_Duration() {
+	var (
+		cli = NewParser()
+		u   = cli.Option("-d, --duration").Duration("199µs")
+	)
+	fmt.Println(u.Microseconds())
+	// output:
+	// 199
+}
+
 func ExampleOption_Url() {
 	var (
 		cli = NewParser()
@@ -77,6 +87,38 @@ func ExampleParseBool() {
 	//       false
 	// parse bool "other"
 
+}
+
+func Test_ok_duration(t *testing.T) {
+	cli := Parse(t, "cmd -d 10ms")
+	cli.Option("-d").Duration("1s")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_incorrect_duration_wrong_unit(t *testing.T) {
+	cli := Parse(t, "cmd -d 10x")
+	cli.Option("-d").Duration("1s")
+	if cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_incorrect_duration_default(t *testing.T) {
+	cli := Parse(t, "cmd")
+	cli.Option("-d").Duration("1x")
+	if cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
+func Test_incorrect_duration_missing(t *testing.T) {
+	cli := Parse(t, "cmd -d")
+	cli.Option("-d").Duration("1s")
+	if cli.Ok() {
+		t.Error(cli.Error())
+	}
 }
 
 func Test_ok_url(t *testing.T) {

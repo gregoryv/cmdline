@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Option defines a command line option, ie. --username
@@ -102,6 +103,36 @@ func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 	}
 	return iv, opt
 
+}
+
+func (opt *Option) Duration(def string) time.Duration {
+	u, _ := opt.DurationOpt(def)
+	return u
+}
+
+func (opt *Option) DurationOpt(def string) (time.Duration, *Option) {
+	opt.setDefault(def)
+	defDur, err := time.ParseDuration(def)
+	if err != nil {
+		opt.fail()
+		opt.err = err
+		return 0, opt
+	}
+	v, err := opt.stringArg()
+	if err != nil {
+		opt.fail()
+		return defDur, opt
+	}
+	if v == "" {
+		return defDur, opt
+	}
+	dur, err := time.ParseDuration(v)
+	if err != nil {
+		opt.fail()
+		opt.err = err
+		return defDur, opt
+	}
+	return dur, opt
 }
 
 func (opt *Option) Url(def string) *url.URL {

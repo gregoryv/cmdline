@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Add Option.Duration, using time.ParseDuration
 - Add Option.Url, using url.Parse for parsing
 
 ## [0.11.0] 2022-01-08
