@@ -25,9 +25,11 @@ This package is different from the builtin package flag.
     		uid		= cli.Option("--uid", "Generated if not given").Int(0)
     		password	= cli.Option("-p, --password, $PASSWORD").String("")
     		verbose		= cli.Flag("-V, --verbose, $VERBOSE")
-    		role		= cli.Option("-r, --role").Enum("guest", "admin", "nobody")
-    		url		= cli.Option("--test-host").Url("tcp://example.com:123")
-    		dur		= cli.Option("--pause").Duration("200ms")
+    		role		= cli.Option("-r, --role").Enum("guest",
+    			"guest", "admin", "nobody",
+    		)
+    		url	= cli.Option("--test-host").Url("tcp://example.com:123")
+    		dur	= cli.Option("--pause").Duration("200ms")
     
     		username	= cli.NamedArg("USERNAME").String("")
     		note		= cli.NamedArg("NOTE").String("")
