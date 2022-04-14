@@ -9,7 +9,7 @@ import (
 	"github.com/gregoryv/cmdline/clitest"
 )
 
-func Example_Duration() {
+func ExampleOption_Duration() {
 	var (
 		cli = NewParser()
 		u   = cli.Option("-d, --duration").Duration("199µs")
