@@ -213,7 +213,29 @@ func (opt *Option) StringOpt(def string) (string, *Option) {
 	if v == "" {
 		return def, opt
 	}
-	return v, opt
+	return unquote(v), opt
+}
+
+func unquote(v string) string {
+	if len(v) < 2 {
+		return v
+	}
+
+	first := v[0]
+	last := v[len(v)-1]
+	if isQuoteChar(first) && first == last {
+		return v[1 : len(v)-1]
+	}
+	return v
+}
+
+func isQuoteChar(v byte) bool {
+	switch v {
+	case '`', '"', '\'':
+		return true
+	default:
+		return false
+	}
 }
 
 func (opt *Option) stringArg() (string, error) {

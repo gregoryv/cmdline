@@ -170,6 +170,31 @@ func Test_parser_string_option(t *testing.T) {
 	}
 }
 
+func Test_parser_string_option_quoted(t *testing.T) {
+	cases := []struct {
+		args []string
+		q    string
+	}{
+		{args: []string{"mycmd", `-q="x y"`}, q: "x y"},
+		{args: []string{"mycmd", `-q`, `"x y"`}, q: "x y"},
+		{args: []string{"mycmd", `-q='x "y'`}, q: `x "y`},
+		{args: []string{"mycmd", `-q`, `'x "y'`}, q: `x "y`},
+		{args: []string{"mycmd", "-q", "`x y`"}, q: "x y"},
+	}
+	for _, c := range cases {
+		t.Run("", func(t *testing.T) {
+			cli := NewParser()
+			sh := clitest.NewShellT(c.args...)
+			cli.SetShell(sh)
+			t.Cleanup(sh.Cleanup)
+			got := cli.Option("-q").String("")
+			if got != c.q {
+				t.Errorf("got %q", got)
+			}
+		})
+	}
+}
+
 func Test_single_group_item_is_selected(t *testing.T) {
 	cli := Parse(t, "mycmd hello")
 	phrases := cli.Group("Phrases", "PHRASE")

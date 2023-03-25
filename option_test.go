@@ -89,6 +89,7 @@ func ExampleParseBool() {
 
 }
 
+
 func Test_ok_duration(t *testing.T) {
 	cli := Parse(t, "cmd -d 10ms")
 	cli.Option("-d").Duration("1s")
