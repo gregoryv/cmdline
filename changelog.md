@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Add space between examples and groups
 - Bump go version in go.mod to 1.19
 
 ## [0.13.0] 2023-03-25

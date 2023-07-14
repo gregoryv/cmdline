@@ -88,6 +88,9 @@ func (me *Usage) writeExamples(p *nexus.Printer) {
 	if me.examples.Len() == 0 {
 		return
 	}
+	if len(me.groups) == 0 {
+		p.Println()
+	}
 	p.Println("Examples")
 	p.Print(me.examples.String())
 }
