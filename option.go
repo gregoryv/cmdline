@@ -250,24 +250,23 @@ func isQuoteChar(v byte) bool {
 }
 
 func (opt *Option) stringArg() (string, error) {
-	for i, arg := range opt.args {
-		if opt.match(arg) {
-			opt.argIndex = i
-			opt.valIndex = i
-			// NamedArg is -i=value
-			eqIndex := strings.Index(arg, "=")
-			if eqIndex > 0 {
-				return arg[eqIndex+1:], nil
-			}
-			isLast := len(opt.args)-1 == i
-			if isLast {
-				opt.fail()
-				return "", fmt.Errorf("missing value")
-			}
-			opt.valIndex = i + 1
-			// NamedArg is -i
-			return opt.args[i+1], nil
+	i, found := opt.find()
+	if found {
+		arg := opt.args[i]
+		opt.valIndex = i
+		// NamedArg is -i=value
+		eqIndex := strings.Index(arg, "=")
+		if eqIndex > 0 {
+			return arg[eqIndex+1:], nil
 		}
+		isLast := len(opt.args)-1 == i
+		if isLast {
+			opt.fail()
+			return "", fmt.Errorf("missing value")
+		}
+		opt.valIndex = i + 1
+		// NamedArg is -i
+		return opt.args[i+1], nil
 	}
 	return opt.envValue(), nil
 }
@@ -338,17 +337,49 @@ func (opt *Option) BoolOpt() (bool, *Option) {
 }
 
 func (opt *Option) boolArg() bool {
-	for i, arg := range opt.args {
-		if opt.match(arg) {
-			opt.argIndex = i
-			return true
+	value := opt.envValue()
+
+	i, found := opt.find()
+	if found {
+		// also check if any value is given
+		val, isOption := opt.get(i + 1)
+		if isOption || val == "" {
+			value = "true"
+		} else {
+			value = val
 		}
 	}
-	v, err := ParseBool(opt.envValue())
+
+	v, err := ParseBool(value)
 	if err != nil {
 		opt.err = fmt.Errorf("Invalid bool: %w", err)
 	}
 	return v
+}
+
+// find returns the index of the given option and sets internal arg.Index
+// returns 0, false if not found
+func (opt *Option) find() (i int, found bool) {
+	for i, arg := range opt.args {
+		if opt.match(arg) {
+			opt.argIndex = i
+			return i, true
+		}
+	}
+	return 0, false
+}
+
+// get returns the argument and true if it starts with '-'
+func (opt *Option) get(i int) (string, bool) {
+	if i >= len(opt.args) {
+		return "", false
+	}
+	next := opt.args[i]
+	if len(next) == 0 {
+		return "", false
+	}
+	isOption := next[0:1] == "-"
+	return next, isOption
 }
 
 // ParseBool returns true if the string evaluates to a true

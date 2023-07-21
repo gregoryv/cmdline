@@ -398,6 +398,30 @@ func Test_ok_BoolVar(t *testing.T) {
 	}
 }
 
+func Test_ok_BoolVar_true(t *testing.T) {
+	cli := Parse(t, "cmd -v")
+	dst := false
+	got := cli.Option("-v").BoolVar(&dst)
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got != true {
+		t.Error("unexpected", got)
+	}
+}
+
+func Test_ok_BoolVar_true_space(t *testing.T) {
+	cli := Parse(t, "cmd -v ")
+	dst := false
+	got := cli.Option("-v").BoolVar(&dst)
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got != true {
+		t.Error("unexpected", got)
+	}
+}
+
 // Parse returns a parser from a string starting with the command
 // followed by arguments.
 func Parse(t *testing.T, str string) *Parser {
