@@ -168,6 +168,12 @@ func (opt *Option) UrlOpt(def string) (*url.URL, *Option) {
 	return u, opt
 }
 
+// EnumVar same as Enum but uses dst as default and destination.
+func (opt *Option) EnumVar(dst *string, possible ...string) string {
+	*dst = opt.Enum(*dst, possible...)
+	return *dst
+}
+
 // Enum same as EnumOpt but does not return the Option
 func (opt *Option) Enum(def string, possible ...string) string {
 	val, _ := opt.EnumOpt(def, possible...)
@@ -194,16 +200,16 @@ func (opt *Option) EnumOpt(def string, possible ...string) (string, *Option) {
 	return val, opt
 }
 
+// StringVar same as String but uses dst as default and destination.
+func (opt *Option) StringVar(dst *string) string {
+	*dst = opt.String(*dst)
+	return *dst
+}
+
 // String same as StringOpt but does not return the Option.
 func (opt *Option) String(def string) string {
 	val, _ := opt.StringOpt(def)
 	return val
-}
-
-// StringVar sets *def with *def or a given one
-func (opt *Option) StringVar(def *string) string {
-	*def, _ = opt.StringOpt(*def)
-	return *def
 }
 
 // StringOpt returns string value from the arguments or the given default value.

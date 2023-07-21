@@ -178,6 +178,11 @@ func Test_ok_enum(t *testing.T) {
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
+	dst := "a"
+	cli.Option("-l, --letter").EnumVar(&dst, "a", "b")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
 }
 
 func Test_incorrect_enum(t *testing.T) {
