@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-//go:generate go run --tags generate genvar.go cmdline
-
 // Option defines a command line option, ie. --username
 type Option struct {
 	args         []string // without command

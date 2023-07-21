@@ -9,17 +9,6 @@ import (
 	"github.com/gregoryv/cmdline/clitest"
 )
 
-func ExampleOption_StringVar() {
-	var (
-		cli  = NewParser()
-		name = "John Doe"
-		_    = cli.Option("-n, --name").StringVar(&name)
-	)
-	fmt.Println(name)
-	// output:
-	// John Doe
-}
-
 func ExampleOption_Duration() {
 	var (
 		cli = NewParser()
@@ -338,58 +327,9 @@ func Test_ok_enumVar(t *testing.T) {
 	}
 }
 
-func Test_ok_intVar(t *testing.T) {
-	cli := Parse(t, "cmd -v 10")
-	dst := 39
-	got := cli.Option("-v").IntVar(&dst)
-	if !cli.Ok() {
-		t.Error(cli.Error())
-	}
-	if got != 10 {
-		t.Error("unexpected", got)
-	}
-}
-
-func Test_ok_uint8Var(t *testing.T) {
-	cli := Parse(t, "cmd -v 10")
-	dst := uint8(39)
-	got := cli.Option("-v").Uint8Var(&dst)
-	if !cli.Ok() {
-		t.Error(cli.Error())
-	}
-	if got != 10 {
-		t.Error("unexpected", got)
-	}
-}
-
-func Test_ok_uint16Var(t *testing.T) {
-	cli := Parse(t, "cmd -v 10")
-	dst := uint16(39)
-	got := cli.Option("-v").Uint16Var(&dst)
-	if !cli.Ok() {
-		t.Error(cli.Error())
-	}
-	if got != 10 {
-		t.Error("unexpected", got)
-	}
-}
-
-func Test_ok_Float64Var(t *testing.T) {
-	cli := Parse(t, "cmd -v 10")
-	dst := 39.0
-	got := cli.Option("-v").Float64Var(&dst)
-	if !cli.Ok() {
-		t.Error(cli.Error())
-	}
-	if got != 10.0 {
-		t.Error("unexpected", got)
-	}
-}
-
-func Test_ok_BoolVar(t *testing.T) {
+func Test_ok_Bool(t *testing.T) {
 	cli := Parse(t, "cmd -v false")
-	dst := true
-	got := cli.Option("-v").BoolVar(&dst)
+	got := cli.Option("-v").Bool(true)
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
@@ -398,10 +338,9 @@ func Test_ok_BoolVar(t *testing.T) {
 	}
 }
 
-func Test_ok_BoolVar_true(t *testing.T) {
+func Test_ok_Bool_empty(t *testing.T) {
 	cli := Parse(t, "cmd -v")
-	dst := false
-	got := cli.Option("-v").BoolVar(&dst)
+	got := cli.Option("-v").Bool(false)
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
@@ -410,10 +349,9 @@ func Test_ok_BoolVar_true(t *testing.T) {
 	}
 }
 
-func Test_ok_BoolVar_true_space(t *testing.T) {
+func Test_ok_Bool_empty_space(t *testing.T) {
 	cli := Parse(t, "cmd -v ")
-	dst := false
-	got := cli.Option("-v").BoolVar(&dst)
+	got := cli.Option("-v").Bool(false)
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
