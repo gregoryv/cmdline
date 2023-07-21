@@ -323,7 +323,12 @@ func (opt *Option) BoolVar(dst *bool) bool {
 }
 
 // Bool same as BoolOpt but does not return the Option.
-func (opt *Option) Bool() bool {
+func (opt *Option) Bool(def bool) bool {
+	if def == true {
+		opt.setDefault("true")
+	} else {
+		opt.setDefault("false")
+	}
 	val, _ := opt.BoolOpt()
 	return val
 }

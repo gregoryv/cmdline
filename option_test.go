@@ -296,7 +296,7 @@ func Test_missing_int_option(t *testing.T) {
 
 func Test_default_bool_option(t *testing.T) {
 	cli := Parse(t, "cmd")
-	got := cli.Option("-h").Bool()
+	got := cli.Option("-h").Bool(false)
 	if got == true {
 		t.Error("unexpected:", got)
 	}

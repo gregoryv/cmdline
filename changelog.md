@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [unreleased]
 
+- Option.Bool takes default value **BREAKING CHANGE**
 - Hide default option values in usage by using a single docline with
   the word "hidden"
 - Add Option.StringVar
