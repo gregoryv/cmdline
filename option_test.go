@@ -327,13 +327,76 @@ func Test_bad_float64_option(t *testing.T) {
 }
 
 func Test_ok_enumVar(t *testing.T) {
+	cli := Parse(t, "cmd -v b")
 	dst := "a"
-	cli.Option("-l, --letter").EnumVar(&dst, "a", "b")
+	got := cli.Option("-v").EnumVar(&dst, "a", "b")
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
+	if got != "b" {
+		t.Error("unexpected", got)
+	}
 }
 
+func Test_ok_intVar(t *testing.T) {
+	cli := Parse(t, "cmd -v 10")
+	dst := 39
+	got := cli.Option("-v").IntVar(&dst)
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got != 10 {
+		t.Error("unexpected", got)
+	}
+}
+
+func Test_ok_uint8Var(t *testing.T) {
+	cli := Parse(t, "cmd -v 10")
+	dst := uint8(39)
+	got := cli.Option("-v").Uint8Var(&dst)
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got != 10 {
+		t.Error("unexpected", got)
+	}
+}
+
+func Test_ok_uint16Var(t *testing.T) {
+	cli := Parse(t, "cmd -v 10")
+	dst := uint16(39)
+	got := cli.Option("-v").Uint16Var(&dst)
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got != 10 {
+		t.Error("unexpected", got)
+	}
+}
+
+func Test_ok_Float64Var(t *testing.T) {
+	cli := Parse(t, "cmd -v 10")
+	dst := 39.0
+	got := cli.Option("-v").Float64Var(&dst)
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got != 10.0 {
+		t.Error("unexpected", got)
+	}
+}
+
+func Test_ok_BoolVar(t *testing.T) {
+	cli := Parse(t, "cmd -v false")
+	dst := true
+	got := cli.Option("-v").BoolVar(&dst)
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+	if got != false {
+		t.Error("unexpected", got)
+	}
+}
 
 // Parse returns a parser from a string starting with the command
 // followed by arguments.
