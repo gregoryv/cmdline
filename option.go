@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+//go:generate go run --tags generate genvar.go cmdline
+
 // Option defines a command line option, ie. --username
 type Option struct {
 	args         []string // without command
@@ -200,12 +202,6 @@ func (opt *Option) EnumOpt(def string, possible ...string) (string, *Option) {
 	return val, opt
 }
 
-// StringVar same as String but uses dst as default and destination.
-func (opt *Option) StringVar(dst *string) string {
-	*dst = opt.String(*dst)
-	return *dst
-}
-
 // String same as StringOpt but does not return the Option.
 func (opt *Option) String(def string) string {
 	val, _ := opt.StringOpt(def)
@@ -314,6 +310,17 @@ func nameAndValue(arg string) (string, string) {
 
 func isOption(arg string) bool {
 	return len(arg) > 0 && arg[0] == '-'
+}
+
+// BoolVar same as Bool but uses dst as default and destination.
+func (opt *Option) BoolVar(dst *bool) bool {
+	if *dst {
+		opt.setDefault("true")
+	} else {
+		opt.setDefault("false")
+	}
+	*dst = opt.boolArg()
+	return *dst
 }
 
 // Bool same as BoolOpt but does not return the Option.

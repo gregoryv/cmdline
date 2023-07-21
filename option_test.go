@@ -178,11 +178,6 @@ func Test_ok_enum(t *testing.T) {
 	if !cli.Ok() {
 		t.Error(cli.Error())
 	}
-	dst := "a"
-	cli.Option("-l, --letter").EnumVar(&dst, "a", "b")
-	if !cli.Ok() {
-		t.Error(cli.Error())
-	}
 }
 
 func Test_incorrect_enum(t *testing.T) {
@@ -330,6 +325,15 @@ func Test_bad_float64_option(t *testing.T) {
 		t.Error("unexpected:", got)
 	}
 }
+
+func Test_ok_enumVar(t *testing.T) {
+	dst := "a"
+	cli.Option("-l, --letter").EnumVar(&dst, "a", "b")
+	if !cli.Ok() {
+		t.Error(cli.Error())
+	}
+}
+
 
 // Parse returns a parser from a string starting with the command
 // followed by arguments.
