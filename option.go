@@ -197,6 +197,12 @@ func (opt *Option) String(def string) string {
 	return val
 }
 
+// StringVar sets *def with *def or a given one
+func (opt *Option) StringVar(def *string) string {
+	*def, _ = opt.StringOpt(*def)
+	return *def
+}
+
 // StringOpt returns string value from the arguments or the given default value.
 func (opt *Option) StringOpt(def string) (string, *Option) {
 	opt.setDefault(def)

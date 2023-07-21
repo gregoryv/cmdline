@@ -12,7 +12,6 @@ This package is different from the builtin package flag.
 - Self documenting options are preferred
 - Multiname options, e.g. -n, --dry-run map to same option
 - Easy way to default to environment variables
-- There are no pointer variations
 - Parsing non option arguments
 - Usage output with optional examples and preface
 

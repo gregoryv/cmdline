@@ -9,6 +9,17 @@ import (
 	"github.com/gregoryv/cmdline/clitest"
 )
 
+func ExampleOption_StringVar() {
+	var (
+		cli  = NewParser()
+		name = "John Doe"
+		_    = cli.Option("-n, --name").StringVar(&name)
+	)
+	fmt.Println(name)
+	// output:
+	// John Doe
+}
+
 func ExampleOption_Duration() {
 	var (
 		cli = NewParser()

@@ -28,7 +28,6 @@ func Test_generate_readme(t *testing.T) {
 			Li("Self documenting options are preferred"),
 			Li("Multiname options, e.g. -n, --dry-run map to same option"),
 			Li("Easy way to default to environment variables"),
-			Li("There are no pointer variations"),
 			Li("Parsing non option arguments"),
 			Li("Usage output with optional examples and preface"),
 		),
