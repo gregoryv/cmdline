@@ -1,0 +1,22 @@
+Usage: speak [OPTIONS] PHRASE
+
+speak - talks back to you
+Author: Gregory Vincic
+
+Options
+    -n, --dry-run
+    -u, --username, $USER : ""
+    -r, --role : "user" [user admin]
+    -h, --help
+
+Phrases
+    askName (default)
+    sayHi
+        -t, --to : "stranger"
+    compliment
+        -s, --someone : "John"
+
+Examples
+    Greet
+        $ speek sayHi -t John
+        Hi, John!

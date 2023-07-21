@@ -29,11 +29,12 @@ func (me *Usage) Preface(lines ...string) {
 // evaluated in any way.
 func (me *Usage) Example(lines ...string) {
 	for _, line := range lines {
+		if me.examples.Len() > 0 {
+			me.examples.WriteString("\n")
+		}
 		me.examples.WriteString(indent)
 		me.examples.WriteString(line)
-		me.examples.WriteString("\n")
 	}
-	me.examples.WriteString("\n")
 }
 
 // WriteUsageTo writes names, defaults and documentation to the given
@@ -57,7 +58,22 @@ func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 	// Options
 	p.Println("Options")
 	me.WriteOptionsTo(p)
+	if len(me.options) > 0 {
+		fmt.Fprintln(w)
+	}
+	me.writeGroups(p)
+	me.writeExamples(p)
 
+	p.Println()
+	return p.Written, *err
+}
+
+const indent = "    "
+
+func (me *Usage) writeGroups(p *nexus.Printer) {
+	if len(me.groups) == 0 {
+		return
+	}
 	for _, grp := range me.groups {
 		p.Println(grp.Title())
 		first := grp.Items()[0]
@@ -66,11 +82,7 @@ func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 			writeItem(p, item, me.args, indent, false)
 		}
 	}
-	me.writeExamples(p)
-	return p.Written, *err
 }
-
-const indent = "    "
 
 // WriteOptionsTo writes the Options section to the given writer.
 func (me *Usage) WriteOptionsTo(w io.Writer) {
@@ -88,7 +100,7 @@ func (me *Usage) writeExamples(p *nexus.Printer) {
 	if me.examples.Len() == 0 {
 		return
 	}
-	if len(me.groups) == 0 {
+	if len(me.groups) > 0 {
 		p.Println()
 	}
 	p.Println("Examples")
@@ -98,9 +110,6 @@ func (me *Usage) writeExamples(p *nexus.Printer) {
 func (me *Usage) writeOptionsTo(w io.Writer, indent string) {
 	for _, opt := range me.options {
 		writeOptionTo(w, opt, indent)
-	}
-	if len(me.options) > 0 {
-		fmt.Fprintln(w)
 	}
 }
 

@@ -4,8 +4,6 @@ Options
     -u, --user-id : ""
     -p, --password : "********"
 
-
 Examples
     Add new user
     $ adduser -u john -p secret
-

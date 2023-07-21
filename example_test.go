@@ -1,16 +1,18 @@
 package cmdline_test
 
 import (
+	"bytes"
 	"fmt"
+	"testing"
 
 	"github.com/gregoryv/cmdline"
 	"github.com/gregoryv/cmdline/clitest"
+	"github.com/gregoryv/golden"
 )
 
-func ExampleUsage_WriteTo() {
+func TestUsage_WriteTo(t *testing.T) {
 	cli := cmdline.NewBasicParser()
 
-	// only needed for this example
 	sh := clitest.NewShellT("speak", "-h")
 	cli.SetShell(sh)
 
@@ -46,31 +48,9 @@ func ExampleUsage_WriteTo() {
 		"    Hi, John!",
 	)
 	cli.Parse()
-	fmt.Println(sh.Out.String())
-	// output:
-	// Usage: speak [OPTIONS] PHRASE
-	//
-	// speak - talks back to you
-	// Author: Gregory Vincic
-	//
-	// Options
-	//     -n, --dry-run
-	//     -u, --username, $USER : ""
-	//     -r, --role : "user" [user admin]
-	//     -h, --help
-	//
-	// Phrases
-	//     askName (default)
-	//     sayHi
-	//         -t, --to : "stranger"
-	//
-	//     compliment
-	//         -s, --someone : "John"
-	//
-	// Examples
-	//     Greet
-	//         $ speek sayHi -t John
-	//         Hi, John!
+	var buf bytes.Buffer
+	cli.Usage().WriteTo(&buf)
+	golden.Assert(t, buf.String())
 }
 
 // ----------------------------------------
