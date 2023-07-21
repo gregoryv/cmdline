@@ -23,6 +23,9 @@ type Option struct {
 	valIndex int // position for option value, same as argIndex if e.g. --i=1
 
 	envMap func(string) string
+
+	// usage does not show value
+	hidden bool
 }
 
 // NewOption returns an option defined by a comma separated list of

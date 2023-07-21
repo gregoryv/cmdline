@@ -233,7 +233,15 @@ func (me *Parser) parseFailed() error {
 func (me *Parser) Option(names string, doclines ...string) *Option {
 	opt := NewOption(names, me.args[1:]...)
 	opt.envMap = me.envMap
-	opt.doc = doclines
+	opt.doc = make([]string, 0, len(doclines))
+	for _, line := range doclines {
+		if line == "hidden" {
+			opt.hidden = true
+			continue
+		}
+		opt.doc = append(opt.doc, line)
+
+	}
 	me.options = append(me.options, opt)
 	return opt
 }

@@ -118,11 +118,15 @@ func writeItem(w io.Writer, me *Item, args []string, indent string, dflt bool) {
 
 func writeOptionTo(w io.Writer, opt *Option, indent string) {
 	var def string
-	if opt.defaultValue != "" {
-		def = fmt.Sprintf(" : %v", opt.defaultValue)
+	val := opt.defaultValue
+	if opt.hidden {
+		val = "********"
+	}
+	if val != "" {
+		def = fmt.Sprintf(" : %v", val)
 	}
 	if opt.quoteValue {
-		def = fmt.Sprintf(" : %q", opt.defaultValue)
+		def = fmt.Sprintf(" : %q", val)
 	}
 	var enum string
 	if len(opt.enumerated) > 0 {
