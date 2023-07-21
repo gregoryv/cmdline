@@ -219,6 +219,17 @@ func Test_quoted_string_option(t *testing.T) {
 	}
 }
 
+func Test_empty_string_option(t *testing.T) {
+	cli := Parse(t, `cmd -a ""`)
+	got := cli.Option("-a").String("default")
+	if !cli.Ok() {
+		t.Error(cli.Error(), got)
+	}
+	if got != "" {
+		t.Error("unexpected ", got)
+	}
+}
+
 func Test_default_uint8_option(t *testing.T) {
 	cli := Parse(t, "cmd")
 	got := cli.Option("-a").Uint8(8)
@@ -312,18 +323,6 @@ func Test_bad_float64_option(t *testing.T) {
 	got := cli.Option("-min").Float64(0.1)
 	if got != 0.0 {
 		t.Error("unexpected:", got)
-	}
-}
-
-func Test_ok_enumVar(t *testing.T) {
-	cli := Parse(t, "cmd -v b")
-	dst := "a"
-	got := cli.Option("-v").EnumVar(&dst, "a", "b")
-	if !cli.Ok() {
-		t.Error(cli.Error())
-	}
-	if got != "b" {
-		t.Error("unexpected", got)
 	}
 }
 
