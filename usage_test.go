@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/gregoryv/golden"
 )
 
 func Test_usage_output_with_extended_docs(t *testing.T) {
@@ -48,4 +50,18 @@ func ExampleParser_usageHiddenPassword() {
 	//
 	//     -p, --password : "********"
 	//         minimum 8 chars
+}
+
+func TestUsage_withoutGroups(t *testing.T) {
+	cli := NewParser()
+	cli.args = []string{"adduser"}
+	_ = cli.Option("-u, --user-id").String("")
+	_ = cli.Option("-p, --password", "hidden").String("")
+	u := cli.Usage()
+	u.Example("Add new user",
+		"$ adduser -u john -p secret",
+	)
+	var buf bytes.Buffer
+	cli.Usage().WriteTo(&buf)
+	golden.Assert(t, buf.String())
 }

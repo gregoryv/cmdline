@@ -12,5 +12,7 @@ require (
 	github.com/gregoryv/asserter v0.4.2 // indirect
 	github.com/gregoryv/find v0.4.0 // indirect
 	github.com/gregoryv/gocyclo v0.1.1 // indirect
+	github.com/gregoryv/golden v0.7.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 )
