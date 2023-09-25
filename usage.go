@@ -40,7 +40,7 @@ func (me *Usage) Example(lines ...string) {
 // WriteUsageTo writes names, defaults and documentation to the given
 // writer with the first line being
 //
-//   Usage: COMMAND [OPTIONS] ARGUMENTS...
+//	Usage: COMMAND [OPTIONS] ARGUMENTS...
 func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 	p, err := nexus.NewPrinter(w)
 	p.Printf("Usage: %s [OPTIONS]", me.args[0])

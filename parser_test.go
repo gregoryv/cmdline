@@ -205,6 +205,20 @@ func Test_single_group_item_is_selected(t *testing.T) {
 	}
 }
 
+func Test_group_and_multi_argument(t *testing.T) {
+	cli := Parse(t, "run action conf1 conf2")
+	phrases := cli.Group("Phrases", "PHRASE")
+	phrases.New("hello", nil)
+	phrases.Selected()
+	files := cli.NamedArg("FILES...").Strings("default")
+	if cli.Ok() {
+		t.Errorf("expected failure when required FILES... is missing")
+	}
+	if !reflect.DeepEqual(files, []string{"conf1", "conf2"}) {
+		t.Error("got", files)
+	}
+}
+
 func Test_unknown_group_item(t *testing.T) {
 	cli := Parse(t, "mycmd car")
 	nouns := cli.Group("Nouns", "NOUN")

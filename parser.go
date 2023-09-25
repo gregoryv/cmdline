@@ -225,11 +225,13 @@ func (me *Parser) parseFailed() error {
 
 // Option returns a new option with the given names.
 // Names should be a comma separated string, e.g.
-//   -n, --dry-run
+//
+//	-n, --dry-run
 //
 // You can also include an environment variable to use as default
 // value in the names, e.g.
-//   -t, --token, $COGNITO_TOKEN
+//
+//	-t, --token, $COGNITO_TOKEN
 func (me *Parser) Option(names string, doclines ...string) *Option {
 	opt := NewOption(names, me.args[1:]...)
 	opt.envMap = me.envMap
