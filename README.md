@@ -31,6 +31,7 @@ This package is different from the builtin package flag.
     		url	= cli.Option("--test-host").Url("tcp://example.com:123")
     		dur	= cli.Option("--pause").Duration("200ms")
     
+    		// parse and name non options
     		username	= cli.NamedArg("USERNAME").String("")
     		note		= cli.NamedArg("NOTE").String("")
     	)
