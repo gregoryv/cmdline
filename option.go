@@ -268,7 +268,7 @@ func (opt *Option) envValue() string {
 	names := opt.argNames()
 	env := names[len(names)-1] // last element
 	if env[0] != '$' {
-		return ""
+		return opt.defaultValue
 	}
 	return os.Expand(env, opt.envMap)
 }
@@ -303,19 +303,20 @@ func isOption(arg string) bool {
 	return len(arg) > 0 && arg[0] == '-'
 }
 
-// Bool same as BoolOpt but does not return the Option.
+// Bool returns bool value from the arguments or the given default value.
 func (opt *Option) Bool(def bool) bool {
 	if def == true {
 		opt.setDefault("true")
 	} else {
 		opt.setDefault("false")
 	}
-	val, _ := opt.BoolOpt()
-	return val
+
+	v := opt.boolArg()
+	return v
 }
 
-// BoolOpt returns bool value from the arguments or the given default
-// value. The Option is returned for more configuration.
+// BoolOpt returns bool value from the arguments.
+// The Option is returned for more configuration.
 func (opt *Option) BoolOpt() (bool, *Option) {
 	opt.setDefault("")
 	v := opt.boolArg()

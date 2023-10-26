@@ -302,6 +302,14 @@ func Test_default_bool_option(t *testing.T) {
 	}
 }
 
+func Test_default_bool_option_true(t *testing.T) {
+	cli := Parse(t, "cmd")
+	got := cli.Option("-h").Bool(true)
+	if got == false {
+		t.Error("unexpected:", got)
+	}
+}
+
 func Test_default_float64_option(t *testing.T) {
 	cli := Parse(t, "cmd")
 	got := cli.Option("-min").Float64(0.1)
