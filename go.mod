@@ -2,8 +2,6 @@ module github.com/gregoryv/cmdline
 
 go 1.21
 
-toolchain go1.21.3
-
 require (
 	github.com/gregoryv/golden v0.7.1
 	github.com/gregoryv/nexus v0.6.0
