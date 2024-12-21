@@ -58,9 +58,6 @@ func (opt *Option) IntOpt(def int) (int, *Option) {
 		opt.fail()
 		return def, opt
 	}
-	if v == "" {
-		return def, opt
-	}
 	iv, err := strconv.Atoi(v)
 	if err != nil {
 		opt.fail()
@@ -97,9 +94,6 @@ func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 		opt.fail()
 		return def, opt
 	}
-	if v == "" {
-		return def, opt
-	}
 	iv, err := strconv.ParseUint(v, 0, 64)
 	if err != nil {
 		opt.fail()
@@ -124,9 +118,6 @@ func (opt *Option) DurationOpt(def string) (time.Duration, *Option) {
 	v, err := opt.stringArg()
 	if err != nil {
 		opt.fail()
-		return defDur, opt
-	}
-	if v == "" {
 		return defDur, opt
 	}
 	dur, err := time.ParseDuration(v)
@@ -154,9 +145,6 @@ func (opt *Option) UrlOpt(def string) (*url.URL, *Option) {
 	v, err := opt.stringArg()
 	if err != nil {
 		opt.fail()
-		return defUrl, opt
-	}
-	if v == "" {
 		return defUrl, opt
 	}
 	u, err := url.Parse(v)
@@ -261,11 +249,11 @@ func (opt *Option) stringArg() (string, error) {
 		// NamedArg is -i
 		return opt.args[i+1], nil
 	}
-	return opt.envValue(), nil
+	return opt.envValueOrDefault(), nil
 }
 
 // If last element in option names starts with $ expand it
-func (opt *Option) envValue() string {
+func (opt *Option) envValueOrDefault() string {
 	names := opt.argNames()
 	env := names[len(names)-1] // last element
 	if env[0] != '$' {
@@ -325,7 +313,7 @@ func (opt *Option) BoolOpt() (bool, *Option) {
 }
 
 func (opt *Option) boolArg() bool {
-	value := opt.envValue()
+	value := opt.envValueOrDefault()
 
 	i, found := opt.find()
 	if found {
@@ -407,9 +395,6 @@ func (opt *Option) Float64Opt(def float64) (float64, *Option) {
 	v, err := opt.stringArg()
 	if err != nil {
 		opt.fail()
-		return def, opt
-	}
-	if v == "" {
 		return def, opt
 	}
 	iv, err := strconv.ParseFloat(v, 64)
