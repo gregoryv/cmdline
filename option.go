@@ -200,11 +200,12 @@ func (opt *Option) String(def string) string {
 	return val
 }
 
-// StringOpt returns string value from the arguments or the given default value.
+// StringOpt returns string value from the arguments or the given
+// default value.
 func (opt *Option) StringOpt(def string) (string, *Option) {
 	opt.setDefault(def)
 	opt.quoteValue = true
-	// todo , have to distinquish between option not found and value not found
+	// todo distinquish between option not found and value not found
 	v, err := opt.stringArg()
 	if err != nil {
 		opt.fail()
@@ -373,10 +374,17 @@ func (opt *Option) get(i int) (string, bool) {
 // expression. See example for possible values.
 func ParseBool(v string) (bool, error) {
 	switch v {
-	case "1", "y", "yes", "Yes", "YES", "true", "True", "TRUE":
+
+	case "1", "y", "yes", "Yes", "YES":
 		return true, nil
-	case "", "0", "n", "no", "No", "NO", "false", "False", "FALSE":
+	case "t", "T", "true", "True", "TRUE":
+		return true, nil
+
+	case "", "0", "n", "no", "No", "NO":
 		return false, nil
+	case "f", "F", "false", "False", "FALSE":
+		return false, nil
+
 	}
 	return false, fmt.Errorf("parse bool %q", v)
 }

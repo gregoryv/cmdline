@@ -58,8 +58,8 @@ func Example_envOption() {
 
 func ExampleParseBool() {
 	in := []string{
-		"1", "y", "yes", "Yes", "YES", "true", "True", "TRUE",
-		"0", "n", "no", "No", "NO", "false", "False", "FALSE", "",
+		"1", "y", "yes", "Yes", "YES", "t", "T", "true", "True", "TRUE",
+		"0", "n", "no", "No", "NO", "f", "F", "false", "False", "FALSE", "",
 	}
 	for _, v := range in {
 		got, _ := ParseBool(v)
@@ -73,6 +73,8 @@ func ExampleParseBool() {
 	// yes   true
 	// Yes   true
 	// YES   true
+	// t     true
+	// T     true
 	// true  true
 	// True  true
 	// TRUE  true
@@ -81,6 +83,8 @@ func ExampleParseBool() {
 	// no    false
 	// No    false
 	// NO    false
+	// f     false
+	// F     false
 	// false false
 	// False false
 	// FALSE false
