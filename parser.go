@@ -232,6 +232,12 @@ func (me *Parser) parseFailed() error {
 // value in the names, e.g.
 //
 //	-t, --token, $COGNITO_TOKEN
+//
+// The doclines are multiple documentation lines. The special docline
+//
+//	"hidden"
+//
+// means the values is masked when printed in the usage information.
 func (me *Parser) Option(names string, doclines ...string) *Option {
 	opt := NewOption(names, me.args[1:]...)
 	opt.envMap = me.envMap
