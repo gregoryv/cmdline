@@ -21,30 +21,30 @@ type Basic struct {
 
 // Parse checks for errors or if the help flag is given writes usage
 // to os.Stdout
-func (me *Basic) Parse() {
-	me.defineHelp.Do(me.helpFlag)
+func (b *Basic) Parse() {
+	b.defineHelp.Do(b.helpFlag)
 
 	switch {
-	case me.help:
-		me.Usage().WriteTo(me.Parser.sh.Stdout())
-		me.sh.Exit(0)
+	case b.help:
+		b.Usage().WriteTo(b.Parser.sh.Stdout())
+		b.sh.Exit(0)
 
-	case !me.Ok():
-		fmt.Fprintln(me.sh.Stderr(), me.Error())
-		fmt.Fprintln(me.sh.Stderr(), "Try -h or --help, for more information")
-		me.sh.Exit(1)
+	case !b.Ok():
+		fmt.Fprintln(b.sh.Stderr(), b.Error())
+		fmt.Fprintln(b.sh.Stderr(), "Try -h or --help, for more information")
+		b.sh.Exit(1)
 	}
 }
 
 // Usage returns the usage for further documentation. If Parse method
 // has not been called, it adds the help flag.
-func (me *Basic) Usage() *Usage {
-	me.defineHelp.Do(me.helpFlag)
-	return me.Parser.Usage()
+func (b *Basic) Usage() *Usage {
+	b.defineHelp.Do(b.helpFlag)
+	return b.Parser.Usage()
 }
 
-func (me *Basic) helpFlag() {
-	me.help = me.Parser.Flag("-h, --help")
+func (b *Basic) helpFlag() {
+	b.help = b.Parser.Flag("-h, --help")
 }
 
 // ----------------------------------------
@@ -82,36 +82,36 @@ type Parser struct {
 }
 
 // Parse checks parsing errors and exits on errors
-func (me *Parser) Parse() {
-	if !me.Ok() {
-		fmt.Fprintln(me.sh.Stderr(), me.Error())
-		me.sh.Exit(1)
+func (b *Parser) Parse() {
+	if !b.Ok() {
+		fmt.Fprintln(b.sh.Stderr(), b.Error())
+		b.sh.Exit(1)
 	}
 }
 
-func (me *Parser) SetShell(sh Shell) {
-	me.sh = sh
-	me.args = sh.Args()
+func (b *Parser) SetShell(sh Shell) {
+	b.sh = sh
+	b.args = sh.Args()
 }
 
-func (me *Parser) Group(title, name string) *Group {
-	return me.group(title, name, me.NamedArg(name).String(""))
+func (b *Parser) Group(title, name string) *Group {
+	return b.group(title, name, b.NamedArg(name).String(""))
 }
 
 // Preface is the same as Usage().Preface
-func (me *Parser) Preface(lines ...string) {
-	me.usage.Preface(lines...)
+func (b *Parser) Preface(lines ...string) {
+	b.usage.Preface(lines...)
 }
 
-func (me *Parser) group(title, name, v string) *Group {
+func (b *Parser) group(title, name, v string) *Group {
 	grp := &Group{
 		name:  name,
-		args:  me.Args(),
+		args:  b.Args(),
 		title: title,
 		v:     v,
 		items: make([]*Item, 0),
 	}
-	err := me.addGroup(grp)
+	err := b.addGroup(grp)
 	if err != nil {
 		panic(fmt.Sprintf("duplicate group %q", title))
 	}
@@ -119,13 +119,13 @@ func (me *Parser) group(title, name, v string) *Group {
 	return grp
 }
 
-func (me *Parser) addGroup(grp *Group) error {
-	for _, existing := range me.groups {
+func (b *Parser) addGroup(grp *Group) error {
+	for _, existing := range b.groups {
 		if existing.Title() == grp.Title() {
 			return fmt.Errorf("group %q already exists", grp.Title())
 		}
 	}
-	me.groups = append(me.groups, grp)
+	b.groups = append(b.groups, grp)
 	return nil
 }
 
@@ -140,39 +140,39 @@ type Group struct {
 	err error
 }
 
-func (me *Group) New(name string, any interface{}) *Item {
+func (b *Group) New(name string, any interface{}) *Item {
 	item := &Item{
 		Name:   name,
 		Loader: any,
 	}
-	me.items = append(me.items, item)
+	b.items = append(b.items, item)
 	return item
 }
 
 // Selected returns the matching item. Defaults to the first in the group.
-func (me *Group) Selected() interface{} {
-	i := me.items[0]
-	if me.v != "" {
+func (b *Group) Selected() interface{} {
+	i := b.items[0]
+	if b.v != "" {
 		var found bool
-		i, found = me.find(me.v)
+		i, found = b.find(b.v)
 		if !found {
-			me.err = fmt.Errorf("invalid %s", me.name)
+			b.err = fmt.Errorf("invalid %s", b.name)
 			return nil
 		}
 	}
 	extra := NewParser()
-	extra.args = append([]string{me.title}, me.args...)
+	extra.args = append([]string{b.title}, b.args...)
 	sel := i.Load(extra)
-	me.err = extra.Error()
+	b.err = extra.Error()
 	return sel
 }
 
-func (me *Group) Title() string  { return me.title }
-func (me *Group) Items() []*Item { return me.items }
+func (b *Group) Title() string  { return b.title }
+func (b *Group) Items() []*Item { return b.items }
 
 // Find returns the named Item or nil if not found.
-func (me *Group) find(name string) (*Item, bool) {
-	for _, item := range me.items {
+func (b *Group) find(name string) (*Item, bool) {
+	for _, item := range b.items {
 		if item.Name == name {
 			return item, true
 		}
@@ -183,18 +183,18 @@ func (me *Group) find(name string) (*Item, bool) {
 // ----------------------------------------
 
 // Ok returns true if no parsing error occured
-func (me *Parser) Ok() bool {
-	return me.Error() == nil
+func (b *Parser) Ok() bool {
+	return b.Error() == nil
 }
 
 // Error returns first error of the given options.
-func (me *Parser) Error() error {
-	err := me.parseFailed()
+func (b *Parser) Error() error {
+	err := b.parseFailed()
 	if err != nil {
 		return err
 	}
-	if len(me.groups) == 0 { // as groups are selected with non option argument
-		for _, arg := range me.Args() {
+	if len(b.groups) == 0 { // as groups are selected with non option argument
+		for _, arg := range b.Args() {
 			if isOption(arg) {
 				return fmt.Errorf("Unknown option: %v", arg)
 			}
@@ -203,7 +203,7 @@ func (me *Parser) Error() error {
 	return nil
 }
 
-func (me *Parser) parseFailed() error {
+func (b *Parser) parseFailed() error {
 	var err error
 	setErr := func(e error) {
 		if err != nil {
@@ -211,13 +211,13 @@ func (me *Parser) parseFailed() error {
 		}
 		err = e
 	}
-	for _, opt := range me.options {
+	for _, opt := range b.options {
 		setErr(opt.err)
 	}
-	for _, arg := range me.arguments {
+	for _, arg := range b.arguments {
 		setErr(arg.err)
 	}
-	for _, grp := range me.groups {
+	for _, grp := range b.groups {
 		setErr(grp.err)
 	}
 	return err
@@ -238,9 +238,9 @@ func (me *Parser) parseFailed() error {
 //	"hidden"
 //
 // means the values is masked when printed in the usage information.
-func (me *Parser) Option(names string, doclines ...string) *Option {
-	opt := NewOption(names, me.args[1:]...)
-	opt.envMap = me.envMap
+func (b *Parser) Option(names string, doclines ...string) *Option {
+	opt := NewOption(names, b.args[1:]...)
+	opt.envMap = b.envMap
 	opt.doc = make([]string, 0, len(doclines))
 	for _, line := range doclines {
 		if line == "hidden" {
@@ -250,28 +250,28 @@ func (me *Parser) Option(names string, doclines ...string) *Option {
 		opt.doc = append(opt.doc, line)
 
 	}
-	me.options = append(me.options, opt)
+	b.options = append(b.options, opt)
 	return opt
 }
 
 // Flag is short for Option(name).Bool()
-func (me *Parser) Flag(name string) bool {
-	val, _ := me.Option(name).BoolOpt()
+func (b *Parser) Flag(name string) bool {
+	val, _ := b.Option(name).BoolOpt()
 	return val
 }
 
 // Usage returns the currently documented options for further
 // documentation.
-func (me *Parser) Usage() *Usage {
-	return me.usage
+func (b *Parser) Usage() *Usage {
+	return b.usage
 }
 
 // Args returns arguments not matched by any of the options
-func (me *Parser) Args() []string {
+func (b *Parser) Args() []string {
 	rest := make([]string, 0)
-	for i, arg := range me.args[1:] {
+	for i, arg := range b.args[1:] {
 		//		fmt.Println("a:", arg)
-		if !me.wasMatched(i) {
+		if !b.wasMatched(i) {
 			rest = append(rest, arg)
 		}
 	}
@@ -279,16 +279,16 @@ func (me *Parser) Args() []string {
 }
 
 // Argn returns the n:th of remaining arguments starting at 0.
-func (me *Parser) Argn(n int) string {
-	rest := me.Args()
+func (b *Parser) Argn(n int) string {
+	rest := b.Args()
 	if n < len(rest) {
 		return rest[n]
 	}
 	return ""
 }
 
-func (me *Parser) wasMatched(i int) bool {
-	for _, opt := range me.options {
+func (b *Parser) wasMatched(i int) bool {
+	for _, opt := range b.options {
 		if opt.argIndex == i || opt.valIndex == i {
 			return true
 		}
@@ -296,26 +296,26 @@ func (me *Parser) wasMatched(i int) bool {
 	return false
 }
 
-func (me *Parser) String() string {
-	return fmt.Sprintf("Parser: %s", strings.Join(me.args, " "))
+func (b *Parser) String() string {
+	return fmt.Sprintf("Parser: %s", strings.Join(b.args, " "))
 }
 
 // NamedArg returns an named argument
-func (me *Parser) NamedArg(name string) *NamedArg {
+func (b *Parser) NamedArg(name string) *NamedArg {
 	arg := &NamedArg{
 		name: name,
-		v:    me.parseMultiArg(name),
+		v:    b.parseMultiArg(name),
 	}
-	me.arguments = append(me.arguments, arg)
+	b.arguments = append(b.arguments, arg)
 	return arg
 }
 
-func (me *Parser) parseMultiArg(name string) []string {
+func (b *Parser) parseMultiArg(name string) []string {
 	if isMulti(name) {
-		return me.Args()
+		return b.Args()
 	}
 	// parse one argument
-	v := me.Argn(len(me.arguments))
+	v := b.Argn(len(b.arguments))
 	if v == "" {
 		return nil
 	}
@@ -332,9 +332,9 @@ type NamedArg struct {
 }
 
 // String returns the value of this NamedArg or the given default
-func (me *NamedArg) String(def string) string {
-	me.required = (def == "")
-	v := me.v
+func (b *NamedArg) String(def string) string {
+	b.required = (def == "")
+	v := b.v
 
 	if len(v) == 0 || v[0] == "" {
 		return def
@@ -344,15 +344,15 @@ func (me *NamedArg) String(def string) string {
 
 // Strings returns the values of this argument. If no default is given
 // this NamedArg is considered required.
-func (me *NamedArg) Strings(def ...string) []string {
-	me.required = (len(def) == 0)
+func (b *NamedArg) Strings(def ...string) []string {
+	b.required = (len(def) == 0)
 	switch {
-	case len(me.v) == 0 && me.required:
-		me.err = fmt.Errorf("missing %s", me.name)
-	case len(me.v) == 0 && !me.required:
+	case len(b.v) == 0 && b.required:
+		b.err = fmt.Errorf("missing %s", b.name)
+	case len(b.v) == 0 && !b.required:
 		return def
 	}
-	return me.v
+	return b.v
 }
 
 func isMulti(v string) bool {

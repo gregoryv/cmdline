@@ -58,7 +58,7 @@ type Hi struct {
 	to string
 }
 
-func (me *Hi) Run() { fmt.Printf("Hi, %s!\n", me.to) }
+func (h *Hi) Run() { fmt.Printf("Hi, %s!\n", h.to) }
 
 type Compliment struct {
 	// Enable this subcommand to have a name
@@ -66,12 +66,12 @@ type Compliment struct {
 	someone string
 }
 
-func (me *Compliment) ExtraOptions(p *cmdline.Parser) {
-	me.someone = p.Option("-s, --someone").String("John")
+func (h *Compliment) ExtraOptions(p *cmdline.Parser) {
+	h.someone = p.Option("-s, --someone").String("John")
 }
 
-func (me *Compliment) Run() {
-	fmt.Printf("%s, you look dashing I must say.\n", me.someone)
+func (h *Compliment) Run() {
+	fmt.Printf("%s, you look dashing I must say.\n", h.someone)
 }
 
 // It is up to you to define the interface for your sub commands
@@ -81,4 +81,4 @@ type runnable interface {
 
 type runfunc func()
 
-func (me runfunc) Run() { me() }
+func (h runfunc) Run() { me() }

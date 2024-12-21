@@ -31,26 +31,26 @@ type ShellOS struct {
 }
 
 // Getenv returns os.Getenv
-func (me *ShellOS) Getenv(key string) string { return os.Getenv(key) }
+func (s *ShellOS) Getenv(key string) string { return os.Getenv(key) }
 
 // Args returns os.Args
-func (me *ShellOS) Args() []string { return os.Args }
+func (s *ShellOS) Args() []string { return os.Args }
 
 // Getwd returns os.Getwd
-func (me *ShellOS) Getwd() (string, error) { return os.Getwd() }
+func (s *ShellOS) Getwd() (string, error) { return os.Getwd() }
 
 // Stdin returns os.Stdin
-func (me *ShellOS) Stdin() io.Reader { return os.Stdin }
+func (s *ShellOS) Stdin() io.Reader { return os.Stdin }
 
 // Stdout returns os.Stdout
-func (me *ShellOS) Stdout() io.Writer { return os.Stdout }
+func (s *ShellOS) Stdout() io.Writer { return os.Stdout }
 
 // Stderr returns os.Stderr
-func (me *ShellOS) Stderr() io.Writer { return os.Stderr }
+func (s *ShellOS) Stderr() io.Writer { return os.Stderr }
 
 // Exit returns the given exit code
-func (me *ShellOS) Exit(code int) { me.exit(code) }
-func (me *ShellOS) Fatal(v ...interface{}) {
+func (s *ShellOS) Exit(code int) { s.exit(code) }
+func (s *ShellOS) Fatal(v ...interface{}) {
 	log.Println(v...)
-	me.exit(1)
+	s.exit(1)
 }

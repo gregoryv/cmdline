@@ -17,23 +17,23 @@ type Usage struct {
 }
 
 // Preface adds lines just before the options section
-func (me *Usage) Preface(lines ...string) {
+func (u *Usage) Preface(lines ...string) {
 	for _, line := range lines {
-		me.preface.WriteString(line)
-		me.preface.WriteString("\n")
+		u.preface.WriteString(line)
+		u.preface.WriteString("\n")
 	}
 }
 
 // Example adds an examples section. The examples are placed last
 // after options and named arguments. Examples are plain text and not
 // evaluated in any way.
-func (me *Usage) Example(lines ...string) {
+func (u *Usage) Example(lines ...string) {
 	for _, line := range lines {
-		if me.examples.Len() > 0 {
-			me.examples.WriteString("\n")
+		if u.examples.Len() > 0 {
+			u.examples.WriteString("\n")
 		}
-		me.examples.WriteString(indent)
-		me.examples.WriteString(line)
+		u.examples.WriteString(indent)
+		u.examples.WriteString(line)
 	}
 }
 
@@ -41,11 +41,11 @@ func (me *Usage) Example(lines ...string) {
 // writer with the first line being
 //
 //	Usage: COMMAND [OPTIONS] ARGUMENTS...
-func (me *Usage) WriteTo(w io.Writer) (int64, error) {
+func (u *Usage) WriteTo(w io.Writer) (int64, error) {
 	p, err := nexus.NewPrinter(w)
-	p.Printf("Usage: %s [OPTIONS]", me.args[0])
+	p.Printf("Usage: %s [OPTIONS]", u.args[0])
 	// Named arguments
-	for _, arg := range me.arguments {
+	for _, arg := range u.arguments {
 		if arg.required {
 			p.Printf(" %s", arg.name)
 			continue
@@ -54,15 +54,15 @@ func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 	}
 	// Preface
 	p.Print("\n\n")
-	me.writePreface(p)
+	u.writePreface(p)
 	// Options
 	p.Println("Options")
-	me.WriteOptionsTo(p)
-	if len(me.options) > 0 {
+	u.WriteOptionsTo(p)
+	if len(u.options) > 0 {
 		fmt.Fprintln(w)
 	}
-	me.writeGroups(p)
-	me.writeExamples(p)
+	u.writeGroups(p)
+	u.writeExamples(p)
 
 	p.Println()
 	return p.Written, *err
@@ -70,58 +70,58 @@ func (me *Usage) WriteTo(w io.Writer) (int64, error) {
 
 const indent = "    "
 
-func (me *Usage) writeGroups(p *nexus.Printer) {
-	if len(me.groups) == 0 {
+func (u *Usage) writeGroups(p *nexus.Printer) {
+	if len(u.groups) == 0 {
 		return
 	}
-	for _, grp := range me.groups {
+	for _, grp := range u.groups {
 		p.Println(grp.Title())
 		first := grp.Items()[0]
-		writeItem(p, first, me.args, indent, true)
+		writeItem(p, first, u.args, indent, true)
 		for _, item := range grp.Items()[1:] {
-			writeItem(p, item, me.args, indent, false)
+			writeItem(p, item, u.args, indent, false)
 		}
 	}
 }
 
 // WriteOptionsTo writes the Options section to the given writer.
-func (me *Usage) WriteOptionsTo(w io.Writer) {
-	me.writeOptionsTo(w, "")
+func (u *Usage) WriteOptionsTo(w io.Writer) {
+	u.writeOptionsTo(w, "")
 }
 
-func (me *Usage) writePreface(p *nexus.Printer) {
-	if me.preface.Len() == 0 {
+func (u *Usage) writePreface(p *nexus.Printer) {
+	if u.preface.Len() == 0 {
 		return
 	}
-	p.Println(me.preface.String())
+	p.Println(u.preface.String())
 }
 
-func (me *Usage) writeExamples(p *nexus.Printer) {
-	if me.examples.Len() == 0 {
+func (u *Usage) writeExamples(p *nexus.Printer) {
+	if u.examples.Len() == 0 {
 		return
 	}
-	if len(me.groups) > 0 {
+	if len(u.groups) > 0 {
 		p.Println()
 	}
 	p.Println("Examples")
-	p.Print(me.examples.String())
+	p.Print(u.examples.String())
 }
 
-func (me *Usage) writeOptionsTo(w io.Writer, indent string) {
-	for _, opt := range me.options {
+func (u *Usage) writeOptionsTo(w io.Writer, indent string) {
+	for _, opt := range u.options {
 		writeOptionTo(w, opt, indent)
 	}
 }
 
-func writeItem(w io.Writer, me *Item, args []string, indent string, dflt bool) {
+func writeItem(w io.Writer, m *Item, args []string, indent string, dflt bool) {
 	if dflt {
-		fmt.Fprintf(w, "%s%s (default)\n", indent, me.Name)
+		fmt.Fprintf(w, "%s%s (default)\n", indent, m.Name)
 	} else {
-		fmt.Fprintf(w, "%s%s\n", indent, me.Name)
+		fmt.Fprintf(w, "%s%s\n", indent, m.Name)
 	}
 	extra := NewParser()
 	extra.args = args
-	me.Load(extra)
+	m.Load(extra)
 	extra.Usage().writeOptionsTo(w, indent)
 }
 

@@ -48,58 +48,58 @@ type ShellT struct {
 	origin string
 }
 
-func (me *ShellT) Getenv(key string) (v string) {
-	v, _ = me.Env[key]
+func (s *ShellT) Getenv(key string) (v string) {
+	v, _ = s.Env[key]
 	return
 }
 
-func (me *ShellT) Args() []string         { return me.args }
-func (me *ShellT) Getwd() (string, error) { return me.dir, nil }
-func (me *ShellT) Stdin() io.Reader       { return &me.In }
-func (me *ShellT) Stdout() io.Writer      { return &me.Out }
-func (me *ShellT) Stderr() io.Writer      { return &me.Err }
+func (s *ShellT) Args() []string         { return s.args }
+func (s *ShellT) Getwd() (string, error) { return s.dir, nil }
+func (s *ShellT) Stdin() io.Reader       { return &s.In }
+func (s *ShellT) Stdout() io.Writer      { return &s.Out }
+func (s *ShellT) Stderr() io.Writer      { return &s.Err }
 
 // Exit sets ExitCode
-func (me *ShellT) Exit(code int) {
-	me.ExitCode = code
-	os.Chdir(me.origin)
+func (s *ShellT) Exit(code int) {
+	s.ExitCode = code
+	os.Chdir(s.origin)
 }
 
 // Fatal logs the given values and calls the Exit method
-func (me *ShellT) Fatal(v ...interface{}) {
+func (s *ShellT) Fatal(v ...interface{}) {
 	log.Println(v...)
-	os.Chdir(me.origin)
-	me.Exit(1)
+	os.Chdir(s.origin)
+	s.Exit(1)
 }
 
 // Cleanup removes temporary directory and restores the working
 // directory.
-func (me *ShellT) Cleanup() {
-	os.Chdir(me.origin)
-	os.RemoveAll(me.dir)
+func (s *ShellT) Cleanup() {
+	os.Chdir(s.origin)
+	os.RemoveAll(s.dir)
 }
 
 // Dump returns a dump of the command, see DumpTo
-func (me *ShellT) Dump() string {
+func (s *ShellT) Dump() string {
 	var b strings.Builder
-	me.DumpTo(&b)
+	s.DumpTo(&b)
 	return b.String()
 }
 
 // DumpTo writes argument, stdout and stderr if any to the given writer
-func (me *ShellT) DumpTo(w io.Writer) error {
+func (s *ShellT) DumpTo(w io.Writer) error {
 	p, err := nexus.NewPrinter(w)
 	p.Print("$ ")
-	p.Print(strings.Join(me.Args(), " "))
+	p.Print(strings.Join(s.Args(), " "))
 	p.Println()
-	io.Copy(p, &me.Out)
+	io.Copy(p, &s.Out)
 	p.Println()
-	p.Print("exit ", me.ExitCode)
+	p.Print("exit ", s.ExitCode)
 
-	if me.Err.Len() > 0 {
+	if s.Err.Len() > 0 {
 		p.Println()
 		p.Println("STDERR:")
-		io.Copy(p, &me.Err)
+		io.Copy(p, &s.Err)
 	}
 	return *err
 }
