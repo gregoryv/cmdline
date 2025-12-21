@@ -50,6 +50,7 @@ func (s *ShellOS) Stderr() io.Writer { return os.Stderr }
 
 // Exit returns the given exit code
 func (s *ShellOS) Exit(code int) { s.exit(code) }
+
 func (s *ShellOS) Fatal(v ...interface{}) {
 	log.Println(v...)
 	s.exit(1)

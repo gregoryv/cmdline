@@ -51,7 +51,6 @@ func godoc(project string) *Element {
 		text = path.Base(project)
 	)
 	return A(Href(href), text)
-
 }
 
 func githubBadge(workflow string) *Element {

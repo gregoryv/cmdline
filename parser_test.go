@@ -90,6 +90,7 @@ func ExampleParser_Usage_requiredNamedArguments() {
 	// Options
 	//     -h, --help
 }
+
 func Test_basic_parser_shows_help(t *testing.T) {
 	cli := NewBasicParser()
 	sh := clitest.NewShellT("test", "-h")
@@ -124,6 +125,7 @@ func Test_parser_checks_errors(t *testing.T) {
 		t.Error(sh.Dump())
 	}
 }
+
 func Test_parser_constructor_uses_osArgs(t *testing.T) {
 	p := NewParser()
 	if !reflect.DeepEqual(p.args, os.Args) {

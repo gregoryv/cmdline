@@ -8,7 +8,7 @@ import (
 	"github.com/gregoryv/nexus"
 )
 
-// type Usage is for documenting the configured parser
+// Usage is for documenting the configured parser
 type Usage struct {
 	*Parser
 

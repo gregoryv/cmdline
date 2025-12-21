@@ -67,7 +67,7 @@ func ExampleParseBool() {
 	}
 	_, err := ParseBool("other")
 	fmt.Println(err)
-	//output:
+	// output:
 	// 1     true
 	// y     true
 	// yes   true
@@ -90,7 +90,6 @@ func ExampleParseBool() {
 	// FALSE false
 	//       false
 	// parse bool "other"
-
 }
 
 func Test_ok_duration(t *testing.T) {

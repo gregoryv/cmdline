@@ -99,7 +99,6 @@ func (opt *Option) UintOpt(def uint64) (uint64, *Option) {
 		opt.fail()
 	}
 	return iv, opt
-
 }
 
 func (opt *Option) Duration(def string) time.Duration {
